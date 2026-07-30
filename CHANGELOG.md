@@ -43,6 +43,10 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- Proyecto organizado bajo `leyendasolvidadas` en paquetes explícitos de
+  aplicación, dominio (combate, compañía, objetos, misiones y mundo),
+  infraestructura, interfaz de consola y pruebas. Las APIs de habilidades y
+  movimientos sustituyen el acceso implícito que ofrecía el paquete por defecto.
 - La carga conserva un lector de serialización Java exclusivamente para abrir
   y convertir partidas antiguas; todos los guardados nuevos usan LOSV v1.
 - Saltos de nivel de Veterano y Pesadilla reducidos de `+2/+4` a `+1/+2`;

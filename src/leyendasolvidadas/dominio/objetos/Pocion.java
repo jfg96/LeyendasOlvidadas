@@ -1,0 +1,68 @@
+package leyendasolvidadas.dominio.objetos;
+
+import leyendasolvidadas.aplicacion.*;
+import leyendasolvidadas.dominio.combate.*;
+import leyendasolvidadas.dominio.compania.*;
+import leyendasolvidadas.dominio.objetos.*;
+import leyendasolvidadas.dominio.misiones.*;
+import leyendasolvidadas.dominio.mundo.*;
+import leyendasolvidadas.infraestructura.*;
+import leyendasolvidadas.interfaz.consola.*;
+
+/** Consumibles: pociones, antorchas, laudano... */
+public class Pocion extends Item {
+    private final TipoPocion tipo;
+    private final double potencia;
+
+    public Pocion(String nombre, TipoPocion tipo, double potencia) {
+        super(nombre, Rareza.COMUN, (int) (potencia / 2) + 8);
+        this.tipo = tipo; this.potencia = potencia;
+    }
+    public TipoPocion getTipo() { return tipo; }
+    public double getPotencia() { return potencia; }
+
+    /**
+     * Consume la pocion sobre el personaje. La expedicion puede ser null (en la aldea).
+     * @return true si se ha podido usar.
+     */
+    public boolean usar(Personaje p, Expedicion exp) {
+        switch (tipo) {
+            case VIDA:
+                p.curar(potencia);
+                UI.log(p.getNombre() + " bebe " + getNombre() + " y recupera " + (int) potencia + " PV.");
+                return true;
+            case RECURSO:
+                p.setRecurso(p.getRecurso() + potencia);
+                UI.log("El tonico restaura " + (int) potencia + " de " + p.nombreRecurso() + ".");
+                return true;
+            case CALMA:
+                p.aliviarEstres((int) potencia);
+                UI.log("El laudano calma los nervios (-" + (int) potencia + " estres).");
+                return true;
+            case PURGA:
+                p.limpiarEfectosNegativos();
+                UI.log("El antidoto purga los males del cuerpo.");
+                return true;
+            case ANTORCHA:
+                if (exp == null) { UI.log("Aqui no hace falta luz."); return false; }
+                exp.subirLuz((int) potencia);
+                UI.log("Prendes una antorcha nueva (+" + (int) potencia + " de luz).");
+                return true;
+        }
+        return false;
+    }
+    @Override public String descripcion() {
+        switch (tipo) {
+            case VIDA: return "Consumible | Cura " + (int) potencia + " PV";
+            case RECURSO: return "Consumible | +" + (int) potencia + " recurso";
+            case CALMA: return "Consumible | -" + (int) potencia + " estres";
+            case PURGA: return "Consumible | Limpia efectos negativos";
+            default: return "Consumible | +" + (int) potencia + " de luz";
+        }
+    }
+    public static Pocion vida() { return new Pocion("Pocion de Salud", TipoPocion.VIDA, 50); }
+    public static Pocion tonico() { return new Pocion("Tonico Revitalizante", TipoPocion.RECURSO, 60); }
+    public static Pocion laudano() { return new Pocion("Frasco de Laudano", TipoPocion.CALMA, 25); }
+    public static Pocion antorcha() { return new Pocion("Antorcha de Brea", TipoPocion.ANTORCHA, 40); }
+    public static Pocion antidoto() { return new Pocion("Antidoto de Ruda", TipoPocion.PURGA, 0); }
+}

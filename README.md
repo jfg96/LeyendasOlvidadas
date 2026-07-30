@@ -72,14 +72,14 @@ Desde la raíz del proyecto:
 
 ```bash
 mkdir -p out
-javac -encoding UTF-8 -d out src/*.java
-java -cp out Main
+javac -encoding UTF-8 -d out $(find src -name "*.java")
+java -cp out leyendasolvidadas.interfaz.consola.Main
 ```
 
 Si la terminal no representa correctamente los colores ANSI:
 
 ```bash
-java -cp out Main --sin-color
+java -cp out leyendasolvidadas.interfaz.consola.Main --sin-color
 ```
 
 En Windows se recomienda usar Windows Terminal y activar UTF-8 antes de
@@ -87,8 +87,8 @@ ejecutar el juego:
 
 ```powershell
 chcp 65001
-javac -encoding UTF-8 -d out src/*.java
-java -cp out Main
+javac -encoding UTF-8 -d out (Get-ChildItem -Recurse src\*.java)
+java -cp out leyendasolvidadas.interfaz.consola.Main
 ```
 
 ## Cómo se juega
@@ -127,18 +127,17 @@ compatibilidad de partidas antiguas.
 
 ```text
 LeyendasOlvidadas/
-├── src/
-│   ├── Main.java              # Punto de entrada
-│   ├── Juego.java             # Flujo principal de la partida
-│   ├── Aldea.java             # Centro de operaciones
-│   ├── Expedicion.java        # Exploración y mapa procedural
-│   ├── Combate.java           # Motor de combate
-│   ├── Personaje.java         # Base de héroes y enemigos
-│   ├── Bestiario.java         # Fábrica de criaturas y jefes
-│   ├── GestorMisiones.java    # Creación y progreso de encargos
-│   ├── EstadoJuego.java       # Estado persistente
-│   ├── GuardarCargar.java     # Lectura y escritura de partidas
-│   └── UI.java                # Interfaz de terminal
+├── src/leyendasolvidadas/
+│   ├── aplicacion/             # Casos de uso y flujo de partida
+│   ├── dominio/
+│   │   ├── combate/           # Personajes, habilidades y combate
+│   │   ├── compania/          # Plantilla, formación e inventario
+│   │   ├── misiones/          # Encargos y progreso
+│   │   ├── mundo/             # Expediciones, salas y bestiario
+│   │   └── objetos/           # Equipo, consumibles y rarezas
+│   ├── infraestructura/         # Persistencia y azar
+│   └── interfaz/consola/        # Entrada, salida y punto de arranque
+├── test/leyendasolvidadas/pruebas/
 ├── CHANGELOG.md
 └── README.md
 ```
@@ -160,10 +159,10 @@ Las pruebas no necesitan dependencias externas. Desde la raíz del proyecto:
 
 ```bash
 mkdir -p out
-javac -encoding UTF-8 -d out src/*.java test/*.java
-java -cp out CompaniaTest
-java -cp out CombateCompaniaTest
-java -cp out SimuladorEquilibrio
+javac -encoding UTF-8 -d out $(find src test -name "*.java")
+java -cp out leyendasolvidadas.pruebas.CompaniaTest
+java -cp out leyendasolvidadas.pruebas.CombateCompaniaTest
+java -cp out leyendasolvidadas.pruebas.SimuladorEquilibrio
 ```
 
 El simulador ejecuta miles de expediciones reproducibles con composiciones,
