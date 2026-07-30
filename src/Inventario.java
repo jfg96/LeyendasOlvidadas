@@ -17,6 +17,13 @@ public class Inventario implements Serializable {
     }
     public List<Item> getItems() { return items; }
 
+    /** Restaura el contenido desde un formato de guardado externo. */
+    public void restaurar(int oro, List<Item> nuevosItems) {
+        this.oro = Math.max(0, oro);
+        items.clear();
+        for (Item item : nuevosItems) if (items.size() < CAPACIDAD) items.add(item);
+    }
+
     public boolean anadir(Item item) {
         if (item == null) return false;
         if (items.size() >= CAPACIDAD) {

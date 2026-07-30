@@ -63,6 +63,17 @@ public class EstadoJuego implements Serializable {
         return 35 + candidato.getNivel() * 30;
     }
 
+    public void restaurarProgreso(int semana, int victorias, boolean campanaGanada,
+                                  Compania compania, List<Item> ofertas, List<Personaje> candidatos) {
+        this.semana = Math.max(1, semana);
+        this.expedicionesGanadas = Math.max(0, victorias);
+        this.campanaGanada = campanaGanada;
+        this.jugador = compania.getProtagonista();
+        this.compania = compania;
+        this.ofertasHerreria = new ArrayList<>(ofertas);
+        this.candidatos = new ArrayList<>(candidatos);
+    }
+
     /** Completa campos incorporados en versiones posteriores al cargar. */
     public void prepararTrasCarga() {
         Compania actual = getCompania();

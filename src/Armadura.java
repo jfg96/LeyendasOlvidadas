@@ -8,6 +8,14 @@ public class Armadura extends Item {
         this.defensa = (int) Math.round(defensa * rareza.getMult());
         this.vidaExtra = (int) Math.round(vidaExtra * rareza.getMult());
     }
+    private Armadura(String nombre, int defensa, int vidaExtra, Rareza rareza, boolean restaurada) {
+        super(nombre, rareza, defensa * 8 + vidaExtra);
+        this.defensa = defensa;
+        this.vidaExtra = vidaExtra;
+    }
+    public static Armadura restaurar(String nombre, int defensa, int vidaExtra, Rareza rareza) {
+        return new Armadura(nombre, defensa, vidaExtra, rareza, true);
+    }
     public int getDefensa() { return defensa; }
     public int getVidaExtra() { return vidaExtra; }
     @Override public String descripcion() { return "Armadura | Def +" + defensa + ", Vida +" + vidaExtra; }

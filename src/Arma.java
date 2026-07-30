@@ -8,6 +8,7 @@ public class Arma extends Item {
         this.danioBase = danioBase;
     }
     public double getDanio() { return danioBase * getRareza().getMult() + mejoras * 3; }
+    public double getDanioBase() { return danioBase; }
     public int getMejoras() { return mejoras; }
     public void mejorar() { mejoras++; }
     @Override public String descripcion() {

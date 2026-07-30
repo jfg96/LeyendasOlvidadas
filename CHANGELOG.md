@@ -6,6 +6,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Formato binario de guardado **LOSV v1**, con cabecera y versión explícitas,
+  identificadores estables para clases y objetos y prueba completa de ida y
+  vuelta. Ya no depende de los nombres ni de la ubicación de las clases Java.
 - Simulador Monte Carlo reproducible de equilibrio: compara tres composiciones,
   tres niveles y tres dificultades en expediciones de cuatro encuentros, además
   de los jefes normales y la Santa Compaña. Sus franjas automáticas detectan
@@ -40,6 +43,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- La carga conserva un lector de serialización Java exclusivamente para abrir
+  y convertir partidas antiguas; todos los guardados nuevos usan LOSV v1.
 - Saltos de nivel de Veterano y Pesadilla reducidos de `+2/+4` a `+1/+2`;
   la dificultad alta conserva grupos más numerosos en vez de depender de una
   diferencia de nivel desproporcionada.

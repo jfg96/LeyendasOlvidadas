@@ -189,6 +189,22 @@ public abstract class Personaje implements Serializable {
     }
     public void resetMental() { aflixion = null; }
 
+    /** Restaura valores variables sin acoplar el dominio al formato de archivo. */
+    public void restaurarEstado(double vida, double recurso, int cordura,
+                                String aflixion, int experiencia, List<EfectoEstado> efectos,
+                                List<Integer> cooldowns) {
+        setVida(vida);
+        setRecurso(recurso);
+        this.cordura = Math.max(0, Math.min(100, cordura));
+        this.aflixion = aflixion;
+        this.experiencia = Math.max(0, experiencia);
+        this.efectos.clear();
+        this.efectos.addAll(efectos);
+        List<Habilidad> habilidades = getHabilidades();
+        for (int i = 0; i < habilidades.size() && i < cooldowns.size(); i++)
+            habilidades.get(i).setCooldownActual(cooldowns.get(i));
+    }
+
     // --- Experiencia ---
     public int xpNecesaria() { return nivel * 100; }
     public void ganarExperiencia(int cantidad) {

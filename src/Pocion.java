@@ -8,6 +8,7 @@ public class Pocion extends Item {
         this.tipo = tipo; this.potencia = potencia;
     }
     public TipoPocion getTipo() { return tipo; }
+    public double getPotencia() { return potencia; }
 
     /**
      * Consume la pocion sobre el personaje. La expedicion puede ser null (en la aldea).

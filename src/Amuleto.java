@@ -11,6 +11,14 @@ public class Amuleto extends Item {
         this.don = don;
         this.potencia = (int) Math.round(potencia * rareza.getMult());
     }
+    private Amuleto(String nombre, Don don, int potencia, Rareza rareza, boolean restaurado) {
+        super(nombre, rareza, 25 + potencia * 5);
+        this.don = don;
+        this.potencia = potencia;
+    }
+    public static Amuleto restaurar(String nombre, Don don, int potencia, Rareza rareza) {
+        return new Amuleto(nombre, don, potencia, rareza, true);
+    }
     public Don getDon() { return don; }
     public int getPotencia() { return potencia; }
     @Override public String descripcion() {

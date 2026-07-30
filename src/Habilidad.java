@@ -31,6 +31,8 @@ public class Habilidad implements Serializable {
         return new Habilidad(n, d, coste, 0, mult, filas, false, null, 0, 0, 0, false, 0, 0, 0);
     }
     public boolean disponible(Personaje p) { return cdActual == 0 && p.getRecurso() >= coste; }
+    public int getCooldownActual() { return cdActual; }
+    public void setCooldownActual(int valor) { cdActual = Math.max(0, Math.min(cooldown, valor)); }
     public Habilidad aAliado() { sobreAliado = true; return this; }
     public String filasTexto() {
         StringBuilder sb = new StringBuilder();
