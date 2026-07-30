@@ -1,5 +1,6 @@
 package leyendasolvidadas.interfaz.consola;
 
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
 import leyendasolvidadas.dominio.compania.*;
@@ -15,11 +16,12 @@ import leyendasolvidadas.interfaz.consola.*;
  */
 public class Main {
     public static void main(String[] args) {
+        leyendasolvidadas.dominio.eventos.BusEventos.conectar(UI::mostrarEvento);
         for (String a : args)
             if (a.equals("--sin-color")) {
                 UI.color = false;
                 break;
             }
-        Juego.getInstancia().iniciarJuego();
+        new Juego(new GuardarCargar()).iniciarJuego();
     }
 }

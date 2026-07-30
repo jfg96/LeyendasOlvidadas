@@ -1,13 +1,8 @@
 package leyendasolvidadas.dominio.objetos;
 
-import leyendasolvidadas.aplicacion.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.combate.*;
-import leyendasolvidadas.dominio.compania.*;
-import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
 
 /** Arma equipable. Su dano escala con la rareza y las mejoras de la herreria. */
 public class Arma extends Item {

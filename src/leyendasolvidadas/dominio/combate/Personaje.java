@@ -1,15 +1,10 @@
 package leyendasolvidadas.dominio.combate;
 
-import leyendasolvidadas.aplicacion.*;
-import leyendasolvidadas.dominio.combate.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
-import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
+import leyendasolvidadas.dominio.eventos.*;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +16,7 @@ import java.util.List;
  * @author Javier Fernandez Gavino
  * @version 3.0 (Leyendas Olvidadas: La Compania)
  */
-public abstract class Personaje implements Serializable {
+public abstract class Personaje {
     private String nombre;
     private int nivel;
     private double vida, vidaMax;
@@ -151,11 +146,11 @@ public abstract class Personaje implements Serializable {
             TipoEfecto t = e.getTipo();
             if (t == TipoEfecto.SANGRADO || t == TipoEfecto.VENENO || t == TipoEfecto.QUEMADURA) {
                 double d = recibirDanio(e.getPotencia(), true);
-                UI.log(UI.pintar(nombre + " sufre " + (int) d + " por " + t.getNombre().toLowerCase() + ".", UI.ROJO));
+                BusEventos.publicar(nombre + " sufre " + (int) d + " por " + t.getNombre().toLowerCase() + ".", TipoMensaje.PELIGRO);
             }
             if (t == TipoEfecto.REGENERACION) {
                 curar(e.getPotencia());
-                UI.log(UI.pintar(nombre + " recupera " + (int) e.getPotencia() + " PV por regeneracion.", UI.VERDE));
+                BusEventos.publicar(nombre + " recupera " + (int) e.getPotencia() + " PV por regeneracion.", TipoMensaje.EXITO);
             }
             if (e.avanzarTurno()) it.remove();
         }
@@ -164,7 +159,7 @@ public abstract class Personaje implements Serializable {
         if (efectos.isEmpty()) return "";
         StringBuilder sb = new StringBuilder(" ");
         for (EfectoEstado e : efectos)
-            sb.append(UI.pintar("[" + e + "]", e.getTipo().esNegativo() ? UI.ROJO : UI.VERDE));
+            sb.append("[").append(e).append("]");
         return sb.toString();
     }
 
@@ -178,23 +173,23 @@ public abstract class Personaje implements Serializable {
         if (cordura >= 100 && aflixion == null) pruebaDeterminacion();
     }
     private void pruebaDeterminacion() {
-        System.out.println(UI.pintar("\n  ══ Tu mente se resquebraja... PRUEBA DE DETERMINACION ══", UI.MAGENTA));
+        BusEventos.publicar("Tu mente se resquebraja... PRUEBA DE DETERMINACION", TipoMensaje.HORROR);
         if (Rng.prob(25)) {
             aflixion = "VIRTUD";
             cordura = 45;
-            UI.log(UI.pintar("¡" + nombre.toUpperCase() + " SE CRECE ANTE EL HORROR! (Virtuoso: +critico, +esquiva)", UI.AMARILLO));
+            BusEventos.publicar("¡" + nombre.toUpperCase() + " SE CRECE ANTE EL HORROR! (Virtuoso: +critico, +esquiva)", TipoMensaje.RECOMPENSA);
         } else if (Rng.prob(50)) {
             aflixion = "PARANOIA";
-            UI.log(UI.pintar(nombre + " sucumbe a la PARANOIA: a veces dudara y perdera el turno.", UI.ROJO));
+            BusEventos.publicar(nombre + " sucumbe a la PARANOIA: a veces dudara y perdera el turno.", TipoMensaje.HORROR);
         } else {
             aflixion = "DESESPERACION";
-            UI.log(UI.pintar(nombre + " cae en la DESESPERACION: su propia mente le atormenta.", UI.ROJO));
+            BusEventos.publicar(nombre + " cae en la DESESPERACION: su propia mente le atormenta.", TipoMensaje.HORROR);
         }
     }
     public void aliviarEstres(int cantidad) {
         cordura = Math.max(0, cordura - cantidad);
         if (aflixion != null && !"VIRTUD".equals(aflixion) && cordura < 30) {
-            UI.log(UI.pintar(nombre + " recobra la compostura. La afliccion se disipa.", UI.VERDE));
+            BusEventos.publicar(nombre + " recobra la compostura. La afliccion se disipa.", TipoMensaje.EXITO);
             aflixion = null;
         }
     }
@@ -220,7 +215,7 @@ public abstract class Personaje implements Serializable {
     public int xpNecesaria() { return nivel * 100; }
     public void ganarExperiencia(int cantidad) {
         experiencia += cantidad;
-        UI.log(UI.pintar("+" + cantidad + " XP.", UI.CIAN));
+        BusEventos.publicar("+" + cantidad + " XP.", TipoMensaje.PROGRESO);
         while (experiencia >= xpNecesaria() && nivel < 30) {
             experiencia -= xpNecesaria();
             subirNivel();
@@ -230,7 +225,7 @@ public abstract class Personaje implements Serializable {
     public void subirNivel() {
         setNivel(nivel + 1);
         if (!progresionSilenciosa)
-            System.out.println(UI.pintar("\n  *** ¡" + nombre.toUpperCase() + " ALCANZA EL NIVEL " + nivel + "! ***", UI.AMARILLO));
+            BusEventos.publicar("¡" + nombre.toUpperCase() + " ALCANZA EL NIVEL " + nivel + "!", TipoMensaje.RECOMPENSA);
     }
 
     /** Escala un recluta sin mostrar mensajes de subida durante su generacion. */
@@ -242,6 +237,6 @@ public abstract class Personaje implements Serializable {
     }
 
     protected void logProgresion(String mensaje) {
-        if (!progresionSilenciosa) UI.log(mensaje);
+        if (!progresionSilenciosa) BusEventos.publicar(mensaje, TipoMensaje.PROGRESO);
     }
 }

@@ -1,5 +1,6 @@
-package leyendasolvidadas.dominio.mundo;
+package leyendasolvidadas.interfaz.consola;
 
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
 import leyendasolvidadas.dominio.compania.*;
@@ -54,7 +55,7 @@ public final class Evento {
             if (Rng.prob(55)) {
                 Item premio = Rng.prob(50) ? Amuleto.aleatorio(exp.getBonusRareza())
                         : Arma.aleatoria(h.getNivel(), exp.getBonusRareza());
-                UI.log("Encuentras " + premio.nombreColoreado() + ".");
+                UI.log("Encuentras " + UI.item(premio) + ".");
                 h.getInventario().anadir(premio);
             } else {
                 UI.log(UI.pintar("Los huesos CHILLAN. Retrocedes horrorizado.", UI.ROJO));
@@ -142,7 +143,7 @@ public final class Evento {
                 case 2: it = Amuleto.aleatorio(exp.getBonusRareza() + (grande ? 15 : 0)); break;
                 default: it = Rng.prob(50) ? Pocion.vida() : Pocion.laudano();
             }
-            UI.log("Dentro hallas " + it.nombreColoreado() + " " + UI.pintar("(" + it.descripcion() + ")", UI.TENUE));
+            UI.log("Dentro hallas " + UI.item(it) + " " + UI.pintar("(" + it.descripcion() + ")", UI.TENUE));
             h.getInventario().anadir(it);
         }
         return null;

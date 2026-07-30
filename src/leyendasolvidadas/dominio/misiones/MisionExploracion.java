@@ -1,13 +1,9 @@
 package leyendasolvidadas.dominio.misiones;
 
-import leyendasolvidadas.aplicacion.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.combate.*;
-import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
 
 /** Mision de reconocimiento: visitar casi todas las habitaciones del mapa. */
 public class MisionExploracion extends Mision {

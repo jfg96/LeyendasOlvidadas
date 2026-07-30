@@ -6,6 +6,14 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Servicios de aplicación independientes de UI para gestionar compañía,
+  recuperación, compras, ventas y forja, con resultados neutrales reutilizables.
+- Puerto `RepositorioPartidas` e implementación de archivo inyectada desde el
+  punto de entrada; eliminados el singleton global de `Juego` y la persistencia
+  estática.
+- Eventos de dominio con intención semántica y adaptador de colores en consola.
+- Prueba arquitectónica que impide dependencias de presentación en las capas
+  internas, y documentación específica en `ARCHITECTURE.md`.
 - Formato binario de guardado **LOSV v1**, con cabecera y versión explícitas,
   identificadores estables para clases y objetos y prueba completa de ida y
   vuelta. Ya no depende de los nombres ni de la ubicación de las clases Java.
@@ -43,12 +51,18 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- Menús interactivos de juego, aldea, expedición, combate, eventos e inventario
+  clasificados como adaptadores de consola; las entidades ya no imprimen, leen
+  opciones ni generan texto ANSI.
+- Eliminada por completo la implementación de `Serializable` del modelo tras la
+  adopción del códec LOSV explícito.
 - Proyecto organizado bajo `leyendasolvidadas` en paquetes explícitos de
   aplicación, dominio (combate, compañía, objetos, misiones y mundo),
   infraestructura, interfaz de consola y pruebas. Las APIs de habilidades y
   movimientos sustituyen el acceso implícito que ofrecía el paquete por defecto.
-- La carga conserva un lector de serialización Java exclusivamente para abrir
-  y convertir partidas antiguas; todos los guardados nuevos usan LOSV v1.
+- Todos los guardados nuevos usan LOSV v1. Las partidas experimentales creadas
+  con la serialización nativa anterior no son compatibles con la nueva
+  organización por paquetes.
 - Saltos de nivel de Veterano y Pesadilla reducidos de `+2/+4` a `+1/+2`;
   la dificultad alta conserva grupos más numerosos en vez de depender de una
   diferencia de nivel desproporcionada.

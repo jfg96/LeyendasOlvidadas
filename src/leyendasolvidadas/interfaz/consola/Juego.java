@@ -1,5 +1,6 @@
-package leyendasolvidadas.aplicacion;
+package leyendasolvidadas.interfaz.consola;
 
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
 import leyendasolvidadas.dominio.compania.*;
@@ -17,15 +18,12 @@ import leyendasolvidadas.interfaz.consola.*;
  * @version 3.0 (Leyendas Olvidadas: La Compania)
  */
 public class Juego {
-    private static Juego instancia;
+    private final RepositorioPartidas repositorioPartidas;
     private EstadoJuego estado;
 
-    private Juego() {}
-    public static Juego getInstancia() {
-        if (instancia == null) instancia = new Juego();
-        return instancia;
+    public Juego(RepositorioPartidas repositorioPartidas) {
+        this.repositorioPartidas = repositorioPartidas;
     }
-    public EstadoJuego getEstado() { return estado; }
 
     public void iniciarJuego() {
         UI.limpiar();
@@ -40,9 +38,9 @@ public class Juego {
         System.out.println(UI.pintar("\n   La niebla ha devorado los caminos. Las campanas doblan solas.\n" +
                 "   Alguien tiene que llevar la vela... y devolverla.\n", UI.TENUE));
 
-        if (GuardarCargar.existePartida()) {
+        if (repositorioPartidas.existePartida()) {
             System.out.println("  1. Continuar partida\n  2. Nueva partida");
-            if (UI.leerOpcion(1, 2) == 1) estado = GuardarCargar.cargar();
+            if (UI.leerOpcion(1, 2) == 1) estado = repositorioPartidas.cargar();
         }
         if (estado == null) {
             estado = new EstadoJuego();
@@ -78,7 +76,7 @@ public class Juego {
     }
 
     private void bucle() {
-        Aldea aldea = new Aldea(estado);
+        Aldea aldea = new Aldea(estado, repositorioPartidas);
         while (true) {
             Expedicion exp = aldea.bucle();
             estado = aldea.getEstado();
@@ -111,7 +109,7 @@ public class Juego {
                 UI.log(UI.pintar("Cobras el encargo: +" + mision.getOroRecompensa() + " reales.", UI.AMARILLO));
                 for (Personaje heroe : grupo) heroe.ganarExperiencia(mision.getXpRecompensa());
                 if (mision.getItemRecompensa() != null) {
-                    UI.log("Te entregan ademas " + mision.getItemRecompensa().nombreColoreado() + ".");
+                    UI.log("Te entregan ademas " + UI.item(mision.getItemRecompensa()) + ".");
                     compania.getInventario().anadir(mision.getItemRecompensa());
                 }
                 for (Personaje heroe : grupo) heroe.aliviarEstres(20);

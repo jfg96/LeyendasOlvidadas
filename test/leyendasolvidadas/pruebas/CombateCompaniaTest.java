@@ -1,5 +1,6 @@
 package leyendasolvidadas.pruebas;
 
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
 import leyendasolvidadas.dominio.compania.*;

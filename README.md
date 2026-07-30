@@ -130,12 +130,14 @@ LeyendasOlvidadas/
 ├── src/leyendasolvidadas/
 │   ├── aplicacion/             # Casos de uso y flujo de partida
 │   ├── dominio/
+│   │   ├── azar/               # Azar reproducible
 │   │   ├── combate/           # Personajes, habilidades y combate
 │   │   ├── compania/          # Plantilla, formación e inventario
+│   │   ├── eventos/            # Mensajes semánticos de dominio
 │   │   ├── misiones/          # Encargos y progreso
 │   │   ├── mundo/             # Expediciones, salas y bestiario
 │   │   └── objetos/           # Equipo, consumibles y rarezas
-│   ├── infraestructura/         # Persistencia y azar
+│   ├── infraestructura/         # Persistencia LOSV
 │   └── interfaz/consola/        # Entrada, salida y punto de arranque
 ├── test/leyendasolvidadas/pruebas/
 ├── CHANGELOG.md
@@ -144,8 +146,12 @@ LeyendasOlvidadas/
 
 El código emplea una jerarquía común para personajes, fábricas para enemigos
 y misiones, enumeraciones para estados y tipos, y un generador de azar
-centralizado. Todo vive en el paquete por defecto para mantener una compilación
-directa y sin configuración adicional.
+centralizado. Las clases se organizan en paquetes explícitos y mantienen una
+compilación directa, sin Maven, Gradle ni dependencias externas.
+
+Las decisiones y reglas internas no dependen de la terminal. Consulta
+[`ARCHITECTURE.md`](ARCHITECTURE.md) para conocer los límites entre dominio,
+aplicación, infraestructura e interfaces, y cómo añadir una futura versión JavaFX.
 
 ## Estado del proyecto
 
@@ -161,6 +167,8 @@ Las pruebas no necesitan dependencias externas. Desde la raíz del proyecto:
 mkdir -p out
 javac -encoding UTF-8 -d out $(find src test -name "*.java")
 java -cp out leyendasolvidadas.pruebas.CompaniaTest
+java -cp out leyendasolvidadas.pruebas.ArquitecturaTest
+java -cp out leyendasolvidadas.pruebas.ServiciosAplicacionTest
 java -cp out leyendasolvidadas.pruebas.CombateCompaniaTest
 java -cp out leyendasolvidadas.pruebas.SimuladorEquilibrio
 ```

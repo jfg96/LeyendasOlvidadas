@@ -1,13 +1,8 @@
 package leyendasolvidadas.dominio.objetos;
 
-import leyendasolvidadas.aplicacion.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.combate.*;
-import leyendasolvidadas.dominio.compania.*;
-import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
 
 /** Reliquia equipable con un efecto pasivo. */
 public class Amuleto extends Item {

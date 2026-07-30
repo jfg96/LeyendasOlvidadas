@@ -1,5 +1,6 @@
-package leyendasolvidadas.dominio.mundo;
+package leyendasolvidadas.interfaz.consola;
 
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
 import leyendasolvidadas.dominio.compania.*;
@@ -20,7 +21,7 @@ import java.util.Map;
  * Una expedicion a un paraje maldito: mapa procedural de habitaciones,
  * gestion de la antorcha (luz) y bucle de exploracion.
  */
-public class Expedicion {
+public class Expedicion implements FuenteLuz {
 
     /** Resultado de la expedicion. */
     public enum Resultado { EXITO, ABANDONO, MUERTE }
@@ -31,16 +32,18 @@ public class Expedicion {
     private final GestorMisiones gestor = new GestorMisiones();
     private final Dificultad dificultad;
     private final int nivelZona;
+    private final int victoriasPrevias;
     private final List<Habitacion> habitaciones = new ArrayList<>();
     private Habitacion actual;
     private Habitacion entrada;
     private int luz = 100;
 
-    public Expedicion(Compania compania, Mision mision, Dificultad dificultad) {
+    public Expedicion(Compania compania, Mision mision, Dificultad dificultad, int victoriasPrevias) {
         this.heroes = new ArrayList<>(compania.getFormacionActiva());
         this.protagonista = compania.getProtagonista();
         this.inventario = compania.getInventario();
         this.dificultad = dificultad;
+        this.victoriasPrevias = victoriasPrevias;
         this.nivelZona = (int) Math.round(heroes.stream().mapToInt(Personaje::getNivel)
                 .average().orElse(1)) + dificultad.getNivelExtra();
         gestor.asignar(mision);
@@ -207,11 +210,11 @@ public class Expedicion {
                 }
                 case 2:
                     Personaje usuario = elegirHeroeVivo("\u00bfQuien usa un objeto?");
-                    if (usuario != null) inventario.menuUsar(usuario, this);
+                    if (usuario != null) ControladorInventario.menuUsar(inventario, usuario, this);
                     UI.pausa();
                     break;
                 case 3:
-                    gestor.mostrarResumen();
+                    for (String linea : gestor.resumen().split("\\n")) UI.log(linea);
                     UI.pausa();
                     break;
                 case 4:
@@ -339,7 +342,7 @@ public class Expedicion {
             h.resolver();
             Jefe jefe = ((MisionJefe) m).esFinal()
                     ? Bestiario.crearJefeFinal(nivelZona)
-                    : Bestiario.crearJefe(nivelZona, Juego.getInstancia().getEstado().getExpedicionesGanadas());
+                    : Bestiario.crearJefe(nivelZona, victoriasPrevias);
             System.out.println(UI.pintar("\n  Has llegado a la guarida. Algo enorme respira en la oscuridad...", UI.MAGENTA));
             UI.pausa();
             Combate.Resultado res = nuevoCombate(List.of(jefe)).ejecutar(false);

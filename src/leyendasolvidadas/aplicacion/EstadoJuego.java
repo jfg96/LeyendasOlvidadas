@@ -1,21 +1,17 @@
 package leyendasolvidadas.aplicacion;
 
-import leyendasolvidadas.aplicacion.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.combate.*;
 import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
 import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /** Todo el estado persistente de la partida (lo que se guarda en disco). */
-public class EstadoJuego implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class EstadoJuego {
 
     /** Campo conservado para poder recuperar guardados anteriores al sistema de compania. */
     private Personaje jugador;

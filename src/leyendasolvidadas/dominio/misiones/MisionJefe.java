@@ -1,13 +1,9 @@
 package leyendasolvidadas.dominio.misiones;
 
-import leyendasolvidadas.aplicacion.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.combate.*;
-import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
 
 /** Mision de jefe: dar caza a la bestia que domina el paraje. */
 public class MisionJefe extends Mision {

@@ -1,5 +1,6 @@
-package leyendasolvidadas.aplicacion;
+package leyendasolvidadas.interfaz.consola;
 
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
 import leyendasolvidadas.dominio.compania.*;
@@ -18,8 +19,14 @@ import java.util.List;
  */
 public class Aldea {
     private EstadoJuego estado;
+    private final RepositorioPartidas repositorioPartidas;
+    private final ServicioCompania servicioCompania = new ServicioCompania();
+    private final ServicioAldea servicioAldea = new ServicioAldea();
 
-    public Aldea(EstadoJuego estado) { this.estado = estado; }
+    public Aldea(EstadoJuego estado, RepositorioPartidas repositorioPartidas) {
+        this.estado = estado;
+        this.repositorioPartidas = repositorioPartidas;
+    }
     public EstadoJuego getEstado() { return estado; }
 
     /**
@@ -62,16 +69,16 @@ public class Aldea {
                 case 4: herreria(h); break;
                 case 5: gestionarEquipo(); break;
                 case 6: gestionarCompania(); break;
-                case 7: GuardarCargar.guardar(estado); UI.pausa(); break;
+                case 7: repositorioPartidas.guardar(estado); UI.pausa(); break;
                 case 8: cargarPartida(); break;
-                case 9: GuardarCargar.guardar(estado); return null;
+                case 9: repositorioPartidas.guardar(estado); return null;
             }
         }
     }
 
     private void gestionarEquipo() {
         Personaje elegido = elegirMiembro("¿Quien revisa el equipo?");
-        if (elegido != null) estado.getCompania().getInventario().menuUsar(elegido, null);
+        if (elegido != null) ControladorInventario.menuUsar(estado.getCompania().getInventario(), elegido, null);
         UI.pausa();
     }
 
@@ -129,15 +136,7 @@ public class Aldea {
         int op = UI.leerOpcion(0, candidatos.size());
         if (op == 0) return;
         Personaje candidato = candidatos.get(op - 1);
-        int coste = EstadoJuego.costeContratacion(candidato);
-        if (!compania.getInventario().gastarOro(coste)) {
-            UI.log(UI.pintar("No hay suficientes reales en la tesoreria.", UI.ROJO));
-        } else if (compania.contratar(candidato)) {
-            candidatos.remove(candidato);
-            UI.log(UI.pintar(candidato.getNombre() + " se une a la compania.", UI.VERDE));
-        } else {
-            compania.getInventario().ganarOro(coste);
-        }
+        mostrarResultado(servicioCompania.contratar(estado, candidato));
         UI.pausa();
     }
 
@@ -160,8 +159,7 @@ public class Aldea {
             if (op == 0) break;
             formacion.add(disponibles.remove(op - 1));
         }
-        compania.prepararFormacion(formacion);
-        UI.log(UI.pintar("Formacion preparada con " + formacion.size() + " integrante(s).", UI.VERDE));
+        mostrarResultado(servicioCompania.prepararFormacion(estado, formacion));
         UI.pausa();
     }
 
@@ -171,18 +169,13 @@ public class Aldea {
         if (estado.getCompania().esProtagonista(elegido)) {
             UI.log(UI.pintar("El protagonista no puede abandonar su propia leyenda.", UI.ROJO));
         } else if (UI.confirmar("¿Despedir a " + elegido.getNombre() + "?")) {
-            devolverEquipo(elegido);
-            estado.getCompania().despedir(elegido);
-            UI.log(UI.pintar(elegido.getNombre() + " abandona Valdesombra.", UI.TENUE));
+            mostrarResultado(servicioCompania.despedir(estado, elegido));
         }
         UI.pausa();
     }
 
-    private void devolverEquipo(Personaje personaje) {
-        Inventario almacen = estado.getCompania().getInventario();
-        if (personaje.getArma() != null && almacen.anadir(personaje.getArma())) personaje.setArma(null);
-        if (personaje.getArmadura() != null && almacen.anadir(personaje.getArmadura())) personaje.setArmadura(null);
-        if (personaje.getAmuleto() != null && almacen.anadir(personaje.getAmuleto())) personaje.setAmuleto(null);
+    private void mostrarResultado(ResultadoAccion resultado) {
+        UI.log(UI.pintar(resultado.mensaje(), resultado.exito() ? UI.VERDE : UI.ROJO));
     }
 
     private Personaje elegirMiembro(String titulo) {
@@ -198,14 +191,14 @@ public class Aldea {
     }
 
     private void cargarPartida() {
-        if (!GuardarCargar.existePartida()) {
+        if (!repositorioPartidas.existePartida()) {
             UI.log(UI.pintar("No hay ninguna partida guardada que cargar.", UI.ROJO));
             UI.pausa();
             return;
         }
         if (!UI.confirmar("¿Cargar la partida guardada? Perderas el progreso no guardado")) return;
 
-        EstadoJuego cargado = GuardarCargar.cargar();
+        EstadoJuego cargado = repositorioPartidas.cargar();
         if (cargado != null) {
             estado = cargado;
             UI.log(UI.pintar("Partida cargada. Regresas a Valdesombra.", UI.VERDE));
@@ -246,7 +239,8 @@ public class Aldea {
                 ? new MisionJefe(Dificultad.DIFICIL, 500, 1000, Amuleto.aleatorio(30), true)
                 : ofertas[op - 1];
         if (!UI.confirmar("¿Partir hacia '" + elegida.getNombre() + "'?")) return null;
-        return new Expedicion(estado.getCompania(), elegida, elegida.getDificultad());
+        return new Expedicion(estado.getCompania(), elegida, elegida.getDificultad(),
+                estado.getExpedicionesGanadas());
     }
 
     // ---------------------------------------------------------------- ermita
@@ -261,17 +255,10 @@ public class Aldea {
         System.out.println("  0. Salir");
         switch (UI.leerOpcion(0, 2)) {
             case 1:
-                if (h.getInventario().gastarOro(costeCura)) {
-                    h.setVida(h.getVidaMax());
-                    h.limpiarEfectosNegativos();
-                    UI.log(UI.pintar("Tus heridas se cierran bajo los unguentos.", UI.VERDE));
-                } else UI.log(UI.pintar("No te llega el oro.", UI.ROJO));
+                mostrarResultado(servicioAldea.sanar(estado, h));
                 break;
             case 2:
-                if (h.getInventario().gastarOro(costeCalma)) {
-                    h.aliviarEstres(35);
-                    UI.log(UI.pintar("Las palabras pesan menos tras decirlas en voz alta (-35 estres).", UI.VERDE));
-                } else UI.log(UI.pintar("No te llega el oro.", UI.ROJO));
+                mostrarResultado(servicioAldea.calmar(estado, h, costeCalma, 35));
                 break;
         }
         UI.pausa();
@@ -287,10 +274,7 @@ public class Aldea {
         System.out.println("  0. Salir");
         switch (UI.leerOpcion(0, 3)) {
             case 1:
-                if (h.getInventario().gastarOro(10)) {
-                    h.aliviarEstres(15);
-                    UI.log(UI.pintar("El vino aspero calienta el pecho (-15 estres).", UI.VERDE));
-                } else UI.log(UI.pintar("Ni para vino te queda.", UI.ROJO));
+                mostrarResultado(servicioAldea.calmar(estado, h, 10, 15));
                 break;
             case 2: {
                 String[] rumores = {
@@ -330,7 +314,7 @@ public class Aldea {
             System.out.println("  — Genero de la semana —");
             for (int i = 0; i < ofertas.size(); i++) {
                 Item it = ofertas.get(i);
-                System.out.printf("  %d. %-34s %-32s %s%n", i + 1, it.nombreColoreado(),
+                System.out.printf("  %d. %-34s %-32s %s%n", i + 1, UI.item(it),
                         UI.pintar(it.descripcion(), UI.TENUE),
                         UI.pintar(it.getValorOro() + " reales", UI.AMARILLO));
             }
@@ -343,21 +327,12 @@ public class Aldea {
             if (op == 0) return;
             if (op <= 3 && op <= ofertas.size()) {
                 Item it = ofertas.get(op - 1);
-                if (h.getInventario().gastarOro(it.getValorOro())) {
-                    if (h.getInventario().anadir(it)) {
-                        ofertas.remove(it);
-                        UI.log("Compras " + it.nombreColoreado() + ".");
-                    } else h.getInventario().ganarOro(it.getValorOro());
-                } else UI.log(UI.pintar("No te llega el oro.", UI.ROJO));
+                mostrarResultado(servicioAldea.comprar(estado, it));
                 UI.pausa();
             } else if (op == 4) {
                 vender(h);
             } else if (op == 5 && h.getArma() != null) {
-                if (h.getInventario().gastarOro(costeForja)) {
-                    h.getArma().mejorar();
-                    UI.log(UI.pintar("El martillo canta: " + h.getArma().getNombre()
-                            + " ahora hace +" + (int) h.getArma().getDanio() + " de danio.", UI.VERDE));
-                } else UI.log(UI.pintar("No te llega el oro.", UI.ROJO));
+                mostrarResultado(servicioAldea.forjar(estado, h));
                 UI.pausa();
             }
         }
@@ -365,14 +340,12 @@ public class Aldea {
     private void vender(Personaje h) {
         List<Item> items = h.getInventario().getItems();
         if (items.isEmpty()) { UI.log("La mochila esta vacia."); UI.pausa(); return; }
-        h.getInventario().mostrar();
+        ControladorInventario.mostrar(h.getInventario());
         System.out.println("  ¿Que vendes? (0 para nada)");
         int op = UI.leerOpcion(0, items.size());
         if (op == 0) return;
-        Item it = items.remove(op - 1);
-        int precio = it.getValorOro() / 2;
-        h.getInventario().ganarOro(precio);
-        UI.log("Vendes " + it.nombreColoreado() + " por " + precio + " reales.");
+        Item it = items.get(op - 1);
+        mostrarResultado(servicioAldea.vender(estado, it));
         UI.pausa();
     }
 }

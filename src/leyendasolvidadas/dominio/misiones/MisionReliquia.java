@@ -1,13 +1,10 @@
 package leyendasolvidadas.dominio.misiones;
 
-import leyendasolvidadas.aplicacion.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.combate.*;
-import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
+import leyendasolvidadas.dominio.eventos.*;
 
 /** Mision de rescate: recuperar una reliquia del fondo del paraje y volver a la entrada. */
 public class MisionReliquia extends Mision {
@@ -21,7 +18,7 @@ public class MisionReliquia extends Mision {
     @Override public void notificarObjetivo() {
         if (!recogida) {
             recogida = true;
-            System.out.println(UI.pintar("\n  ✦ Tomas la reliquia sagrada. ¡Vuelve a la ENTRADA (E) para consagrarla! ✦", UI.AMARILLO));
+            BusEventos.publicar("Tomas la reliquia sagrada. ¡Vuelve a la ENTRADA (E) para consagrarla!", TipoMensaje.RECOMPENSA);
         }
     }
     /** Llamado al pisar la entrada. */

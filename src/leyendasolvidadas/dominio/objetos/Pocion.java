@@ -1,13 +1,9 @@
 package leyendasolvidadas.dominio.objetos;
 
-import leyendasolvidadas.aplicacion.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.combate.*;
-import leyendasolvidadas.dominio.compania.*;
-import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
+import leyendasolvidadas.dominio.eventos.*;
 
 /** Consumibles: pociones, antorchas, laudano... */
 public class Pocion extends Item {
@@ -25,28 +21,28 @@ public class Pocion extends Item {
      * Consume la pocion sobre el personaje. La expedicion puede ser null (en la aldea).
      * @return true si se ha podido usar.
      */
-    public boolean usar(Personaje p, Expedicion exp) {
+    public boolean usar(Personaje p, FuenteLuz exp) {
         switch (tipo) {
             case VIDA:
                 p.curar(potencia);
-                UI.log(p.getNombre() + " bebe " + getNombre() + " y recupera " + (int) potencia + " PV.");
+                BusEventos.publicar(p.getNombre() + " bebe " + getNombre() + " y recupera " + (int) potencia + " PV.", TipoMensaje.EXITO);
                 return true;
             case RECURSO:
                 p.setRecurso(p.getRecurso() + potencia);
-                UI.log("El tonico restaura " + (int) potencia + " de " + p.nombreRecurso() + ".");
+                BusEventos.publicar("El tonico restaura " + (int) potencia + " de " + p.nombreRecurso() + ".", TipoMensaje.EXITO);
                 return true;
             case CALMA:
                 p.aliviarEstres((int) potencia);
-                UI.log("El laudano calma los nervios (-" + (int) potencia + " estres).");
+                BusEventos.publicar("El laudano calma los nervios (-" + (int) potencia + " estres).", TipoMensaje.EXITO);
                 return true;
             case PURGA:
                 p.limpiarEfectosNegativos();
-                UI.log("El antidoto purga los males del cuerpo.");
+                BusEventos.publicar("El antidoto purga los males del cuerpo.", TipoMensaje.EXITO);
                 return true;
             case ANTORCHA:
-                if (exp == null) { UI.log("Aqui no hace falta luz."); return false; }
+                if (exp == null) { BusEventos.publicar("Aqui no hace falta luz."); return false; }
                 exp.subirLuz((int) potencia);
-                UI.log("Prendes una antorcha nueva (+" + (int) potencia + " de luz).");
+                BusEventos.publicar("Prendes una antorcha nueva (+" + (int) potencia + " de luz).", TipoMensaje.RECOMPENSA);
                 return true;
         }
         return false;

@@ -1,20 +1,15 @@
 package leyendasolvidadas.dominio.misiones;
 
-import leyendasolvidadas.aplicacion.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.combate.*;
-import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
 
-import java.io.Serializable;
 
 /**
  * Coordina la mision activa de la expedicion y reenvia los eventos del mundo.
  */
-public class GestorMisiones implements Serializable {
+public class GestorMisiones {
     private Mision misionActual;
 
     public void asignar(Mision m) { misionActual = m; }
@@ -28,15 +23,14 @@ public class GestorMisiones implements Serializable {
     public void notificarEntrada() {
         if (misionActual instanceof MisionReliquia) ((MisionReliquia) misionActual).notificarEntrada();
     }
-    public void mostrarResumen() {
-        if (misionActual == null) { UI.log("Sin encargo activo."); return; }
-        UI.seccion("ENCARGO: " + misionActual.getNombre() + " [" + misionActual.getDificultad().getTitulo() + "]");
-        UI.log(misionActual.getDescripcion());
-        UI.log(UI.pintar("Progreso: " + misionActual.progreso(), UI.CIAN));
-        UI.log(UI.pintar("Recompensa: " + misionActual.getOroRecompensa() + " reales, "
+    public String resumen() {
+        if (misionActual == null) return "Sin encargo activo.";
+        return "ENCARGO: " + misionActual.getNombre() + " [" + misionActual.getDificultad().getTitulo() + "]\n"
+                + misionActual.getDescripcion() + "\nProgreso: " + misionActual.progreso()
+                + "\nRecompensa: " + misionActual.getOroRecompensa() + " reales, "
                 + misionActual.getXpRecompensa() + " XP"
                 + (misionActual.getItemRecompensa() != null
-                    ? ", " + misionActual.getItemRecompensa().getNombre() : ""), UI.AMARILLO));
+                    ? ", " + misionActual.getItemRecompensa().getNombre() : "");
     }
 
     /** Genera una mision aleatoria acorde al nivel del heroe. */

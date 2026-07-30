@@ -1,20 +1,16 @@
 package leyendasolvidadas.dominio.mundo;
 
-import leyendasolvidadas.aplicacion.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.combate.*;
-import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
 import leyendasolvidadas.dominio.misiones.*;
-import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
+import leyendasolvidadas.dominio.eventos.*;
 
-import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /** Estancia del mapa de expedicion, con conexiones a otras habitaciones. */
-public class Habitacion implements Serializable {
+public class Habitacion {
     private final int x, y;
     private final TipoHabitacion tipo;
     private final TipoSala ambiente;
@@ -46,17 +42,17 @@ public class Habitacion implements Serializable {
         switch (ambiente) {
             case ESCARCHA:
                 p.setRecurso(p.getRecurso() - 15);
-                UI.log(UI.pintar("Un frio sepulcral drena 15 de " + p.nombreRecurso().toLowerCase() + ".", UI.CIAN));
+                BusEventos.publicar("Un frio sepulcral drena 15 de " + p.nombreRecurso().toLowerCase() + ".", TipoMensaje.PELIGRO);
                 break;
             case NIEBLA:
                 p.recibirDanio(6, true);
                 p.sufrirEstres(3);
-                UI.log(UI.pintar("Una niebla mefitica te corroe (-6 PV, +3 estres).", UI.ROJO));
+                BusEventos.publicar("Una niebla mefitica te corroe (-6 PV, +3 estres).", TipoMensaje.PELIGRO);
                 break;
             case BENDICION:
                 p.curar(15);
                 p.aliviarEstres(5);
-                UI.log(UI.pintar("Un rayo de luz te reconforta (+15 PV, -5 estres).", UI.VERDE));
+                BusEventos.publicar("Un rayo de luz te reconforta (+15 PV, -5 estres).", TipoMensaje.EXITO);
                 break;
             default: // sin efecto
         }
@@ -64,14 +60,14 @@ public class Habitacion implements Serializable {
 
     /** Simbolo para el minimapa. */
     public String simbolo(Habitacion actual) {
-        if (this == actual) return UI.pintar("@", UI.AMARILLO + UI.NEGRITA);
+        if (this == actual) return "@";
         if (!conocida) return " ";
-        if (!visitada) return UI.pintar("?", UI.CIAN);
+        if (!visitada) return "?";
         switch (tipo) {
-            case ENTRADA: return UI.pintar("E", UI.VERDE);
-            case OBJETIVO: return UI.pintar("♦", UI.MAGENTA);
-            case CAMPAMENTO: return resuelta ? UI.pintar("^", UI.TENUE) : UI.pintar("^", UI.AMARILLO);
-            default: return UI.pintar("·", UI.TENUE);
+            case ENTRADA: return "E";
+            case OBJETIVO: return "♦";
+            case CAMPAMENTO: return "^";
+            default: return "·";
         }
     }
 }

@@ -1,18 +1,12 @@
 package leyendasolvidadas.dominio.combate;
 
-import leyendasolvidadas.aplicacion.*;
-import leyendasolvidadas.dominio.combate.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
-import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
 
-import java.io.Serializable;
 
 /** Habilidad de combate de un heroe. Es un contenedor de datos: la resolucion la hace Combate. */
-public class Habilidad implements Serializable {
+public class Habilidad {
     final String nombre, desc;
     final int coste;            // coste de recurso
     final int cooldown;         // turnos de enfriamiento

@@ -1,13 +1,9 @@
 package leyendasolvidadas.dominio.combate;
 
-import leyendasolvidadas.aplicacion.*;
-import leyendasolvidadas.dominio.combate.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
-import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
+import leyendasolvidadas.dominio.eventos.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +34,7 @@ public class Jefe extends Enemigo {
             faseDos = true;
             limpiarEfectosNegativos();
             for (MovimientoEnemigo m : movimientosFase2) anadirMovimiento(m);
-            System.out.println(UI.pintar("\n  ╔═══ ¡" + getNombre().toUpperCase() + " DESATA SU FURIA! ═══╗", UI.ROJO));
-            System.out.println(UI.pintar("  \"" + gritoFase2 + "\"", UI.MAGENTA));
+            BusEventos.publicar("¡" + getNombre().toUpperCase() + " DESATA SU FURIA! \"" + gritoFase2 + "\"", TipoMensaje.HORROR);
             return true;
         }
         return false;

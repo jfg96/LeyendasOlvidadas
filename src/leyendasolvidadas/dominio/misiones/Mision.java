@@ -1,21 +1,17 @@
 package leyendasolvidadas.dominio.misiones;
 
-import leyendasolvidadas.aplicacion.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.combate.*;
-import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
+import leyendasolvidadas.dominio.eventos.*;
 
-import java.io.Serializable;
 
 /**
  * Clase base de las misiones de expedicion. Las subclases reaccionan a los
  * eventos del mundo mediante los metodos notificar*.
  */
-public abstract class Mision implements Serializable {
+public abstract class Mision {
     private final String nombre, descripcion;
     private final Dificultad dificultad;
     private final int oroRecompensa, xpRecompensa;
@@ -38,7 +34,7 @@ public abstract class Mision implements Serializable {
     protected void completar() {
         if (estado == EstadoMision.EN_CURSO) {
             estado = EstadoMision.COMPLETADA;
-            System.out.println(UI.pintar("\n  ✦ ¡OBJETIVO CUMPLIDO! Puedes volver a la aldea con la cabeza alta. ✦", UI.AMARILLO));
+            BusEventos.publicar("¡OBJETIVO CUMPLIDO! Puedes volver a la aldea con la cabeza alta.", TipoMensaje.RECOMPENSA);
         }
     }
     public void fracasar() { estado = EstadoMision.FRACASADA; }

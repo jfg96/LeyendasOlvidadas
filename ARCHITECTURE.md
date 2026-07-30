@@ -1,0 +1,65 @@
+# Arquitectura
+
+Leyendas Olvidadas separa las reglas del juego de sus mecanismos de entrada,
+salida y almacenamiento. La dirección permitida de dependencias es:
+
+```text
+interfaz/consola ───┐
+                    ├──> aplicacion ──> dominio
+infraestructura ──┘
+```
+
+El dominio no puede importar la consola ni la infraestructura. La aplicación
+coordina casos de uso y define puertos; los adaptadores externos implementan
+esos puertos.
+
+## Dominio
+
+- `dominio.combate`: personajes, clases, habilidades, estados y enemigos.
+- `dominio.compania`: plantilla, formación, tesorería e inventario.
+- `dominio.objetos`: armas, armaduras, amuletos, consumibles y rarezas.
+- `dominio.misiones`: objetivos y progreso de encargos.
+- `dominio.mundo`: habitaciones, dificultad, bestiario y contratos de luz.
+- `dominio.azar`: generador reproducible empleado por reglas y simulaciones.
+- `dominio.eventos`: mensajes semánticos sin colores ni widgets.
+
+Las clases de dominio no leen teclado, no imprimen, no conocen ANSI y no abren
+archivos. `BusEventos` publica hechos narrativos mediante `EventoDominio`; cada
+interfaz decide cómo representarlos.
+
+## Aplicación
+
+- `EstadoJuego`: estado persistente de la campaña.
+- `ServicioCompania`: contratar, despedir y preparar la formación.
+- `ServicioAldea`: curación, calma, compra, venta y forja.
+- `RepositorioPartidas`: puerto de almacenamiento.
+- `ResultadoAccion`: respuesta neutral de un caso de uso.
+
+Los servicios se pueden ejecutar directamente en pruebas o desde cualquier
+interfaz sin arrancar la consola.
+
+## Infraestructura
+
+`GuardarCargar` implementa `RepositorioPartidas`. `CodecPartida` usa el formato
+versionado LOSV y nunca serializa clases Java, por lo que mover o renombrar una
+clase no altera automáticamente los archivos guardados.
+
+## Interfaz de consola
+
+Contiene el arranque, la representación ANSI y los controladores interactivos de
+aldea, expedición, eventos, inventario y combate. Esta es una adaptación del
+juego a terminal, no una dependencia del dominio.
+
+Una futura interfaz JavaFX deberá:
+
+1. Conectar un receptor propio a `BusEventos`.
+2. Consumir `EstadoJuego` y los servicios de aplicación.
+3. Implementar o reutilizar un adaptador para `RepositorioPartidas`.
+4. Representar las decisiones de expedición y combate sin introducir JavaFX en
+   los paquetes internos.
+
+## Comprobación automática
+
+`ArquitecturaTest` inspecciona las fuentes internas y falla si dominio,
+aplicación o infraestructura vuelven a importar la consola, usar `UI`, acceder
+a `System.in/out` o crear un `Scanner`.

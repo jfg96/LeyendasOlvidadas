@@ -1,15 +1,9 @@
 package leyendasolvidadas.dominio.compania;
 
-import leyendasolvidadas.aplicacion.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.combate.*;
-import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
-import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,8 +12,7 @@ import java.util.List;
  * Plantilla persistente del jugador. El protagonista es su miembro fundador,
  * no puede ser despedido y debe participar en toda formacion activa.
  */
-public class Compania implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class Compania {
 
     public static final int MAX_PLANTILLA = 6;
     public static final int MAX_FORMACION = 3;

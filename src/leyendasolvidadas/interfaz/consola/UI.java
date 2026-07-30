@@ -1,5 +1,6 @@
 package leyendasolvidadas.interfaz.consola;
 
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
 import leyendasolvidadas.dominio.compania.*;
@@ -8,6 +9,7 @@ import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.*;
 import leyendasolvidadas.infraestructura.*;
 import leyendasolvidadas.interfaz.consola.*;
+import leyendasolvidadas.dominio.eventos.*;
 
 import java.util.Scanner;
 
@@ -27,6 +29,15 @@ public final class UI {
     public static final String AZUL = "\u001B[34m", MAGENTA = "\u001B[35m", CIAN = "\u001B[36m", GRIS = "\u001B[90m";
 
     public static String pintar(String texto, String col) { return c(col) + texto + c(RESET); }
+    public static String item(Item item) {
+        String colorRareza = switch (item.getRareza()) {
+            case COMUN -> GRIS;
+            case RARA -> CIAN;
+            case EPICA -> MAGENTA;
+            case LEGENDARIA -> AMARILLO;
+        };
+        return pintar(item.getNombre(), colorRareza);
+    }
 
     public static void limpiar() {
         if (color) System.out.print("\u001B[2J\u001B[H");
@@ -58,6 +69,18 @@ public final class UI {
     }
 
     public static void log(String msg) { System.out.println("  " + msg); }
+
+    public static void mostrarEvento(EventoDominio evento) {
+        String colorEvento = switch (evento.tipo()) {
+            case EXITO -> VERDE;
+            case PELIGRO -> ROJO;
+            case HORROR -> MAGENTA;
+            case RECOMPENSA -> AMARILLO;
+            case PROGRESO -> CIAN;
+            default -> RESET;
+        };
+        log(pintar(evento.mensaje(), colorEvento));
+    }
 
     public static void pausa() {
         System.out.print(pintar("\n  [ Pulsa ENTER para continuar ]", TENUE));

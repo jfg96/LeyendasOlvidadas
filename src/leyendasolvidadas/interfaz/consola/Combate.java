@@ -1,5 +1,6 @@
-package leyendasolvidadas.dominio.combate;
+package leyendasolvidadas.interfaz.consola;
 
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
 import leyendasolvidadas.dominio.compania.*;
@@ -108,7 +109,7 @@ public class Combate {
 
     private Resultado turnoHeroe(Personaje heroe) {
         heroe.setRecurso(heroe.getRecurso() + heroe.getRegenRecurso());
-        for (Habilidad h : heroe.getHabilidades()) if (h.cdActual > 0) h.cdActual--;
+        for (Habilidad h : heroe.getHabilidades()) if (h.getCooldownActual() > 0) h.reducirCooldown();
 
         if ("PARANOIA".equals(heroe.getAflixion()) && Rng.prob(20)) {
             UI.log(UI.pintar(heroe.getNombre() + " se paraliza por la paranoia.", UI.MAGENTA));
@@ -128,10 +129,10 @@ public class Combate {
             List<Habilidad> habilidades = heroe.getHabilidades();
             for (int i = 0; i < habilidades.size(); i++) {
                 Habilidad h = habilidades.get(i);
-                String estado = h.cdActual > 0 ? " [enfriando " + h.cdActual + "]"
-                        : heroe.getRecurso() < h.coste ? " [sin recurso]" : "";
-                System.out.printf("  %d. %-20s (coste %d)%s  %s%n", i + 1, h.nombre, h.coste,
-                        UI.pintar(estado, UI.ROJO), UI.pintar(h.desc, UI.TENUE));
+                String estado = h.getCooldownActual() > 0 ? " [enfriando " + h.getCooldownActual() + "]"
+                        : heroe.getRecurso() < h.getCoste() ? " [sin recurso]" : "";
+                System.out.printf("  %d. %-20s (coste %d)%s  %s%n", i + 1, h.getNombre(), h.getCoste(),
+                        UI.pintar(estado, UI.ROJO), UI.pintar(h.getDescripcion(), UI.TENUE));
             }
             System.out.println("  5. Mochila");
             System.out.println("  6. Recuperar aliento");
@@ -146,7 +147,7 @@ public class Combate {
                 }
                 if (usarHabilidad(heroe, h)) { UI.pausa(); return null; }
             } else if (op == 5) {
-                if (inventario.menuUsar(heroe, exp)) { UI.pausa(); return null; }
+                if (ControladorInventario.menuUsar(inventario, heroe, exp)) { UI.pausa(); return null; }
             } else if (op == 6) {
                 heroe.setRecurso(heroe.getRecurso() + heroe.getRecursoMax() * 0.4);
                 heroe.curar(heroe.getVidaMax() * 0.10);
@@ -171,16 +172,16 @@ public class Combate {
     }
 
     private boolean usarHabilidad(Personaje heroe, Habilidad h) {
-        heroe.setRecurso(heroe.getRecurso() - h.coste);
-        h.cdActual = h.cooldown;
-        if (h.estresPropio < 0) heroe.aliviarEstres(-h.estresPropio);
-        else if (h.estresPropio > 0) heroe.sufrirEstres(h.estresPropio);
+        heroe.setRecurso(heroe.getRecurso() - h.getCoste());
+        h.activarCooldown();
+        if (h.getEstresPropio() < 0) heroe.aliviarEstres(-h.getEstresPropio());
+        else if (h.getEstresPropio() > 0) heroe.sufrirEstres(h.getEstresPropio());
 
-        if (h.sobreSi) {
-            Personaje objetivo = h.sobreAliado ? elegirAliado() : heroe;
+        if (h.esSobreSi()) {
+            Personaje objetivo = h.esSobreAliado() ? elegirAliado() : heroe;
             if (objetivo == null) { devolverCoste(heroe, h); return false; }
-            objetivo.aplicarEfecto(h.efecto, h.durEfecto, h.potEfecto);
-            UI.log(heroe.getNombre() + " usa " + UI.pintar(h.nombre, UI.CIAN) + " sobre "
+            objetivo.aplicarEfecto(h.getEfecto(), h.getDuracionEfecto(), h.getPotenciaEfecto());
+            UI.log(heroe.getNombre() + " usa " + UI.pintar(h.getNombre(), UI.CIAN) + " sobre "
                     + objetivo.getNombre() + ".");
             return true;
         }
@@ -191,15 +192,15 @@ public class Combate {
             devolverCoste(heroe, h);
             return false;
         }
-        List<Enemigo> golpeados = h.aoe ? objetivos : List.of(elegirEnemigo(objetivos));
-        UI.log(heroe.getNombre() + " usa " + UI.pintar(h.nombre, UI.CIAN) + ".");
+        List<Enemigo> golpeados = h.esArea() ? objetivos : List.of(elegirEnemigo(objetivos));
+        UI.log(heroe.getNombre() + " usa " + UI.pintar(h.getNombre(), UI.CIAN) + ".");
         for (Enemigo e : new ArrayList<>(golpeados)) golpear(heroe, h, e);
         return true;
     }
 
     private void devolverCoste(Personaje heroe, Habilidad h) {
-        heroe.setRecurso(heroe.getRecurso() + h.coste);
-        h.cdActual = 0;
+        heroe.setRecurso(heroe.getRecurso() + h.getCoste());
+        h.setCooldownActual(0);
     }
 
     private Personaje elegirAliado() {
@@ -224,7 +225,7 @@ public class Combate {
     private List<Enemigo> objetivosValidos(Habilidad h) {
         List<Enemigo> lista = new ArrayList<>();
         for (int i = 0; i < enemigos.size(); i++)
-            for (int fila : h.filas) if (fila == i + 1) { lista.add(enemigos.get(i)); break; }
+            for (int fila : h.getFilas()) if (fila == i + 1) { lista.add(enemigos.get(i)); break; }
         return lista;
     }
 
@@ -233,20 +234,20 @@ public class Combate {
             UI.log(UI.pintar(enemigo.getNombre() + " esquiva el golpe.", UI.TENUE));
             return;
         }
-        boolean critico = Rng.prob(heroe.criticoActual() + h.critBonus);
-        double danio = heroe.ataqueBase() * h.mult * heroe.modDanioSaliente() * Rng.variacion();
+        boolean critico = Rng.prob(heroe.criticoActual() + h.getBonusCritico());
+        double danio = heroe.ataqueBase() * h.getMultiplicador() * heroe.modDanioSaliente() * Rng.variacion();
         if (critico) danio *= 1.6;
-        if (h.mult > 0) {
+        if (h.getMultiplicador() > 0) {
             double real = enemigo.recibirDanio(danio, false);
             UI.log((critico ? UI.pintar("\u00a1CRITICO! ", UI.AMARILLO) : "") + enemigo.getNombre()
                     + " sufre " + (int) real + " de dano.");
             if (critico) heroe.aliviarEstres(3);
-            if (h.robo > 0) heroe.curar(real * h.robo);
+            if (h.getRoboVida() > 0) heroe.curar(real * h.getRoboVida());
         }
-        if (h.efecto != null && enemigo.estaVivo() && Rng.prob(h.probEfecto)) {
-            double potencia = h.efecto == TipoEfecto.QUEMADURA || h.efecto == TipoEfecto.SANGRADO
-                    ? 3 + heroe.getNivel() : h.potEfecto;
-            enemigo.aplicarEfecto(h.efecto, h.durEfecto, potencia);
+        if (h.getEfecto() != null && enemigo.estaVivo() && Rng.prob(h.getProbabilidadEfecto())) {
+            double potencia = h.getEfecto() == TipoEfecto.QUEMADURA || h.getEfecto() == TipoEfecto.SANGRADO
+                    ? 3 + heroe.getNivel() : h.getPotenciaEfecto();
+            enemigo.aplicarEfecto(h.getEfecto(), h.getDuracionEfecto(), potencia);
         }
         if (!enemigo.estaVivo()) procesarMuerte(enemigo);
     }
@@ -258,36 +259,36 @@ public class Combate {
         MovimientoEnemigo movimiento = enemigo.elegirMovimiento(fila);
         Personaje objetivo = Rng.elegir(vivos);
 
-        if (movimiento.seCura) {
+        if (movimiento.seCura()) {
             enemigo.curar(enemigo.getVidaMax() * 0.15);
-            UI.log(enemigo.getNombre() + " usa " + movimiento.nombre + " y se cura.");
+            UI.log(enemigo.getNombre() + " usa " + movimiento.getNombre() + " y se cura.");
             return;
         }
-        if (movimiento.sobreSi) {
-            enemigo.aplicarEfecto(movimiento.efecto, movimiento.durEfecto, movimiento.potEfecto);
-            UI.log(enemigo.getNombre() + " usa " + movimiento.nombre + ".");
+        if (movimiento.esSobreSi()) {
+            enemigo.aplicarEfecto(movimiento.getEfecto(), movimiento.getDuracionEfecto(), movimiento.getPotenciaEfecto());
+            UI.log(enemigo.getNombre() + " usa " + movimiento.getNombre() + ".");
             aplicarTerror(movimiento, objetivo);
             return;
         }
-        UI.log(enemigo.getNombre() + " usa " + UI.pintar(movimiento.nombre, UI.ROJO)
+        UI.log(enemigo.getNombre() + " usa " + UI.pintar(movimiento.getNombre(), UI.ROJO)
                 + " contra " + objetivo.getNombre() + ".");
-        if (movimiento.mult > 0 && !Rng.prob(objetivo.esquivaActual())) {
+        if (movimiento.getMultiplicador() > 0 && !Rng.prob(objetivo.esquivaActual())) {
             boolean critico = Rng.prob(8 + (luz() < 15 ? 7 : 0));
-            double danio = enemigo.getDanioBase() * movimiento.mult * enemigo.multFase()
+            double danio = enemigo.getDanioBase() * movimiento.getMultiplicador() * enemigo.multFase()
                     * multDanioEnemigo() * enemigo.modDanioSaliente() * Rng.variacion();
             if (critico) danio *= 1.6;
             double real = objetivo.recibirDanio(danio, false);
             UI.log(objetivo.getNombre() + " sufre " + (int) real + " de dano.");
             if (critico) objetivo.sufrirEstres(8);
-            if (movimiento.efecto != null && Rng.prob(movimiento.probEfecto))
-                objetivo.aplicarEfecto(movimiento.efecto, movimiento.durEfecto, movimiento.potEfecto);
+            if (movimiento.getEfecto() != null && Rng.prob(movimiento.getProbabilidadEfecto()))
+                objetivo.aplicarEfecto(movimiento.getEfecto(), movimiento.getDuracionEfecto(), movimiento.getPotenciaEfecto());
         }
         aplicarTerror(movimiento, objetivo);
     }
 
     private void aplicarTerror(MovimientoEnemigo movimiento, Personaje objetivo) {
-        if (movimiento.estres <= 0) return;
-        int total = movimiento.estres + estresExtra();
+        if (movimiento.getEstres() <= 0) return;
+        int total = movimiento.getEstres() + estresExtra();
         objetivo.sufrirEstres(total);
         UI.log(UI.pintar(objetivo.getNombre() + " sufre +" + total + " estres.", UI.MAGENTA));
     }

@@ -1,18 +1,12 @@
 package leyendasolvidadas.dominio.combate;
 
-import leyendasolvidadas.aplicacion.*;
-import leyendasolvidadas.dominio.combate.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
-import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
 
-import java.io.Serializable;
 
 /** Ataque o accion que puede realizar un enemigo, con peso para la IA. */
-public class MovimientoEnemigo implements Serializable {
+public class MovimientoEnemigo {
     final String nombre;
     final double mult;          // multiplicador de dano (0 = no dana)
     final TipoEfecto efecto;    // efecto que puede aplicar (o null)

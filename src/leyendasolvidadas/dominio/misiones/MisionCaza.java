@@ -1,13 +1,10 @@
 package leyendasolvidadas.dominio.misiones;
 
-import leyendasolvidadas.aplicacion.*;
+import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.combate.*;
-import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
+import leyendasolvidadas.dominio.eventos.*;
 
 /** Mision de exterminio: acabar con N criaturas, las que sean. */
 public class MisionCaza extends Mision {
@@ -21,7 +18,7 @@ public class MisionCaza extends Mision {
     @Override public void notificarMuerte(Enemigo e) {
         if (estaCompletada()) return;
         muertes++;
-        UI.log(UI.pintar("Batida: " + muertes + "/" + objetivo + " presas cobradas.", UI.CIAN));
+        BusEventos.publicar("Batida: " + muertes + "/" + objetivo + " presas cobradas.", TipoMensaje.PROGRESO);
         if (muertes >= objetivo) completar();
     }
     @Override public String progreso() { return "Presas: " + muertes + "/" + objetivo; }
