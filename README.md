@@ -56,14 +56,14 @@ quebrarse.
 ## Requisitos
 
 - **JDK 17 o posterior**.
+- **Apache Maven 3.8.6 o posterior**.
 - Una terminal compatible con UTF-8.
-- No requiere Maven, Gradle ni librerías externas.
 
 Puedes comprobar la versión instalada con:
 
 ```bash
 java -version
-javac -version
+mvn -version
 ```
 
 ## Compilar y jugar
@@ -71,15 +71,14 @@ javac -version
 Desde la raíz del proyecto:
 
 ```bash
-mkdir -p out
-javac -encoding UTF-8 -d out $(find src -name "*.java")
-java -cp out leyendasolvidadas.interfaz.consola.Main
+mvn clean package
+java -jar target/leyendas-olvidadas-3.1.0-SNAPSHOT.jar
 ```
 
 Si la terminal no representa correctamente los colores ANSI:
 
 ```bash
-java -cp out leyendasolvidadas.interfaz.consola.Main --sin-color
+java -jar target/leyendas-olvidadas-3.1.0-SNAPSHOT.jar --sin-color
 ```
 
 En Windows se recomienda usar Windows Terminal y activar UTF-8 antes de
@@ -87,8 +86,8 @@ ejecutar el juego:
 
 ```powershell
 chcp 65001
-javac -encoding UTF-8 -d out (Get-ChildItem -Recurse src\*.java)
-java -cp out leyendasolvidadas.interfaz.consola.Main
+mvn clean package
+java -jar target\leyendas-olvidadas-3.1.0-SNAPSHOT.jar
 ```
 
 ## Cómo se juega
@@ -128,27 +127,29 @@ antigua serialización nativa no son compatibles.
 
 ```text
 LeyendasOlvidadas/
-├── src/leyendasolvidadas/
-│   ├── aplicacion/             # Casos de uso y flujo de partida
-│   ├── dominio/
-│   │   ├── azar/               # Azar reproducible
-│   │   ├── combate/           # Personajes, habilidades y combate
-│   │   ├── compania/          # Plantilla, formación e inventario
-│   │   ├── eventos/            # Mensajes semánticos de dominio
-│   │   ├── misiones/          # Encargos y progreso
-│   │   ├── mundo/             # Expediciones, salas y bestiario
-│   │   └── objetos/           # Equipo, consumibles y rarezas
-│   ├── infraestructura/         # Persistencia LOSV
-│   └── interfaz/consola/        # Entrada, salida y punto de arranque
-├── test/leyendasolvidadas/pruebas/
+├── src/
+│   ├── main/java/leyendasolvidadas/
+│   │   ├── aplicacion/          # Casos de uso y flujo de partida
+│   │   ├── dominio/
+│   │   │   ├── azar/            # Azar reproducible
+│   │   │   ├── combate/         # Personajes, habilidades y combate
+│   │   │   ├── compania/        # Plantilla, formación e inventario
+│   │   │   ├── eventos/         # Mensajes semánticos de dominio
+│   │   │   ├── misiones/        # Encargos y progreso
+│   │   │   ├── mundo/           # Expediciones, salas y bestiario
+│   │   │   └── objetos/         # Equipo, consumibles y rarezas
+│   │   ├── infraestructura/     # Persistencia LOSV
+│   │   └── interfaz/consola/    # Entrada, salida y punto de arranque
+│   └── test/java/leyendasolvidadas/pruebas/
+├── pom.xml
 ├── CHANGELOG.md
 └── README.md
 ```
 
 El código emplea una jerarquía común para personajes, fábricas para enemigos
 y misiones, enumeraciones para estados y tipos, y un generador de azar
-centralizado. Las clases se organizan en paquetes explícitos y mantienen una
-compilación directa, sin Maven, Gradle ni dependencias externas.
+centralizado. Maven administra la compilación reproducible, el empaquetado y
+las pruebas JUnit 5 con la estructura estándar de directorios.
 
 Las decisiones y reglas internas no dependen de la terminal. Consulta
 [`ARCHITECTURE.md`](ARCHITECTURE.md) para conocer los límites entre dominio,
@@ -162,16 +163,19 @@ de aldea, contratación, expedición, combate por compañías, progresión y jef
 
 ## Pruebas y equilibrio
 
-Las pruebas no necesitan dependencias externas. Desde la raíz del proyecto:
+La suite automatizada usa JUnit 5. Desde la raíz del proyecto:
 
 ```bash
-mkdir -p out
-javac -encoding UTF-8 -d out $(find src test -name "*.java")
-java -cp out leyendasolvidadas.pruebas.CompaniaTest
-java -cp out leyendasolvidadas.pruebas.ArquitecturaTest
-java -cp out leyendasolvidadas.pruebas.ServiciosAplicacionTest
-java -cp out leyendasolvidadas.pruebas.CombateCompaniaTest
-java -cp out leyendasolvidadas.pruebas.SimuladorEquilibrio
+mvn test
+```
+
+El simulador de equilibrio, más costoso que la suite habitual, se ejecuta de
+forma explícita:
+
+```bash
+mvn test-compile exec:java \
+  -Dexec.mainClass=leyendasolvidadas.pruebas.SimuladorEquilibrio \
+  -Dexec.classpathScope=test
 ```
 
 El simulador ejecuta miles de expediciones reproducibles con composiciones,

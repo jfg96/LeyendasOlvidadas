@@ -1,5 +1,7 @@
 package leyendasolvidadas.pruebas;
 
+import org.junit.jupiter.api.Test;
+
 import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
@@ -18,7 +20,8 @@ import java.util.List;
 
 /** Verifica una ida y vuelta completa del formato de guardado versionado. */
 public class CodecPartidaTest {
-    public static void main(String[] args) throws Exception {
+    @Test
+    void conservaUnaPartidaCompleta() throws Exception {
         Personaje protagonista = FabricaHeroes.crear(1, "Aldan");
         protagonista.prepararNivelInicial(3);
         protagonista.getArma().mejorar();

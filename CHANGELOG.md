@@ -6,6 +6,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Construcción reproducible con Maven para Java 17, empaquetado ejecutable y
+  ejecución del simulador de equilibrio mediante `exec-maven-plugin`.
+- JUnit 5 como infraestructura de pruebas y ejecución unificada con `mvn test`.
 - Servicios de aplicación independientes de UI para gestionar compañía,
   recuperación, compras, ventas y forja, con resultados neutrales reutilizables.
 - Puerto `RepositorioPartidas` e implementación de archivo inyectada desde el
@@ -54,6 +57,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- Código principal y pruebas trasladados a la estructura estándar de Maven
+  (`src/main/java` y `src/test/java`); las comprobaciones manuales anteriores
+  son ahora casos JUnit detectados automáticamente.
 - Menús interactivos de juego, aldea, expedición, combate, eventos e inventario
   clasificados como adaptadores de consola; las entidades ya no imprimen, leen
   opciones ni generan texto ANSI.

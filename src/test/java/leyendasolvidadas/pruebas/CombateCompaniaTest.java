@@ -1,5 +1,7 @@
 package leyendasolvidadas.pruebas;
 
+import org.junit.jupiter.api.Test;
+
 import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
@@ -14,7 +16,8 @@ import java.util.List;
 
 /** Prueba de integracion minima del combate y sus recompensas compartidas. */
 public class CombateCompaniaTest {
-    public static void main(String[] args) {
+    @Test
+    void reparteRecompensasATodaLaCompania() {
         Personaje protagonista = FabricaHeroes.crear(1, "Aldan");
         Personaje meiga = FabricaHeroes.crear(4, "Iria");
         Personaje bandolero = FabricaHeroes.crear(3, "Lope");

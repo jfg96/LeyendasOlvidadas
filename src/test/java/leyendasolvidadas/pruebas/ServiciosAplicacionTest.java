@@ -1,5 +1,7 @@
 package leyendasolvidadas.pruebas;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.List;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.Personaje;
@@ -8,7 +10,8 @@ import leyendasolvidadas.dominio.objetos.Pocion;
 
 /** Comprueba casos de uso sin arrancar ninguna interfaz. */
 public class ServiciosAplicacionTest {
-    public static void main(String[] args) {
+    @Test
+    void ejecutaCasosDeUsoSinInterfaz() {
         EstadoJuego estado = new EstadoJuego();
         Personaje protagonista = FabricaHeroes.crear(1, "Aldan");
         protagonista.getInventario().ganarOro(500);

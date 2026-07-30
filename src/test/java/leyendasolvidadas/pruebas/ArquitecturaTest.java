@@ -1,5 +1,7 @@
 package leyendasolvidadas.pruebas;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,10 +12,11 @@ public class ArquitecturaTest {
     private static final List<String> PROHIBIDOS = List.of(
             "leyendasolvidadas.interfaz.consola", "UI.", "System.out", "System.in", "Scanner");
 
-    public static void main(String[] args) throws IOException {
-        comprobarCapa(Path.of("src/leyendasolvidadas/dominio"));
-        comprobarCapa(Path.of("src/leyendasolvidadas/aplicacion"));
-        comprobarCapa(Path.of("src/leyendasolvidadas/infraestructura"));
+    @Test
+    void capasInternasNoDependenDeLaConsola() throws IOException {
+        comprobarCapa(Path.of("src/main/java/leyendasolvidadas/dominio"));
+        comprobarCapa(Path.of("src/main/java/leyendasolvidadas/aplicacion"));
+        comprobarCapa(Path.of("src/main/java/leyendasolvidadas/infraestructura"));
     }
 
     private static void comprobarCapa(Path raiz) throws IOException {

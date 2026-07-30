@@ -1,5 +1,7 @@
 package leyendasolvidadas.pruebas;
 
+import org.junit.jupiter.api.Test;
+
 import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
@@ -14,7 +16,8 @@ import java.util.List;
 
 /** Pruebas sin dependencias de las invariantes del modelo de compania. */
 public class CompaniaTest {
-    public static void main(String[] args) throws Exception {
+    @Test
+    void mantieneLasInvariantesDeLaCompania() throws Exception {
         Personaje protagonista = new Animero("Fundador");
         Personaje meiga = new Meiga("Iria");
         Personaje fraile = new Fraile("Bieito");
