@@ -252,7 +252,8 @@ public class Expedicion implements ContextoCombate {
         // ---- travesia del pasillo ----
         int segmentos = Rng.entre(2, 3);
         for (int s = 1; s <= segmentos; s++) {
-            bajarLuz(region == Region.BOSQUE_DE_LOS_AHORCADOS ? 7 : 5);
+            bajarLuz(region == Region.MINAS_DE_SAN_LOURENZO ? 10
+                    : region == Region.BOSQUE_DE_LOS_AHORCADOS ? 7 : 5);
             int estres = estresPorPaso();
             if (estres > 0) for (Personaje heroe : heroesVivos()) heroe.sufrirEstres(estres);
             if (region == Region.CAMINO_DE_LOS_DIFUNTOS)
@@ -261,6 +262,10 @@ public class Expedicion implements ContextoCombate {
                 Personaje victima = Rng.elegir(heroesVivos());
                 victima.aplicarEfecto(TipoEfecto.VENENO, 2, 2 + nivelZona / 2.0);
                 UI.log(UI.pintar("El barro infecta las heridas de " + victima.getNombre() + ".", UI.ROJO));
+            }
+            if (region == Region.MINAS_DE_SAN_LOURENZO && Rng.prob(7)) {
+                UI.log(UI.pintar("Un derrumbe sacude la galería.", UI.ROJO));
+                for (Personaje heroe : heroesVivos()) heroe.recibirDanio(5 + nivelZona, true);
             }
             System.out.println();
             UI.log(UI.pintar("Avanzas por el corredor (" + s + "/" + segmentos + ")... Luz " + luz + ".", UI.TENUE));
@@ -334,6 +339,8 @@ public class Expedicion implements ContextoCombate {
                 if (region == Region.BOSQUE_DE_LOS_AHORCADOS) Evento.curioBosque(protagonista, this);
                 else if (region == Region.BRANAS_HUNDIDAS) Evento.curioBranas(protagonista, this);
                 else if (region == Region.CAMINO_DE_LOS_DIFUNTOS) Evento.curioCamino(protagonista, this);
+                else if (region == Region.MINAS_DE_SAN_LOURENZO) Evento.curioMinas(protagonista, this);
+                else if (region == Region.PAZO_DE_SOUTOMAIOR) Evento.curioPazo(protagonista, this);
                 else Evento.curioAleatorio(protagonista, this);
                 if (companiaDerrotada()) return Resultado.MUERTE;
                 UI.pausa();
@@ -359,6 +366,8 @@ public class Expedicion implements ContextoCombate {
                     ? Bestiario.crearReiAforcados(nivelZona)
                     : m.getNombre().equals("Los sudarios de Aldara") ? Bestiario.crearLavandeiraMaior(nivelZona)
                     : m.getNombre().equals("Las puertas del hospital") ? Bestiario.crearHospitalario(nivelZona)
+                    : m.getNombre().equals("La campana del capataz") ? Bestiario.crearCapataz(nivelZona)
+                    : m.getNombre().equals("La cripta de los Soutomaior") ? Bestiario.crearCustodioCripta(nivelZona)
                     : Bestiario.crearJefe(nivelZona, victoriasPrevias);
             System.out.println(UI.pintar("\n  Has llegado a la guarida. Algo enorme respira en la oscuridad...", UI.MAGENTA));
             UI.pausa();

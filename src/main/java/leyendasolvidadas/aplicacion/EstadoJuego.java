@@ -23,6 +23,7 @@ public class EstadoJuego {
     private List<Item> ofertasHerreria = new ArrayList<>();
     private List<Personaje> candidatos = new ArrayList<>();
     private ProgresoCampana progresoCampana = new ProgresoCampana();
+    private EstadoAldea estadoAldea = new EstadoAldea();
 
     public Compania getCompania() {
         if (compania == null && jugador != null) {
@@ -53,6 +54,11 @@ public class EstadoJuego {
         if (progresoCampana == null) progresoCampana = new ProgresoCampana();
         return progresoCampana;
     }
+    public EstadoAldea getEstadoAldea() {
+        if (estadoAldea == null) estadoAldea = new EstadoAldea();
+        return estadoAldea;
+    }
+    public void restaurarEstadoAldea(EstadoAldea estadoAldea) { this.estadoAldea = estadoAldea; }
 
     /** Renueva el genero de la herreria (se llama cada semana). */
     public void renovarHerreria() {

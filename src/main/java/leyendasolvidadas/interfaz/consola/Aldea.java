@@ -45,6 +45,10 @@ public class Aldea {
                     + "   Parajes limpiados: " + estado.getExpedicionesGanadas());
             UI.log("Formacion: " + estado.getCompania().getFormacionActiva().stream()
                     .map(Personaje::getNombre).reduce((a, b) -> a + " / " + b).orElse("-") );
+            String danados = estado.getEstadoAldea().getNiveles().keySet().stream()
+                    .filter(estado.getEstadoAldea()::estaDanado).map(EdificioAldea::getNombre)
+                    .reduce((a, b) -> a + ", " + b).orElse("");
+            if (!danados.isEmpty()) UI.log(UI.pintar("Edificios dañados: " + danados, UI.ROJO));
             System.out.println();
             System.out.println("  1. Tablon de encargos " + UI.pintar("(partir de expedicion)", UI.TENUE));
             System.out.println("  2. Ermita " + UI.pintar("(curar cuerpo y alma)", UI.TENUE));
@@ -52,10 +56,11 @@ public class Aldea {
             System.out.println("  4. Herreria " + UI.pintar("(comprar, vender, forjar)", UI.TENUE));
             System.out.println("  5. Mochila y equipo");
             System.out.println("  6. Gestionar compania " + UI.pintar("(contratar y formar grupo)", UI.TENUE));
-            System.out.println("  7. Guardar partida");
-            System.out.println("  8. Cargar partida");
-            System.out.println("  9. Guardar y salir del juego");
-            switch (UI.leerOpcion(1, 9)) {
+            System.out.println("  7. Estado y reparaciones de Valdesombra");
+            System.out.println("  8. Guardar partida");
+            System.out.println("  9. Cargar partida");
+            System.out.println("  10. Guardar y salir del juego");
+            switch (UI.leerOpcion(1, 10)) {
                 case 1: {
                     Expedicion e = tablon();
                     if (e != null) return e;
@@ -70,11 +75,23 @@ public class Aldea {
                 case 4: herreria(h); break;
                 case 5: gestionarEquipo(); break;
                 case 6: gestionarCompania(); break;
-                case 7: repositorioPartidas.guardar(estado); UI.pausa(); break;
-                case 8: cargarPartida(); break;
-                case 9: repositorioPartidas.guardar(estado); return null;
+                case 7: repararAldea(); break;
+                case 8: repositorioPartidas.guardar(estado); UI.pausa(); break;
+                case 9: cargarPartida(); break;
+                case 10: repositorioPartidas.guardar(estado); return null;
             }
         }
+    }
+
+    private void repararAldea() {
+        List<EdificioAldea> danados = estado.getEstadoAldea().getNiveles().keySet().stream()
+                .filter(estado.getEstadoAldea()::estaDanado).toList();
+        UI.seccion("VALDESOMBRA");
+        if (danados.isEmpty()) { UI.log("Todos los edificios permanecen en pie."); UI.pausa(); return; }
+        for (int i=0;i<danados.size();i++) UI.log((i+1)+". "+danados.get(i).getNombre()+" — "
+                +(80+estado.getEstadoAldea().nivel(danados.get(i))*20)+" reales");
+        System.out.println("  0. Volver"); int op=UI.leerOpcion(0,danados.size());
+        if(op>0) mostrarResultado(servicioAldea.reparar(estado,danados.get(op-1))); UI.pausa();
     }
 
     private void gestionarEquipo() {
@@ -242,6 +259,8 @@ public class Aldea {
         Mision[] ofertas = new Mision[3];
         Region[] regiones = estado.getProgresoCampana().getCapitulo() == CapituloCampana.CAMINOS_DE_ANIMAS
                 ? new Region[]{Region.BRANAS_HUNDIDAS, Region.CAMINO_DE_LOS_DIFUNTOS, Region.BRANAS_HUNDIDAS}
+                : estado.getProgresoCampana().getCapitulo() == CapituloCampana.DEUDA_DE_LOS_VIVOS
+                ? new Region[]{Region.MINAS_DE_SAN_LOURENZO, Region.PAZO_DE_SOUTOMAIOR, Region.MINAS_DE_SAN_LOURENZO}
                 : new Region[]{Region.BOSQUE_DE_LOS_AHORCADOS, Region.BOSQUE_DE_LOS_AHORCADOS, Region.BOSQUE_DE_LOS_AHORCADOS};
         Dificultad[] difs = {Dificultad.FACIL, Dificultad.MEDIA, Dificultad.DIFICIL};
         for (int i = 0; i < 3; i++) {
@@ -270,6 +289,14 @@ public class Aldea {
         if (jefeCamino) especiales.add(new MisionJefe("Las puertas del hospital",
                 "Vencer al Hospitalario que cerró las puertas durante el incendio.", Dificultad.DIFICIL,
                 300, 400, Amuleto.aleatorio(25), false).enRegion(Region.CAMINO_DE_LOS_DIFUNTOS));
+        boolean jefeMinas = estado.getProgresoCampana().haDecidido("cap3.minas.jefe_disponible")
+                && !estado.getProgresoCampana().haDecidido("cap3.capataz_derrotado");
+        boolean jefePazo = estado.getProgresoCampana().haDecidido("cap3.pazo.jefe_disponible")
+                && !estado.getProgresoCampana().haDecidido("cap3.cripta_soutomaior_abierta");
+        if (jefeMinas) especiales.add(new MisionJefe("La campana del capataz", "Romper las cadenas de O Capataz.",
+                Dificultad.MEDIA, 320, 440, Amuleto.aleatorio(25), false).enRegion(Region.MINAS_DE_SAN_LOURENZO));
+        if (jefePazo) especiales.add(new MisionJefe("La cripta de los Soutomaior", "Entrar en la cripta donde se oculta la Falange.",
+                Dificultad.DIFICIL, 360, 500, Amuleto.aleatorio(28), false).enRegion(Region.PAZO_DE_SOUTOMAIOR));
         for (int i = 0; i < especiales.size(); i++)
             System.out.println(UI.pintar("  " + (i + 4) + ". ☠ " + especiales.get(i).getNombre().toUpperCase()
                     + " — " + especiales.get(i).getDescripcion(), UI.MAGENTA));

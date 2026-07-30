@@ -45,6 +45,7 @@ public class CodecPartidaTest {
         original.getProgresoCampana().avanzarA(CapituloCampana.CAMPANAS_DE_VALDESOMBRA);
         original.getProgresoCampana().avanzarA(CapituloCampana.CAMINOS_DE_ANIMAS);
         original.getProgresoCampana().registrarDecision("peregrino.liberado");
+        original.getEstadoAldea().danar(EdificioAldea.ARCHIVO);
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         CodecPartida.escribir(new DataOutputStream(bytes), original);
         EstadoJuego copia = CodecPartida.leer(new DataInputStream(new ByteArrayInputStream(bytes.toByteArray())));
@@ -58,6 +59,8 @@ public class CodecPartidaTest {
                 "Debe conservar las decisiones narrativas");
         comprobar(copia.getProgresoCampana().estaDesbloqueada(Region.BRANAS_HUNDIDAS),
                 "Debe conservar las regiones desbloqueadas");
+        comprobar(copia.getEstadoAldea().estaDanado(EdificioAldea.ARCHIVO),
+                "Debe conservar los daños de Valdesombra");
         comprobar(copia.getCompania().getPlantilla().size() == 3, "Debe conservar la plantilla");
         comprobar("Brañas Hundidas".equals(copia.getCompania().getPlantilla().get(1).getTrasfondo().origen()),
                 "Debe conservar la identidad narrativa de los mercenarios");

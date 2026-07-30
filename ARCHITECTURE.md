@@ -21,7 +21,8 @@ esos puertos.
   Incluye la identidad narrativa persistente de cada mercenario.
 - `dominio.objetos`: armas, armaduras, amuletos, consumibles y rarezas.
 - `dominio.misiones`: objetivos y progreso de encargos.
-- `dominio.mundo`: regiones, habitaciones, dificultad, bestiario y contratos de luz.
+- `dominio.mundo`: regiones, habitaciones, estado de la aldea, dificultad,
+  bestiario y contratos de luz.
 - `dominio.azar`: generador reproducible empleado por reglas y simulaciones.
 - `dominio.eventos`: mensajes semánticos sin colores ni widgets.
 
@@ -38,6 +39,7 @@ interfaz decide cómo representarlos.
 - `ServicioCapituloUno`: presentación y primera relación con Padre Tomé.
 - `ServicioCapituloDos`: progreso paralelo de regiones, jefes, Libro de los
   Nombres y decisión sobre la verdad de la matanza.
+- `ServicioCapituloTres`: Minas, Pazo, Falange, ataque, edificios y alianzas.
 - `Combate`: motor completo de iniciativa, acciones, IA y recompensas.
 - `VistaCombate`: puerto de decisiones y representación; permite ejecutar el
   mismo motor desde consola, JavaFX o una prueba automática.
@@ -56,7 +58,7 @@ ni introducir reglas narrativas en la interfaz.
 `GuardarCargar` implementa `RepositorioPartidas`. `CodecPartida` usa el formato
 versionado LOSV y nunca serializa clases Java, por lo que mover o renombrar una
 clase no altera automáticamente los archivos guardados. Cada versión dispone
-de una ruta explícita de lectura o migración; LOSV v3 todavía acepta v1 y v2.
+de una ruta explícita de lectura o migración; LOSV v4 todavía acepta v1, v2 y v3.
 
 ## Interfaz de consola
 

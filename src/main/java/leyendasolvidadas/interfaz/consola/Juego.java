@@ -81,6 +81,7 @@ public class Juego {
         Aldea aldea = new Aldea(estado, repositorioPartidas);
         while (true) {
             new CapituloDosConsola(repositorioPartidas).presentarSiPendiente(estado);
+            new CapituloTresConsola(repositorioPartidas).presentarSiPendiente(estado);
             Expedicion exp = aldea.bucle();
             estado = aldea.getEstado();
             if (exp == null) {
@@ -126,6 +127,9 @@ public class Juego {
                 int progresoDos = new ServicioCapituloDos().registrarVictoria(estado, mision.getRegion());
                 if (progresoDos > 0) UI.log(UI.pintar("Pistas recuperadas en " + mision.getRegion().getNombre()
                         + " (" + progresoDos + "/2).", UI.CIAN));
+                int progresoTres = new ServicioCapituloTres().registrarVictoria(estado, mision.getRegion());
+                if (progresoTres > 0) UI.log(UI.pintar("Pruebas recuperadas en " + mision.getRegion().getNombre()
+                        + " (" + progresoTres + "/2).", UI.CIAN));
                 if (mision instanceof MisionJefe && ((MisionJefe) mision).esFinal())
                     estado.setCampanaGanada(true);
                 if (mision.getNombre().equals("El rey de las sogas")) cerrarCapituloUno();
@@ -136,6 +140,13 @@ public class Juego {
                 if (new ServicioCapituloDos().puedeCerrar(estado)
                         && estado.getProgresoCampana().getCapitulo() == leyendasolvidadas.dominio.campana.CapituloCampana.CAMINOS_DE_ANIMAS)
                     new CapituloDosConsola(repositorioPartidas).cerrar(estado);
+                if (mision.getNombre().equals("La campana del capataz"))
+                    new ServicioCapituloTres().registrarJefe(estado, Region.MINAS_DE_SAN_LOURENZO);
+                if (mision.getNombre().equals("La cripta de los Soutomaior"))
+                    new ServicioCapituloTres().registrarJefe(estado, Region.PAZO_DE_SOUTOMAIOR);
+                if (new ServicioCapituloTres().puedeCerrar(estado)
+                        && estado.getProgresoCampana().getCapitulo() == leyendasolvidadas.dominio.campana.CapituloCampana.DEUDA_DE_LOS_VIVOS)
+                    new CapituloTresConsola(repositorioPartidas).cerrar(estado);
                 break;
             }
             case ABANDONO:

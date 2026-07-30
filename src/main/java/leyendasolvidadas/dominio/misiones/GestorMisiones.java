@@ -78,6 +78,12 @@ public class GestorMisiones {
             case CAMINO_DE_LOS_DIFUNTOS -> Rng.prob(50)
                     ? new MisionCaza("Campanas sin campanero", "Silenciar a los muertos que recorren el Camino Viejo.", dif, 3 + dif.ordinal(), oro, xp, null)
                     : new MisionReliquia("Una página sin nombres", "Recuperar una hoja arrancada del registro parroquial.", dif, oro, xp, null);
+            case MINAS_DE_SAN_LOURENZO -> Rng.prob(50)
+                    ? new MisionCaza("Hierro para los muertos", "Eliminar a los mineros que siguen picando tras su muerte.", dif, 3 + dif.ordinal(), oro, xp, null)
+                    : new MisionExploracion("Galerías bajo el Pazo", "Encontrar el santuario enterrado bajo la explotación.", dif, oro, xp, null);
+            case PAZO_DE_SOUTOMAIOR -> Rng.prob(50)
+                    ? new MisionCaza("Los criados sin nombre", "Abrirse paso entre los guardianes de la casa Soutomaior.", dif, 3 + dif.ordinal(), oro, xp, null)
+                    : new MisionReliquia("El inventario de los culpables", "Robar el registro del saqueo de los peregrinos.", dif, oro, xp, null);
             default -> generar(nivel, dif);
         };
         return m.enRegion(region);

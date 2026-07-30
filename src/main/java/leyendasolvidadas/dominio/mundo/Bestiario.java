@@ -89,6 +89,18 @@ public final class Bestiario {
         e.anadirMovimiento(new MovimientoEnemigo("Doblar de Difuntos", 0.5, TipoEfecto.ATURDIDO, 30, 1, 0, 10, 3, F(1,2,3), false, false));
         e.setFilaPreferida(3); return e;
     }
+    private static Enemigo mineiroMorto(int niv) {
+        Enemigo e = new Enemigo("Mineiro Morto", niv, false); e.anadirMovimiento(MovimientoEnemigo.golpe("Pico Oxidado", 1.05, 3)); return e;
+    }
+    private static Enemigo trasnoHierro(int niv) {
+        Enemigo e = new Enemigo("Trasno de Hierro", niv, false); e.anadirMovimiento(new MovimientoEnemigo("Polvo de Mina", 0.7, TipoEfecto.DEBILITADO, 55, 2, 0, 4, 3, F(1,2,3), false, false)); return e;
+    }
+    private static Enemigo guardiaSoutomaior(int niv) {
+        Enemigo e = new Enemigo("Guardia de Soutomaior", niv, false); e.anadirMovimiento(MovimientoEnemigo.golpe("Estocada", 1.1, 3)); return e;
+    }
+    private static Enemigo criadoSinNombre(int niv) {
+        Enemigo e = new Enemigo("Criado Sin Nombre", niv, false); e.anadirMovimiento(new MovimientoEnemigo("Servicio Eterno", 0.7, TipoEfecto.MARCADO, 55, 2, 0, 6, 3, F(1,2,3), false, false)); return e;
+    }
     // ---------- Elites ----------
     private static Enemigo lobisome(int niv) {
         Enemigo e = new Enemigo("Lobisome", niv, true);
@@ -133,6 +145,14 @@ public final class Bestiario {
                     ? (Rng.prob(55) ? afogado(niv) : lavandeira(niv))
                     : (Rng.prob(55) ? peregrinoQuemado(niv) : campanero(niv)));
             grupo.sort((a, b) -> Integer.compare(a.getFilaPreferida(), b.getFilaPreferida()));
+            return grupo;
+        }
+        if (region == Region.MINAS_DE_SAN_LOURENZO || region == Region.PAZO_DE_SOUTOMAIOR) {
+            int niv = Math.max(1, nivelZona + Rng.entre(-1, 1)); int cuantos = dif == Dificultad.FACIL ? 2 : 3;
+            List<Enemigo> grupo = new ArrayList<>();
+            for (int i=0;i<cuantos;i++) grupo.add(region == Region.MINAS_DE_SAN_LOURENZO
+                    ? (Rng.prob(60) ? mineiroMorto(niv) : trasnoHierro(niv))
+                    : (Rng.prob(60) ? guardiaSoutomaior(niv) : criadoSinNombre(niv)));
             return grupo;
         }
         if (region != Region.BOSQUE_DE_LOS_AHORCADOS) return crearGrupo(nivelZona, dif);
@@ -229,5 +249,17 @@ public final class Bestiario {
         j.anadirMovimiento(new MovimientoEnemigo("Cerrar las Puertas", 0.6, TipoEfecto.ATURDIDO, 45, 1, 0, 9, 3, F(1,2,3), false, false));
         j.anadirMovimientoFase2(new MovimientoEnemigo("Ciento Trece Golpes", 1.55, null, 0, 0, 0, 10, 4, F(1,2,3), false, false));
         return j;
+    }
+    public static Jefe crearCapataz(int nivelZona) {
+        Jefe j = new Jefe("O Capataz", nivelZona + 1, "La campana marca el turno. La mina nunca duerme.");
+        j.anadirMovimiento(new MovimientoEnemigo("Cadena Minera", 1.1, TipoEfecto.ATURDIDO, 35, 1, 0, 4, 3, F(1,2,3), false, false));
+        j.anadirMovimiento(new MovimientoEnemigo("Derrumbe", 0.9, TipoEfecto.DEBILITADO, 55, 2, 0, 7, 3, F(1,2,3), false, false));
+        j.anadirMovimientoFase2(new MovimientoEnemigo("Último Turno", 1.55, null, 0, 0, 0, 8, 4, F(1,2,3), false, false)); return j;
+    }
+    public static Jefe crearCustodioCripta(int nivelZona) {
+        Jefe j = new Jefe("El Custodio de la Cripta", nivelZona + 1, "Los Soutomaior no deben nada a los muertos.");
+        j.anadirMovimiento(new MovimientoEnemigo("Sello de Sal", 1.0, TipoEfecto.MARCADO, 65, 2, 0, 5, 3, F(1,2,3), false, false));
+        j.anadirMovimiento(new MovimientoEnemigo("Sangre Noble", 0.8, TipoEfecto.SANGRADO, 65, 3, 3+nivelZona, 4, 3, F(1,2), false, false));
+        j.anadirMovimientoFase2(new MovimientoEnemigo("Setenta Años de Silencio", 1.5, null, 0, 0, 0, 10, 4, F(1,2,3), false, false)); return j;
     }
 }

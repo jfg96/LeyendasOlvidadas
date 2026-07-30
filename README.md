@@ -117,6 +117,10 @@ Camino de los Difuntos. Cada región tiene encargos, riesgos, criaturas, eventos
 y jefe propios; ambas mitades del Libro de los Nombres son necesarias para
 descubrir qué ocurrió con los ciento trece peregrinos.
 
+El capítulo III abre las Minas y el Pazo, introduce a Don Gonzalo y permite que
+la procesión dañe edificios de Valdesombra. Los servicios afectados permanecen
+inutilizables hasta que la compañía financia su reparación.
+
 El protagonista debe participar en todas las expediciones junto a dos
 acompañantes. El oro y la mochila de 24 espacios pertenecen a toda la compañía;
 cada integrante conserva su nivel, cordura, habilidades y equipo.
@@ -132,8 +136,8 @@ desde el que se haya iniciado el juego. El prólogo también crea puntos de
 guardado automáticos entre escenas. Al arrancar, el menú principal permite
 continuar esa partida o comenzar una nueva.
 
-El archivo utiliza el formato binario versionado LOSV v3, independiente de los
-nombres de las clases Java. La versión actual puede migrar partidas LOSV v1 y v2;
+El archivo utiliza el formato binario versionado LOSV v4, independiente de los
+nombres de las clases Java. La versión actual puede migrar partidas LOSV v1, v2 y v3;
 las partidas experimentales creadas con la antigua serialización nativa no son
 compatibles.
 

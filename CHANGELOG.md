@@ -6,6 +6,13 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Capítulo III completo, **La deuda de los vivos**, con Don Gonzalo, Minas de
+  San Lourenzo, Pazo de Soutomaior, O Capataz y el Custodio de la Cripta.
+- Estado persistente de seis edificios de Valdesombra, daños visibles durante
+  el ataque de la Compaña y reparaciones financiadas por la compañía.
+- Descubrimiento de la Falange del Guía y del anterior capitán entre los muertos;
+  elección de edificio protegido y alianza con Tomé, Aldara o Don Gonzalo.
+- Avance a `LIBRO_DE_LOS_NOMBRES` y prueba integral del arco.
 - Capítulo II completo, **Los caminos de ánimas**, con presentación de Aldara y
   respuestas distintas según el destino dado a Inés al cerrar el Bosque.
 - Tablón regional para Brañas Hundidas y Camino de los Difuntos, con encargos,
@@ -108,6 +115,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- Guardado actualizado a **LOSV v4** para conservar niveles y daños de la aldea,
+  manteniendo migración automática desde LOSV v1, v2 y v3.
 - La Santa Compaña ya no se desbloquea artificialmente tras cuatro expediciones:
   el enfrentamiento final queda reservado para `ULTIMA_PROCESION`.
 - Guardado actualizado a **LOSV v3** para conservar la identidad narrativa de

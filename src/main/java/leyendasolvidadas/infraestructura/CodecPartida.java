@@ -20,7 +20,7 @@ import java.util.Set;
 /** Formato binario estable y versionado, independiente de la serializacion Java. */
 public final class CodecPartida {
     public static final int MAGIC = 0x4C4F5356; // LOSV
-    public static final int VERSION = 3;
+    public static final int VERSION = 4;
 
     private CodecPartida() {}
 
@@ -36,6 +36,7 @@ public final class CodecPartida {
         for (Personaje candidato : estado.getCandidatos()) escribirHeroe(out, candidato);
         escribirProgresoCampana(out, estado.getProgresoCampana());
         escribirTrasfondos(out, estado.getCompania(), estado.getCandidatos());
+        escribirEstadoAldea(out, estado.getEstadoAldea());
     }
 
     public static EstadoJuego leer(DataInputStream in) throws IOException {
@@ -55,10 +56,30 @@ public final class CodecPartida {
                 ? leerProgresoCampana(in) : migrarProgresoV1(campana);
         if (version >= 3) leerTrasfondos(in, compania, candidatos);
         else completarTrasfondosLegado(compania, candidatos);
+        EstadoAldea estadoAldea = version >= 4 ? leerEstadoAldea(in) : new EstadoAldea();
         EstadoJuego estado = new EstadoJuego();
         estado.restaurarProgreso(semana, victorias, campana, compania, ofertas, candidatos, progreso);
+        estado.restaurarEstadoAldea(estadoAldea);
         estado.prepararTrasCarga();
         return estado;
+    }
+
+    private static void escribirEstadoAldea(DataOutputStream out, EstadoAldea aldea) throws IOException {
+        out.writeInt(EdificioAldea.values().length);
+        for (EdificioAldea edificio : EdificioAldea.values()) {
+            out.writeUTF(edificio.name()); out.writeInt(aldea.nivel(edificio));
+            out.writeBoolean(aldea.estaDanado(edificio));
+        }
+    }
+
+    private static EstadoAldea leerEstadoAldea(DataInputStream in) throws IOException {
+        EstadoAldea aldea = new EstadoAldea();
+        int total = leerCantidad(in, EdificioAldea.values().length);
+        try {
+            for (int i = 0; i < total; i++)
+                aldea.restaurar(EdificioAldea.valueOf(in.readUTF()), in.readInt(), in.readBoolean());
+        } catch (IllegalArgumentException e) { throw new IOException("Estado de aldea no válido", e); }
+        return aldea;
     }
 
     private static void escribirTrasfondos(DataOutputStream out, Compania compania,

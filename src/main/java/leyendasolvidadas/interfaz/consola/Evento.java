@@ -67,6 +67,18 @@ public final class Evento {
         if (UI.leerOpcion(1, 2) == 1) { h.sufrirEstres(12); h.curar(18); UI.log(UI.pintar("Un muerto recuerda quién fue (+18 PV, +12 estrés).", UI.MAGENTA)); }
         else { h.aliviarEstres(5); UI.log(UI.pintar("La tinta conserva lo que la voz habría perdido.", UI.CIAN)); }
     }
+    public static void curioMinas(Personaje h, Expedicion exp) {
+        UI.seccion("UNA VETA QUE LATE"); UI.log("El mineral palpita como una vena bajo la roca.");
+        System.out.println("  1. Extraerlo   2. Sellarlo con sal");
+        if (UI.leerOpcion(1,2)==1) { h.getInventario().ganarOro(45); h.recibirDanio(7,true); UI.log(UI.pintar("Obtienes mineral por valor de 45 reales, pero la roca muerde.", UI.AMARILLO)); }
+        else { h.aliviarEstres(8); UI.log(UI.pintar("El latido se detiene.", UI.VERDE)); }
+    }
+    public static void curioPazo(Personaje h, Expedicion exp) {
+        UI.seccion("UN RETRATO SIN ROSTRO"); UI.log("Bajo la pintura raspada aparece la lista de quienes cobraron tras el incendio.");
+        System.out.println("  1. Arrancar el lienzo   2. Dejar una copia falsa");
+        if (UI.leerOpcion(1,2)==1) { h.sufrirEstres(8); UI.log(UI.pintar("Los ojos borrados os siguen por el corredor.", UI.MAGENTA)); }
+        else { h.aliviarEstres(5); UI.log(UI.pintar("Los criados tardarán en descubrir el engaño.", UI.CIAN)); }
+    }
 
     private static void altar(Personaje h) {
         UI.seccion("UN ALTAR OLVIDADO");
