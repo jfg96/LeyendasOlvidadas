@@ -80,6 +80,7 @@ public class Juego {
     private void bucle() {
         Aldea aldea = new Aldea(estado, repositorioPartidas);
         while (true) {
+            new CapituloDosConsola(repositorioPartidas).presentarSiPendiente(estado);
             Expedicion exp = aldea.bucle();
             estado = aldea.getEstado();
             if (exp == null) {
@@ -122,9 +123,19 @@ public class Juego {
                     if (victoriasBosque == 3)
                         UI.log(UI.pintar("En una soga encontráis el mismo símbolo que llevaba Lúa: tres caminantes sin rostro.", UI.MAGENTA));
                 }
+                int progresoDos = new ServicioCapituloDos().registrarVictoria(estado, mision.getRegion());
+                if (progresoDos > 0) UI.log(UI.pintar("Pistas recuperadas en " + mision.getRegion().getNombre()
+                        + " (" + progresoDos + "/2).", UI.CIAN));
                 if (mision instanceof MisionJefe && ((MisionJefe) mision).esFinal())
                     estado.setCampanaGanada(true);
                 if (mision.getNombre().equals("El rey de las sogas")) cerrarCapituloUno();
+                if (mision.getNombre().equals("Los sudarios de Aldara"))
+                    new ServicioCapituloDos().registrarJefe(estado, Region.BRANAS_HUNDIDAS);
+                if (mision.getNombre().equals("Las puertas del hospital"))
+                    new ServicioCapituloDos().registrarJefe(estado, Region.CAMINO_DE_LOS_DIFUNTOS);
+                if (new ServicioCapituloDos().puedeCerrar(estado)
+                        && estado.getProgresoCampana().getCapitulo() == leyendasolvidadas.dominio.campana.CapituloCampana.CAMINOS_DE_ANIMAS)
+                    new CapituloDosConsola(repositorioPartidas).cerrar(estado);
                 break;
             }
             case ABANDONO:

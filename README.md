@@ -112,6 +112,11 @@ la visibilidad consume más antorcha y aparecen criaturas propias de la región.
 Investigar sus sogas conduce hasta Inés y O Rei dos Aforcados; las decisiones
 del desenlace abren los caminos del capítulo II.
 
+En el capítulo II, la compañía debe recorrer tanto las Brañas Hundidas como el
+Camino de los Difuntos. Cada región tiene encargos, riesgos, criaturas, eventos
+y jefe propios; ambas mitades del Libro de los Nombres son necesarias para
+descubrir qué ocurrió con los ciento trece peregrinos.
+
 El protagonista debe participar en todas las expediciones junto a dos
 acompañantes. El oro y la mochila de 24 espacios pertenecen a toda la compañía;
 cada integrante conserva su nivel, cordura, habilidades y equipo.

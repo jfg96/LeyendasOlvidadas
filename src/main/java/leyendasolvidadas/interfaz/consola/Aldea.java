@@ -240,10 +240,13 @@ public class Aldea {
         boolean cierreBosque = estado.getProgresoCampana().haDecidido("cap1.simbolo_peregrinos_descubierto")
                 && !estado.getProgresoCampana().haDecidido("cap1.rei_derrotado");
         Mision[] ofertas = new Mision[3];
+        Region[] regiones = estado.getProgresoCampana().getCapitulo() == CapituloCampana.CAMINOS_DE_ANIMAS
+                ? new Region[]{Region.BRANAS_HUNDIDAS, Region.CAMINO_DE_LOS_DIFUNTOS, Region.BRANAS_HUNDIDAS}
+                : new Region[]{Region.BOSQUE_DE_LOS_AHORCADOS, Region.BOSQUE_DE_LOS_AHORCADOS, Region.BOSQUE_DE_LOS_AHORCADOS};
         Dificultad[] difs = {Dificultad.FACIL, Dificultad.MEDIA, Dificultad.DIFICIL};
         for (int i = 0; i < 3; i++) {
-            ofertas[i] = estado.getProgresoCampana().estaDesbloqueada(Region.BOSQUE_DE_LOS_AHORCADOS)
-                    ? GestorMisiones.generarBosque(estado.getCompania().nivelMedio(), difs[i])
+            ofertas[i] = estado.getProgresoCampana().estaDesbloqueada(regiones[i])
+                    ? GestorMisiones.generarRegional(regiones[i], estado.getCompania().nivelMedio(), difs[i])
                     : GestorMisiones.generar(estado.getCompania().nivelMedio(), difs[i]);
             System.out.printf("  %d. [%s] %-24s %s%n", i + 1,
                     UI.pintar(difs[i].getTitulo(), difs[i] == Dificultad.FACIL ? UI.VERDE
@@ -252,21 +255,29 @@ public class Aldea {
                     UI.pintar(ofertas[i].getOroRecompensa() + " reales, " + ofertas[i].getXpRecompensa() + " XP", UI.TENUE));
             UI.log(UI.pintar("   " + ofertas[i].getDescripcion(), UI.TENUE));
         }
-        if (finalDisponible)
-            System.out.println(UI.pintar("  4. ✝ LA ULTIMA PROCESION — La Santa Compania te espera. Fin de la campana.", UI.MAGENTA));
-        else if (cierreBosque)
-            System.out.println(UI.pintar("  4. ☠ EL REY DE LAS SOGAS — Inés conoce el camino hasta el árbol de los condenados.", UI.MAGENTA));
+        List<Mision> especiales = new ArrayList<>();
+        if (finalDisponible) especiales.add(new MisionJefe(Dificultad.DIFICIL, 500, 1000, Amuleto.aleatorio(30), true));
+        else if (cierreBosque) especiales.add(new MisionJefe("El rey de las sogas",
+                "Seguir a Inés y abatir a O Rei dos Aforcados.", Dificultad.MEDIA, 220, 300,
+                Amuleto.aleatorio(20), false).enRegion(Region.BOSQUE_DE_LOS_AHORCADOS));
+        boolean jefeBranas = estado.getProgresoCampana().haDecidido("cap2.branas.jefe_disponible")
+                && !estado.getProgresoCampana().haDecidido("cap2.lavandeira_derrotada");
+        boolean jefeCamino = estado.getProgresoCampana().haDecidido("cap2.camino.jefe_disponible")
+                && !estado.getProgresoCampana().haDecidido("cap2.hospitalario_derrotado");
+        if (jefeBranas) especiales.add(new MisionJefe("Los sudarios de Aldara",
+                "Derrotar a A Lavandeira Maior y recuperar las páginas sumergidas.", Dificultad.MEDIA,
+                260, 340, Amuleto.aleatorio(22), false).enRegion(Region.BRANAS_HUNDIDAS));
+        if (jefeCamino) especiales.add(new MisionJefe("Las puertas del hospital",
+                "Vencer al Hospitalario que cerró las puertas durante el incendio.", Dificultad.DIFICIL,
+                300, 400, Amuleto.aleatorio(25), false).enRegion(Region.CAMINO_DE_LOS_DIFUNTOS));
+        for (int i = 0; i < especiales.size(); i++)
+            System.out.println(UI.pintar("  " + (i + 4) + ". ☠ " + especiales.get(i).getNombre().toUpperCase()
+                    + " — " + especiales.get(i).getDescripcion(), UI.MAGENTA));
         System.out.println("  0. Volver a la plaza");
-        int max = finalDisponible || cierreBosque ? 4 : 3;
+        int max = 3 + especiales.size();
         int op = UI.leerOpcion(0, max);
         if (op == 0) return null;
-        Mision elegida = (op == 4 && finalDisponible)
-                ? new MisionJefe(Dificultad.DIFICIL, 500, 1000, Amuleto.aleatorio(30), true)
-                : (op == 4)
-                ? new MisionJefe("El rey de las sogas", "Seguir a Inés y abatir a O Rei dos Aforcados.",
-                    Dificultad.MEDIA, 220, 300, Amuleto.aleatorio(20), false)
-                    .enRegion(Region.BOSQUE_DE_LOS_AHORCADOS)
-                : ofertas[op - 1];
+        Mision elegida = op > 3 ? especiales.get(op - 4) : ofertas[op - 1];
         if (!UI.confirmar("¿Partir hacia '" + elegida.getNombre() + "'?")) return null;
         return new Expedicion(estado.getCompania(), elegida, elegida.getDificultad(),
                 estado.getExpedicionesGanadas());

@@ -69,6 +69,26 @@ public final class Bestiario {
         e.setFilaPreferida(3);
         return e;
     }
+    private static Enemigo afogado(int niv) {
+        Enemigo e = new Enemigo("Afogado", niv, false);
+        e.anadirMovimiento(new MovimientoEnemigo("Abrazo de Ciénaga", 0.9, TipoEfecto.DEBILITADO, 45, 2, 0, 4, 3, F(1,2), false, false));
+        return e;
+    }
+    private static Enemigo lavandeira(int niv) {
+        Enemigo e = new Enemigo("Lavandeira", niv, false);
+        e.anadirMovimiento(new MovimientoEnemigo("Sudario Mojado", 0.7, TipoEfecto.VENENO, 55, 3, 2 + niv, 6, 3, F(1,2,3), false, false));
+        e.setFilaPreferida(3); return e;
+    }
+    private static Enemigo peregrinoQuemado(int niv) {
+        Enemigo e = new Enemigo("Peregrino Quemado", niv, false);
+        e.anadirMovimiento(new MovimientoEnemigo("Canto entre Llamas", 0.8, TipoEfecto.QUEMADURA, 45, 2, 2 + niv, 7, 3, F(1,2,3), false, false));
+        return e;
+    }
+    private static Enemigo campanero(int niv) {
+        Enemigo e = new Enemigo("Campanero Sin Rostro", niv, false);
+        e.anadirMovimiento(new MovimientoEnemigo("Doblar de Difuntos", 0.5, TipoEfecto.ATURDIDO, 30, 1, 0, 10, 3, F(1,2,3), false, false));
+        e.setFilaPreferida(3); return e;
+    }
     // ---------- Elites ----------
     private static Enemigo lobisome(int niv) {
         Enemigo e = new Enemigo("Lobisome", niv, true);
@@ -105,6 +125,16 @@ public final class Bestiario {
         return grupo;
     }
     public static List<Enemigo> crearGrupo(Region region, int nivelZona, Dificultad dif) {
+        if (region == Region.BRANAS_HUNDIDAS || region == Region.CAMINO_DE_LOS_DIFUNTOS) {
+            int niv = Math.max(1, nivelZona + Rng.entre(-1, 1));
+            int cuantos = dif == Dificultad.FACIL ? 2 : 3;
+            List<Enemigo> grupo = new ArrayList<>();
+            for (int i = 0; i < cuantos; i++) grupo.add(region == Region.BRANAS_HUNDIDAS
+                    ? (Rng.prob(55) ? afogado(niv) : lavandeira(niv))
+                    : (Rng.prob(55) ? peregrinoQuemado(niv) : campanero(niv)));
+            grupo.sort((a, b) -> Integer.compare(a.getFilaPreferida(), b.getFilaPreferida()));
+            return grupo;
+        }
         if (region != Region.BOSQUE_DE_LOS_AHORCADOS) return crearGrupo(nivelZona, dif);
         int niv = Math.max(1, nivelZona + Rng.entre(-1, 1));
         int cuantos = dif == Dificultad.FACIL ? 2 : 3;
@@ -184,6 +214,20 @@ public final class Bestiario {
         j.anadirMovimiento(new MovimientoEnemigo("Soga del Verdugo", 1.1, TipoEfecto.MARCADO, 65, 2, 0, 5, 3, F(1,2,3), false, false));
         j.anadirMovimiento(new MovimientoEnemigo("Raíces Hambrientas", 0.8, TipoEfecto.SANGRADO, 70, 3, 3 + nivelZona, 3, 3, F(1,2,3), false, false));
         j.anadirMovimientoFase2(new MovimientoEnemigo("Todos Pendemos Juntos", 1.45, null, 0, 0, 0, 9, 4, F(1,2,3), false, false));
+        return j;
+    }
+    public static Jefe crearLavandeiraMaior(int nivelZona) {
+        Jefe j = new Jefe("A Lavandeira Maior", nivelZona + 1, "Lavo hoy el sudario que vestirás mañana.");
+        j.anadirMovimiento(new MovimientoEnemigo("Sudario del Mañana", 0.9, TipoEfecto.VENENO, 75, 3, 3 + nivelZona, 7, 3, F(1,2,3), false, false));
+        j.anadirMovimiento(new MovimientoEnemigo("Agua de Sepultura", 0.7, TipoEfecto.DEBILITADO, 80, 2, 0, 5, 3, F(1,2,3), false, false));
+        j.anadirMovimientoFase2(new MovimientoEnemigo("Lavado de los Muertos", 1.45, null, 0, 0, 0, 8, 4, F(1,2,3), false, false));
+        return j;
+    }
+    public static Jefe crearHospitalario(int nivelZona) {
+        Jefe j = new Jefe("El Hospitalario", nivelZona + 1, "Yo cerré las puertas. Vosotros alimentasteis el fuego.");
+        j.anadirMovimiento(new MovimientoEnemigo("Llave al Rojo", 1.1, TipoEfecto.QUEMADURA, 65, 3, 3 + nivelZona, 4, 3, F(1,2), false, false));
+        j.anadirMovimiento(new MovimientoEnemigo("Cerrar las Puertas", 0.6, TipoEfecto.ATURDIDO, 45, 1, 0, 9, 3, F(1,2,3), false, false));
+        j.anadirMovimientoFase2(new MovimientoEnemigo("Ciento Trece Golpes", 1.55, null, 0, 0, 0, 10, 4, F(1,2,3), false, false));
         return j;
     }
 }

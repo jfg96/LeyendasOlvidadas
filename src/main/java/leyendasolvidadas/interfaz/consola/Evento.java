@@ -50,6 +50,24 @@ public final class Evento {
         }
     }
 
+    public static void curioBranas(Personaje h, Expedicion exp) {
+        UI.seccion("UN REFLEJO QUE NO ES TUYO");
+        UI.log("En el agua aparece tu rostro ahogado, con una página del Libro entre los dientes.");
+        System.out.println("  1. Meter la mano en el agua   2. Romper el reflejo con una piedra");
+        if (UI.leerOpcion(1, 2) == 1) {
+            if (Rng.prob(55)) { h.aliviarEstres(8); exp.subirLuz(15); UI.log(UI.pintar("Rescatas una vela de cobre (+15 luz).", UI.VERDE)); }
+            else { h.aplicarEfecto(TipoEfecto.VENENO, 3, 3); UI.log(UI.pintar("Algo te muerde bajo el agua.", UI.ROJO)); }
+        } else { h.sufrirEstres(6); UI.log("Cada fragmento sigue mirándote."); }
+    }
+
+    public static void curioCamino(Personaje h, Expedicion exp) {
+        UI.seccion("UN NOMBRE BAJO LA CENIZA");
+        UI.log("Las piedras forman letras que desaparecen cuando intentas leerlas.");
+        System.out.println("  1. Pronunciar el nombre   2. Copiarlo sin decirlo");
+        if (UI.leerOpcion(1, 2) == 1) { h.sufrirEstres(12); h.curar(18); UI.log(UI.pintar("Un muerto recuerda quién fue (+18 PV, +12 estrés).", UI.MAGENTA)); }
+        else { h.aliviarEstres(5); UI.log(UI.pintar("La tinta conserva lo que la voz habría perdido.", UI.CIAN)); }
+    }
+
     private static void altar(Personaje h) {
         UI.seccion("UN ALTAR OLVIDADO");
         UI.log("Una talla de la Virgen cubierta de polvo. Las velas llevan anos apagadas.");

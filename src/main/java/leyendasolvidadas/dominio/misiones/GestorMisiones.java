@@ -66,4 +66,20 @@ public class GestorMisiones {
         };
         return mision.enRegion(Region.BOSQUE_DE_LOS_AHORCADOS);
     }
+
+    public static Mision generarRegional(Region region, int nivel, Dificultad dif) {
+        if (region == Region.BOSQUE_DE_LOS_AHORCADOS) return generarBosque(nivel, dif);
+        int n = nivel + dif.getNivelExtra();
+        int oro = (40 + n * 13) * (dif.ordinal() + 1), xp = (50 + n * 22) * (dif.ordinal() + 1);
+        Mision m = switch (region) {
+            case BRANAS_HUNDIDAS -> Rng.prob(50)
+                    ? new MisionCaza("Los que respiran barro", "Abatir a las criaturas surgidas de la ciénaga.", dif, 3 + dif.ordinal(), oro, xp, null)
+                    : new MisionExploracion("La tumba vacía de Aldara", "Cartografiar las islas que aparecen bajo la niebla amarilla.", dif, oro, xp, null);
+            case CAMINO_DE_LOS_DIFUNTOS -> Rng.prob(50)
+                    ? new MisionCaza("Campanas sin campanero", "Silenciar a los muertos que recorren el Camino Viejo.", dif, 3 + dif.ordinal(), oro, xp, null)
+                    : new MisionReliquia("Una página sin nombres", "Recuperar una hoja arrancada del registro parroquial.", dif, oro, xp, null);
+            default -> generar(nivel, dif);
+        };
+        return m.enRegion(region);
+    }
 }

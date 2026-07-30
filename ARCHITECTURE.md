@@ -36,6 +36,8 @@ interfaz decide cómo representarlos.
 - `ServicioAldea`: curación, calma, compra, venta y forja.
 - `ServicioPrologo`: transiciones, decisiones y consecuencias del prólogo.
 - `ServicioCapituloUno`: presentación y primera relación con Padre Tomé.
+- `ServicioCapituloDos`: progreso paralelo de regiones, jefes, Libro de los
+  Nombres y decisión sobre la verdad de la matanza.
 - `Combate`: motor completo de iniciativa, acciones, IA y recompensas.
 - `VistaCombate`: puerto de decisiones y representación; permite ejecutar el
   mismo motor desde consola, JavaFX o una prueba automática.

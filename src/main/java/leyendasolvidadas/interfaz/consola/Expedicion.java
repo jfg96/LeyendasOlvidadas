@@ -255,6 +255,13 @@ public class Expedicion implements ContextoCombate {
             bajarLuz(region == Region.BOSQUE_DE_LOS_AHORCADOS ? 7 : 5);
             int estres = estresPorPaso();
             if (estres > 0) for (Personaje heroe : heroesVivos()) heroe.sufrirEstres(estres);
+            if (region == Region.CAMINO_DE_LOS_DIFUNTOS)
+                for (Personaje heroe : heroesVivos()) heroe.sufrirEstres(2);
+            if (region == Region.BRANAS_HUNDIDAS && Rng.prob(8)) {
+                Personaje victima = Rng.elegir(heroesVivos());
+                victima.aplicarEfecto(TipoEfecto.VENENO, 2, 2 + nivelZona / 2.0);
+                UI.log(UI.pintar("El barro infecta las heridas de " + victima.getNombre() + ".", UI.ROJO));
+            }
             System.out.println();
             UI.log(UI.pintar("Avanzas por el corredor (" + s + "/" + segmentos + ")... Luz " + luz + ".", UI.TENUE));
             int r = Rng.entre(1, 100);
@@ -325,6 +332,8 @@ public class Expedicion implements ContextoCombate {
             case CURIO: {
                 h.resolver();
                 if (region == Region.BOSQUE_DE_LOS_AHORCADOS) Evento.curioBosque(protagonista, this);
+                else if (region == Region.BRANAS_HUNDIDAS) Evento.curioBranas(protagonista, this);
+                else if (region == Region.CAMINO_DE_LOS_DIFUNTOS) Evento.curioCamino(protagonista, this);
                 else Evento.curioAleatorio(protagonista, this);
                 if (companiaDerrotada()) return Resultado.MUERTE;
                 UI.pausa();
@@ -348,6 +357,8 @@ public class Expedicion implements ContextoCombate {
                     ? Bestiario.crearJefeFinal(nivelZona)
                     : region == Region.BOSQUE_DE_LOS_AHORCADOS && m.getNombre().equals("El rey de las sogas")
                     ? Bestiario.crearReiAforcados(nivelZona)
+                    : m.getNombre().equals("Los sudarios de Aldara") ? Bestiario.crearLavandeiraMaior(nivelZona)
+                    : m.getNombre().equals("Las puertas del hospital") ? Bestiario.crearHospitalario(nivelZona)
                     : Bestiario.crearJefe(nivelZona, victoriasPrevias);
             System.out.println(UI.pintar("\n  Has llegado a la guarida. Algo enorme respira en la oscuridad...", UI.MAGENTA));
             UI.pausa();

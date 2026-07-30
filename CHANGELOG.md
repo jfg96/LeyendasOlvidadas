@@ -6,6 +6,20 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Capítulo II completo, **Los caminos de ánimas**, con presentación de Aldara y
+  respuestas distintas según el destino dado a Inés al cerrar el Bosque.
+- Tablón regional para Brañas Hundidas y Camino de los Difuntos, con encargos,
+  progresión y culminaciones independientes.
+- Enemigos de Brañas (Afogado y Lavandeira) y del Camino (Peregrino Quemado y
+  Campanero Sin Rostro), además de eventos exclusivos de reflejos y nombres.
+- Riesgos diferenciados: infección por el barro en las Brañas y estrés continuo
+  causado por las campanas del Camino.
+- Jefes **A Lavandeira Maior** y **El Hospitalario**, cada uno custodio de una
+  parte del Libro de los Nombres.
+- Reconstrucción del Libro, revelación de la matanza de los ciento trece
+  peregrinos y decisión de revelar, ocultar o negociar con la verdad.
+- Avance a `DEUDA_DE_LOS_VIVOS` y desbloqueo de Minas de San Lourenzo y Pazo de
+  Soutomaior únicamente tras completar ambas rutas.
 - Cierre completo del capítulo I: tras investigar tres veces el Bosque aparece
   Inés y se habilita la expedición culminante **El rey de las sogas**.
 - Jefe regional **O Rei dos Aforcados**, con marca, sangrado, raíces y segunda
