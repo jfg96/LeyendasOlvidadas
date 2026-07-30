@@ -38,6 +38,8 @@ quebrarse.
 - **Campaña y modo libre.** Tras cuatro expediciones victoriosas se desbloquea
   el enfrentamiento final contra la Santa Compaña. La partida puede continuar
   después de la victoria.
+- **Prólogo narrativo.** La llegada a Valdesombra, la desaparición de una niña
+  y el primer encuentro con un Sin Rostro introducen el misterio y el combate.
 
 ## Clases jugables
 
@@ -115,7 +117,8 @@ recuperar el aliento o intentar una huida conjunta.
 ## Guardado
 
 La partida se guarda desde la aldea en `partida.sav`, dentro del directorio
-desde el que se haya iniciado el juego. Al arrancar, el menú principal permite
+desde el que se haya iniciado el juego. El prólogo también crea puntos de
+guardado automáticos entre escenas. Al arrancar, el menú principal permite
 continuar esa partida o comenzar una nueva.
 
 El archivo utiliza el formato binario versionado LOSV v2, independiente de los

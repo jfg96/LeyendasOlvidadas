@@ -6,6 +6,13 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Prólogo jugable **La novena campanada**: carta del concejo, motivo personal
+  para acudir a Valdesombra, funeral interrumpido, primera decisión sobre Lúa,
+  encuentro tutorial en el cementerio y revelación sobre el robo de nombres.
+- `ServicioPrologo` independiente de consola, con pasos validados, reanudación
+  desde puntos intermedios y consecuencias distintas al vencer, huir o caer.
+- Guardado automático entre escenas del prólogo y prueba completa de
+  reanudación, derrota no bloqueante, finalización y desbloqueo del Bosque.
 - Armazón narrativo persistente con prólogo, cinco capítulos, última procesión
   y epílogo; solo permite transiciones consecutivas para evitar estados de
   campaña imposibles.

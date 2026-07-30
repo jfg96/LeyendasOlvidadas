@@ -33,6 +33,7 @@ interfaz decide cómo representarlos.
 - `EstadoJuego`: estado persistente de la partida, incluido `ProgresoCampana`.
 - `ServicioCompania`: contratar, despedir y preparar la formación.
 - `ServicioAldea`: curación, calma, compra, venta y forja.
+- `ServicioPrologo`: transiciones, decisiones y consecuencias del prólogo.
 - `Combate`: motor completo de iniciativa, acciones, IA y recompensas.
 - `VistaCombate`: puerto de decisiones y representación; permite ejecutar el
   mismo motor desde consola, JavaFX o una prueba automática.

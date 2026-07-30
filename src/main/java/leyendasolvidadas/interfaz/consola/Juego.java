@@ -49,6 +49,7 @@ public class Juego {
             estado.renovarContratacion();
         }
         UI.pausa();
+        new PrologoConsola(repositorioPartidas).jugar(estado);
         bucle();
     }
 
