@@ -118,10 +118,10 @@ La partida se guarda desde la aldea en `partida.sav`, dentro del directorio
 desde el que se haya iniciado el juego. Al arrancar, el menú principal permite
 continuar esa partida o comenzar una nueva.
 
-El archivo utiliza el formato binario versionado LOSV, independiente de los
-nombres de las clases Java. Conviene conservar una copia de seguridad antes de
-cambiar entre versiones mayores; las partidas experimentales creadas con la
-antigua serialización nativa no son compatibles.
+El archivo utiliza el formato binario versionado LOSV v2, independiente de los
+nombres de las clases Java. La versión actual puede migrar partidas LOSV v1;
+las partidas experimentales creadas con la antigua serialización nativa no son
+compatibles.
 
 ## Estructura del proyecto
 
@@ -132,6 +132,7 @@ LeyendasOlvidadas/
 │   │   ├── aplicacion/          # Casos de uso y flujo de partida
 │   │   ├── dominio/
 │   │   │   ├── azar/            # Azar reproducible
+│   │   │   ├── campana/         # Capítulos y decisiones persistentes
 │   │   │   ├── combate/         # Personajes, habilidades y combate
 │   │   │   ├── compania/        # Plantilla, formación e inventario
 │   │   │   ├── eventos/         # Mensajes semánticos de dominio

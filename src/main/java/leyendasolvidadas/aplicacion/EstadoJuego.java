@@ -1,6 +1,7 @@
 package leyendasolvidadas.aplicacion;
 
 import leyendasolvidadas.dominio.azar.*;
+import leyendasolvidadas.dominio.campana.*;
 import leyendasolvidadas.dominio.combate.*;
 import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
@@ -21,6 +22,7 @@ public class EstadoJuego {
     private boolean campanaGanada = false;
     private List<Item> ofertasHerreria = new ArrayList<>();
     private List<Personaje> candidatos = new ArrayList<>();
+    private ProgresoCampana progresoCampana = new ProgresoCampana();
 
     public Compania getCompania() {
         if (compania == null && jugador != null) {
@@ -47,6 +49,10 @@ public class EstadoJuego {
         if (candidatos == null) candidatos = new ArrayList<>();
         return candidatos;
     }
+    public ProgresoCampana getProgresoCampana() {
+        if (progresoCampana == null) progresoCampana = new ProgresoCampana();
+        return progresoCampana;
+    }
 
     /** Renueva el genero de la herreria (se llama cada semana). */
     public void renovarHerreria() {
@@ -72,6 +78,13 @@ public class EstadoJuego {
 
     public void restaurarProgreso(int semana, int victorias, boolean campanaGanada,
                                   Compania compania, List<Item> ofertas, List<Personaje> candidatos) {
+        restaurarProgreso(semana, victorias, campanaGanada, compania, ofertas, candidatos,
+                new ProgresoCampana());
+    }
+
+    public void restaurarProgreso(int semana, int victorias, boolean campanaGanada,
+                                  Compania compania, List<Item> ofertas, List<Personaje> candidatos,
+                                  ProgresoCampana progresoCampana) {
         this.semana = Math.max(1, semana);
         this.expedicionesGanadas = Math.max(0, victorias);
         this.campanaGanada = campanaGanada;
@@ -79,6 +92,7 @@ public class EstadoJuego {
         this.compania = compania;
         this.ofertasHerreria = new ArrayList<>(ofertas);
         this.candidatos = new ArrayList<>(candidatos);
+        this.progresoCampana = progresoCampana;
     }
 
     /** Completa campos incorporados en versiones posteriores al cargar. */

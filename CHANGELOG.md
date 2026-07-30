@@ -6,6 +6,16 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Armazón narrativo persistente con prólogo, cinco capítulos, última procesión
+  y epílogo; solo permite transiciones consecutivas para evitar estados de
+  campaña imposibles.
+- Banderas narrativas mediante identificadores estables y validados, preparadas
+  para que eventos, personajes, precios y finales recuerden decisiones previas.
+- Seis regiones de campaña con identidad y capítulo de desbloqueo: Bosque de los
+  Ahorcados, Brañas Hundidas, Camino de los Difuntos, Minas de San Lourenzo,
+  Pazo de Soutomaior y Hospital del Camino Viejo.
+- Pruebas de las transiciones narrativas, desbloqueos, decisiones y migración de
+  partidas anteriores.
 - Construcción reproducible con Maven para Java 17, empaquetado ejecutable y
   ejecución del simulador de equilibrio mediante `exec-maven-plugin`.
 - JUnit 5 como infraestructura de pruebas y ejecución unificada con `mvn test`.
@@ -57,6 +67,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- Guardado actualizado a **LOSV v2** para conservar capítulo, decisiones y
+  regiones. El lector mantiene compatibilidad con LOSV v1 y marca de forma
+  explícita las campañas antiguas que ya estaban completadas.
 - Código principal y pruebas trasladados a la estructura estándar de Maven
   (`src/main/java` y `src/test/java`); las comprobaciones manuales anteriores
   son ahora casos JUnit detectados automáticamente.
@@ -69,7 +82,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   aplicación, dominio (combate, compañía, objetos, misiones y mundo),
   infraestructura, interfaz de consola y pruebas. Las APIs de habilidades y
   movimientos sustituyen el acceso implícito que ofrecía el paquete por defecto.
-- Todos los guardados nuevos usan LOSV v1. Las partidas experimentales creadas
+- Los primeros guardados estables usaban LOSV v1. Las partidas experimentales creadas
   con la serialización nativa anterior no son compatibles con la nueva
   organización por paquetes.
 - Saltos de nivel de Veterano y Pesadilla reducidos de `+2/+4` a `+1/+2`;

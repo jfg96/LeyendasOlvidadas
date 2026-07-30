@@ -1,6 +1,7 @@
 package leyendasolvidadas.infraestructura;
 
 import leyendasolvidadas.dominio.azar.*;
+import leyendasolvidadas.dominio.campana.*;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
 import leyendasolvidadas.dominio.compania.*;
@@ -12,12 +13,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /** Formato binario estable y versionado, independiente de la serializacion Java. */
 public final class CodecPartida {
     public static final int MAGIC = 0x4C4F5356; // LOSV
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 
     private CodecPartida() {}
 
@@ -31,12 +34,14 @@ public final class CodecPartida {
         escribirItems(out, estado.getOfertasHerreria());
         out.writeInt(estado.getCandidatos().size());
         for (Personaje candidato : estado.getCandidatos()) escribirHeroe(out, candidato);
+        escribirProgresoCampana(out, estado.getProgresoCampana());
     }
 
     public static EstadoJuego leer(DataInputStream in) throws IOException {
         if (in.readInt() != MAGIC) throw new IOException("Cabecera de partida desconocida");
         int version = in.readInt();
-        if (version != VERSION) throw new IOException("Version de partida no compatible: " + version);
+        if (version < 1 || version > VERSION)
+            throw new IOException("Version de partida no compatible: " + version);
         int semana = in.readInt();
         int victorias = in.readInt();
         boolean campana = in.readBoolean();
@@ -45,10 +50,44 @@ public final class CodecPartida {
         int totalCandidatos = leerCantidad(in, Compania.MAX_PLANTILLA);
         List<Personaje> candidatos = new ArrayList<>();
         for (int i = 0; i < totalCandidatos; i++) candidatos.add(leerHeroe(in));
+        ProgresoCampana progreso = version >= 2
+                ? leerProgresoCampana(in) : migrarProgresoV1(campana);
         EstadoJuego estado = new EstadoJuego();
-        estado.restaurarProgreso(semana, victorias, campana, compania, ofertas, candidatos);
+        estado.restaurarProgreso(semana, victorias, campana, compania, ofertas, candidatos, progreso);
         estado.prepararTrasCarga();
         return estado;
+    }
+
+    private static void escribirProgresoCampana(DataOutputStream out, ProgresoCampana progreso)
+            throws IOException {
+        out.writeUTF(progreso.getCapitulo().name());
+        out.writeInt(progreso.getDecisiones().size());
+        for (String decision : progreso.getDecisiones()) out.writeUTF(decision);
+        out.writeInt(progreso.getRegionesDesbloqueadas().size());
+        for (Region region : progreso.getRegionesDesbloqueadas()) out.writeUTF(region.name());
+    }
+
+    private static ProgresoCampana leerProgresoCampana(DataInputStream in) throws IOException {
+        try {
+            CapituloCampana capitulo = CapituloCampana.valueOf(in.readUTF());
+            int totalDecisiones = leerCantidad(in, 512);
+            Set<String> decisiones = new LinkedHashSet<>();
+            for (int i = 0; i < totalDecisiones; i++)
+                if (!decisiones.add(in.readUTF())) throw new IOException("Decision narrativa duplicada");
+            int totalRegiones = leerCantidad(in, Region.values().length);
+            Set<Region> regiones = new LinkedHashSet<>();
+            for (int i = 0; i < totalRegiones; i++)
+                if (!regiones.add(Region.valueOf(in.readUTF()))) throw new IOException("Region duplicada");
+            return ProgresoCampana.restaurar(capitulo, decisiones, regiones);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Progreso narrativo no valido", e);
+        }
+    }
+
+    private static ProgresoCampana migrarProgresoV1(boolean campanaGanada) {
+        if (!campanaGanada) return new ProgresoCampana();
+        return ProgresoCampana.restaurar(CapituloCampana.EPILOGO,
+                Set.of("legacy.campana_completada"), Set.of());
     }
 
     private static void escribirCompania(DataOutputStream out, Compania compania) throws IOException {

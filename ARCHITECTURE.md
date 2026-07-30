@@ -16,10 +16,11 @@ esos puertos.
 ## Dominio
 
 - `dominio.combate`: personajes, clases, habilidades, estados y enemigos.
+- `dominio.campana`: capítulos y progreso narrativo persistente.
 - `dominio.compania`: plantilla, formación, tesorería e inventario.
 - `dominio.objetos`: armas, armaduras, amuletos, consumibles y rarezas.
 - `dominio.misiones`: objetivos y progreso de encargos.
-- `dominio.mundo`: habitaciones, dificultad, bestiario y contratos de luz.
+- `dominio.mundo`: regiones, habitaciones, dificultad, bestiario y contratos de luz.
 - `dominio.azar`: generador reproducible empleado por reglas y simulaciones.
 - `dominio.eventos`: mensajes semánticos sin colores ni widgets.
 
@@ -29,7 +30,7 @@ interfaz decide cómo representarlos.
 
 ## Aplicación
 
-- `EstadoJuego`: estado persistente de la campaña.
+- `EstadoJuego`: estado persistente de la partida, incluido `ProgresoCampana`.
 - `ServicioCompania`: contratar, despedir y preparar la formación.
 - `ServicioAldea`: curación, calma, compra, venta y forja.
 - `Combate`: motor completo de iniciativa, acciones, IA y recompensas.
@@ -45,7 +46,8 @@ interfaz sin arrancar la consola.
 
 `GuardarCargar` implementa `RepositorioPartidas`. `CodecPartida` usa el formato
 versionado LOSV y nunca serializa clases Java, por lo que mover o renombrar una
-clase no altera automáticamente los archivos guardados.
+clase no altera automáticamente los archivos guardados. Cada versión dispone
+de una ruta explícita de lectura o migración; LOSV v2 todavía acepta v1.
 
 ## Interfaz de consola
 
