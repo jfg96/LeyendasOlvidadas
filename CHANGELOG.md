@@ -6,6 +6,17 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Rediseño integral de la interfaz de consola con ancho visual consistente,
+  secciones jerárquicas, opciones alineadas, estados deshabilitados y mensajes
+  contextuales.
+- Indicador destacado **AHORA ACTÚA** durante el combate, marcador sobre el
+  héroe activo y resumen inmediato de clase, recurso y luz.
+- Alcance visible para cada habilidad —filas, área, aliado o propio—, anuncio de
+  objetivos automáticos y leyenda de iconos para intenciones enemigas.
+- Menú de ayuda dentro de Valdesombra que explica iniciativa, selección de héroe,
+  filas, objetivos, intenciones, expediciones, oscuridad y heridas.
+- Opción de arranque `--sin-limpiar` para terminales, lectores o registros donde
+  no conviene borrar la pantalla entre vistas.
 - Diario persistente de campaña con resultados de expediciones, cierres de
   capítulo, decisiones centrales, historias personales y epílogo alcanzado.
 - Bestiario desbloqueable al encontrar criaturas, con descripciones tácticas y
@@ -181,6 +192,14 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- Menú principal de Valdesombra reorganizado por aventura, servicios, archivo y
+  sistema, mostrando además el capítulo actual de la campaña.
+- Exploración ahora mantiene visibles las acciones no disponibles y explica por
+  qué no se puede acampar o regresar con victoria, en vez de ignorar la entrada.
+- Direcciones del mapa distinguen salas visitadas, descubiertas y todavía sin
+  explorar.
+- Confirmaciones `s/n` validadas: una entrada accidental ya no se interpreta
+  silenciosamente como rechazo.
 - Guardado actualizado a **LOSV v7** para conservar diario y bestiario,
   manteniendo migración automática desde LOSV v1–v6.
 - Guardado actualizado a **LOSV v6** para conservar la identidad estable de los

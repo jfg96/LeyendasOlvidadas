@@ -19,6 +19,8 @@ import java.util.Scanner;
  */
 public final class UI {
     public static boolean color = true;
+    public static boolean limpiarPantalla = true;
+    public static final int ANCHO = 78;
     public static final Scanner SC = new Scanner(System.in);
 
     private UI() {}
@@ -40,12 +42,13 @@ public final class UI {
     }
 
     public static void limpiar() {
-        if (color) System.out.print("\u001B[2J\u001B[H");
-        else System.out.println("\n".repeat(3));
+        if (limpiarPantalla && color) System.out.print("\u001B[2J\u001B[H");
+        else System.out.println("\n".repeat(2));
     }
 
     public static void titulo(String t) {
-        String linea = "═".repeat(Math.max(t.length() + 6, 46));
+        t = t.length() > ANCHO - 8 ? t.substring(0, ANCHO - 9) + "…" : t;
+        String linea = "═".repeat(ANCHO - 2);
         System.out.println(pintar("╔" + linea + "╗", AMARILLO));
         int hueco = linea.length() - t.length();
         int izq = hueco / 2;
@@ -55,8 +58,23 @@ public final class UI {
     }
 
     public static void seccion(String t) {
-        System.out.println(pintar("── " + t + " " + "─".repeat(Math.max(2, 44 - t.length())), GRIS));
+        System.out.println(pintar("── " + t + " " + "─".repeat(Math.max(2, ANCHO - 5 - t.length())), GRIS));
     }
+
+    public static void turno(String nombre, String detalle) {
+        System.out.println();
+        System.out.println(pintar("  ▶ AHORA ACTÚA: " + nombre.toUpperCase(), CIAN + NEGRITA));
+        if (detalle != null && !detalle.isBlank()) log(pintar(detalle, TENUE));
+        System.out.println();
+    }
+
+    public static void opcion(int numero, String nombre, String detalle) {
+        System.out.printf("  %2d. %-28s %s%n", numero, nombre, pintar(detalle == null ? "" : detalle, TENUE));
+    }
+    public static void opcionDeshabilitada(int numero, String nombre, String motivo) {
+        System.out.printf("  %2d. %s  %s%n", numero, pintar(nombre, GRIS), pintar("[" + motivo + "]", TENUE));
+    }
+    public static void aviso(String texto) { log(pintar("! " + texto, AMARILLO)); }
 
     /** Barra de progreso coloreada, p.ej. Vida ██████░░░░ 60/100 */
     public static String barra(String etiqueta, double valor, double max, String col) {
@@ -107,7 +125,12 @@ public final class UI {
     }
 
     public static boolean confirmar(String pregunta) {
-        System.out.print(pintar("  " + pregunta + " (s/n): ", AMARILLO));
-        return SC.nextLine().trim().toLowerCase().startsWith("s");
+        while (true) {
+            System.out.print(pintar("  " + pregunta + " [s/n]: ", AMARILLO));
+            String respuesta = SC.nextLine().trim().toLowerCase();
+            if (respuesta.equals("s") || respuesta.equals("si") || respuesta.equals("sí")) return true;
+            if (respuesta.equals("n") || respuesta.equals("no")) return false;
+            System.out.println(pintar("  (!) Responde s o n.", ROJO));
+        }
     }
 }

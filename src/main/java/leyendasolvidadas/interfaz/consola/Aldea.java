@@ -45,24 +45,29 @@ public class Aldea {
                     + "   Parajes limpiados: " + estado.getExpedicionesGanadas());
             UI.log("Formacion: " + estado.getCompania().getFormacionActiva().stream()
                     .map(Personaje::getNombre).reduce((a, b) -> a + " / " + b).orElse("-") );
+            UI.log("Campaña: " + UI.pintar(estado.getProgresoCampana().getCapitulo().getTitulo(), UI.MAGENTA));
             String danados = estado.getEstadoAldea().getNiveles().keySet().stream()
                     .filter(estado.getEstadoAldea()::estaDanado).map(EdificioAldea::getNombre)
                     .reduce((a, b) -> a + ", " + b).orElse("");
             if (!danados.isEmpty()) UI.log(UI.pintar("Edificios dañados: " + danados, UI.ROJO));
-            System.out.println();
-            System.out.println("  1. Tablon de encargos " + UI.pintar("(partir de expedicion)", UI.TENUE));
-            System.out.println("  2. Ermita " + UI.pintar("(curar cuerpo y alma)", UI.TENUE));
-            System.out.println("  3. Taberna " + UI.pintar("(rumores, vino y dados)", UI.TENUE));
-            System.out.println("  4. Herreria " + UI.pintar("(comprar, vender, forjar)", UI.TENUE));
-            System.out.println("  5. Mochila y equipo");
-            System.out.println("  6. Gestionar compania " + UI.pintar("(contratar y formar grupo)", UI.TENUE));
-            System.out.println("  7. Estado y reparaciones de Valdesombra");
-            System.out.println("  8. Diario de campaña");
-            System.out.println("  9. Bestiario");
-            System.out.println("  10. Guardar partida");
-            System.out.println("  11. Cargar partida");
-            System.out.println("  12. Guardar y salir del juego");
-            switch (UI.leerOpcion(1, 12)) {
+            UI.seccion("AVENTURA");
+            UI.opcion(1, "Tablón de encargos", "preparar una expedición");
+            UI.seccion("SERVICIOS DE VALDESOMBRA");
+            UI.opcion(2, "Ermita", "curar cuerpo y alma");
+            UI.opcion(3, "Taberna", "rumores, vino y dados");
+            UI.opcion(4, "Herrería", "comprar, vender y forjar");
+            UI.opcion(5, "Mochila y equipo", "inventario compartido");
+            UI.opcion(6, "Compañía", "contratar y preparar formación");
+            UI.opcion(7, "Valdesombra", "edificios, daños y mejoras");
+            UI.seccion("ARCHIVO");
+            UI.opcion(8, "Diario de campaña", "historia de esta partida");
+            UI.opcion(9, "Bestiario", "criaturas descubiertas");
+            UI.seccion("SISTEMA");
+            UI.opcion(10, "Guardar partida", "conservar el progreso");
+            UI.opcion(11, "Cargar partida", "recuperar el último guardado");
+            UI.opcion(12, "Ayuda", "controles y reglas esenciales");
+            UI.opcion(13, "Guardar y salir", "volver al sistema");
+            switch (UI.leerOpcion(1, 13)) {
                 case 1: {
                     Expedicion e = tablon();
                     if (e != null) return e;
@@ -82,9 +87,25 @@ public class Aldea {
                 case 9: mostrarBestiario(); break;
                 case 10: repositorioPartidas.guardar(estado); UI.pausa(); break;
                 case 11: cargarPartida(); break;
-                case 12: repositorioPartidas.guardar(estado); return null;
+                case 12: mostrarAyuda(); break;
+                case 13: repositorioPartidas.guardar(estado); return null;
             }
         }
+    }
+
+    private void mostrarAyuda() {
+        UI.limpiar(); UI.titulo("AYUDA DE CAMPO");
+        UI.seccion("COMBATE POR INICIATIVA");
+        UI.log("No eliges qué héroe actúa. Al comenzar cada ronda, velocidad y azar fijan el orden.");
+        UI.log("Busca el rótulo «AHORA ACTÚA»; las habilidades mostradas pertenecen únicamente a ese héroe.");
+        UI.log("Después de elegir habilidad, el juego pide objetivo solo cuando hay varias opciones válidas.");
+        UI.seccion("FILAS E INTENCIONES");
+        UI.log("F1 es vanguardia y F3 retaguardia. Cada habilidad indica las filas que puede alcanzar.");
+        UI.log("⚔ ataque · ‼ golpe fuerte · ☣ daño persistente · ◉ estrés · ◇ control · ◆ apoyo.");
+        UI.seccion("EXPEDICIONES");
+        UI.log("Cumple el objetivo antes de volver. Abandonar evita riesgos mayores, pero pierde la recompensa.");
+        UI.log("La oscuridad aumenta peligro y botín. Las heridas de una derrota se tratan en la ermita.");
+        UI.pausa();
     }
 
     private void repararAldea() {

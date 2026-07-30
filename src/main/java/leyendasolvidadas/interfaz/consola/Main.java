@@ -12,7 +12,7 @@ import leyendasolvidadas.interfaz.consola.*;
 
 /**
  * Punto de entrada de Leyendas Olvidadas: La Compania.
- * Uso: java Main [--sin-color]
+ * Uso: java Main [--sin-color] [--sin-limpiar]
  */
 public class Main {
     public static void main(String[] args) {
@@ -20,8 +20,7 @@ public class Main {
         for (String a : args)
             if (a.equals("--sin-color")) {
                 UI.color = false;
-                break;
-            }
+            } else if (a.equals("--sin-limpiar")) UI.limpiarPantalla = false;
         new Juego(new GuardarCargar()).iniciarJuego();
     }
 }

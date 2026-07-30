@@ -97,6 +97,12 @@ Si la terminal no representa correctamente los colores ANSI:
 java -jar target/leyendas-olvidadas-3.1.0-SNAPSHOT.jar --sin-color
 ```
 
+Para conservar todo el historial de salida sin limpiar la terminal entre menús:
+
+```bash
+java -jar target/leyendas-olvidadas-3.1.0-SNAPSHOT.jar --sin-limpiar
+```
+
 En Windows se recomienda usar Windows Terminal y activar UTF-8 antes de
 ejecutar el juego:
 
@@ -146,6 +152,11 @@ cada integrante conserva su nivel, cordura, habilidades y equipo.
 Todos los menús se controlan introduciendo la opción numérica indicada. Durante
 el combate, cada héroe puede usar una habilidad, abrir la mochila compartida,
 recuperar el aliento o intentar una huida conjunta.
+
+El orden de combate se calcula automáticamente por iniciativa. El rótulo
+**AHORA ACTÚA** identifica al personaje controlado en ese momento; no es
+necesario seleccionarlo. Cada habilidad indica su alcance y, cuando corresponde,
+el juego abre después una selección separada de objetivo.
 
 ## Guardado
 

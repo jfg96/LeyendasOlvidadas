@@ -204,13 +204,15 @@ public class Expedicion implements ContextoCombate {
             StringBuilder sb = new StringBuilder("  1. Avanzar (");
             for (char c : salidas) sb.append(c).append(" ");
             System.out.println(sb.append(")").toString().replace("( ", "("));
-            System.out.println("  2. Mochila y equipo");
-            System.out.println("  3. Detalle del encargo");
+            UI.opcion(2, "Mochila y equipo", "usar objetos y revisar la formación");
+            UI.opcion(3, "Detalle del encargo", "objetivo, progreso y recompensa");
             boolean puedeAcampar = actual.getTipo() == TipoHabitacion.CAMPAMENTO && !actual.estaResuelta();
-            if (puedeAcampar) System.out.println("  4. " + UI.pintar("Acampar junto al fuego", UI.AMARILLO));
+            if (puedeAcampar) UI.opcion(4, "Acampar junto al fuego", "recupera al grupo y la antorcha");
+            else UI.opcionDeshabilitada(4, "Acampar", "necesitas un campamento sin usar");
             boolean puedeVolver = gestor.hayMisionCompletada();
-            if (puedeVolver) System.out.println("  5. " + UI.pintar("Volver a la aldea (VICTORIA)", UI.VERDE));
-            System.out.println("  6. Abandonar la expedicion");
+            if (puedeVolver) UI.opcion(5, "Volver a Valdesombra", "misión completada · cobrar recompensa");
+            else UI.opcionDeshabilitada(5, "Volver con victoria", "el objetivo sigue pendiente");
+            UI.opcion(6, "Abandonar la expedición", "sin recompensa · +15 estrés");
 
             int op = UI.leerOpcion(1, 6);
             switch (op) {
@@ -230,9 +232,11 @@ public class Expedicion implements ContextoCombate {
                     break;
                 case 4:
                     if (puedeAcampar) acampar();
+                    else { UI.aviso("Aquí no se puede acampar."); UI.pausa(); }
                     break;
                 case 5:
                     if (puedeVolver) return Resultado.EXITO;
+                    else { UI.aviso("Completa primero el objetivo del encargo."); UI.pausa(); }
                     break;
                 case 6:
                     if (UI.confirmar("¿Abandonar? Perderas la recompensa y el animo (+15 estres)")) {
@@ -250,7 +254,7 @@ public class Expedicion implements ContextoCombate {
         for (int i = 0; i < salidas.size(); i++) {
             char c = salidas.get(i);
             Habitacion destino = actual.getConexiones().get(c);
-            String pista = destino.estaVisitada() ? "(ya explorada)" : destino.esConocida() ? "(?)" : "(?)";
+            String pista = destino.estaVisitada() ? "(visitada)" : destino.esConocida() ? "(descubierta)" : "(sin explorar)";
             System.out.println("  " + (i + 1) + ". " + nombreDir(c) + " " + UI.pintar(pista, UI.TENUE));
         }
         int op = UI.leerOpcion(0, salidas.size());
