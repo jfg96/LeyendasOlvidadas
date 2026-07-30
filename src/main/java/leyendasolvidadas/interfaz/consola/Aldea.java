@@ -279,7 +279,8 @@ public class Aldea {
             UI.log(UI.pintar("   " + ofertas[i].getDescripcion(), UI.TENUE));
         }
         List<Mision> especiales = new ArrayList<>();
-        if (finalDisponible) especiales.add(new MisionJefe(Dificultad.DIFICIL, 500, 1000, Amuleto.aleatorio(30), true));
+        if (finalDisponible) especiales.add(new MisionJefe(Dificultad.DIFICIL, 500, 1000,
+                Amuleto.aleatorio(30), true).enRegion(Region.HOSPITAL_DEL_CAMINO_VIEJO));
         else if (cierreBosque) especiales.add(new MisionJefe("El rey de las sogas",
                 "Seguir a Inés y abatir a O Rei dos Aforcados.", Dificultad.MEDIA, 220, 300,
                 Amuleto.aleatorio(20), false).enRegion(Region.BOSQUE_DE_LOS_AHORCADOS));

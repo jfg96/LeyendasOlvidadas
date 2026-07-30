@@ -6,6 +6,21 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Capítulo V completo, **La última procesión**, con entrada de la Compaña en una
+  Valdesombra deformada, elección de ruta y aliado derivado de decisiones
+  anteriores.
+- El Hospital del Camino Viejo como región efectiva de la expedición final,
+  con Portadores del Cirio, Penitentes Sin Rostro y el combate contra la Santa
+  Compaña.
+- Beneficios de preparación distintos para sal y fuego, reliquias o campanas,
+  aplicados a la formación antes del último trayecto.
+- Cinco epílogos persistentes: Los nombres devueltos, El nuevo guía, El ejército
+  de los muertos, Que arda Valdesombra y La deuda perdonada. Sus opciones se
+  habilitan según las decisiones acumuladas durante la campaña.
+- Elección de sacrificio para contener la maldición bajo un nuevo guía y cierre
+  efectivo del progreso en `EPILOGO`.
+- Pruebas de requisitos de finales, consecuencias persistentes y conclusión de
+  la campaña.
 - Capítulo IV completo, **El libro de los nombres**, con apertura del Libro,
   elección de custodio y una investigación que regresa con propósito al Bosque,
   el Camino de los Difuntos y el Pazo de Soutomaior.

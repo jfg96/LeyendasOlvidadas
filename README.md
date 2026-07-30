@@ -121,6 +121,11 @@ El capítulo III abre las Minas y el Pazo, introduce a Don Gonzalo y permite que
 la procesión dañe edificios de Valdesombra. Los servicios afectados permanecen
 inutilizables hasta que la compañía financia su reparación.
 
+El capítulo IV reconstruye los ciento trece nombres a partir de testimonios
+dispersos y obliga a decidir qué verdad merece conservarse. En el capítulo V,
+las decisiones, alianzas y preparativos acumulados determinan qué desenlaces
+están disponibles tras atravesar el Hospital y enfrentar a la Santa Compaña.
+
 El protagonista debe participar en todas las expediciones junto a dos
 acompañantes. El oro y la mochila de 24 espacios pertenecen a toda la compañía;
 cada integrante conserva su nivel, cordura, habilidades y equipo.
@@ -177,8 +182,10 @@ aplicación, infraestructura e interfaces, y cómo añadir una futura versión J
 ## Estado del proyecto
 
 El juego es funcional y se encuentra en desarrollo. Incluye el bucle completo
-de aldea, contratación, expedición, combate por compañías, progresión y jefe final; consulta
-[`CHANGELOG.md`](CHANGELOG.md) para ver las incorporaciones más recientes.
+de aldea, contratación, expedición y combate por compañías, además de una
+campaña jugable desde el prólogo hasta cinco epílogos condicionados por las
+decisiones. Consulta [`CHANGELOG.md`](CHANGELOG.md) para ver las incorporaciones
+más recientes.
 
 ## Pruebas y equilibrio
 

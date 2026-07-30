@@ -83,6 +83,7 @@ public class Juego {
             new CapituloDosConsola(repositorioPartidas).presentarSiPendiente(estado);
             new CapituloTresConsola(repositorioPartidas).presentarSiPendiente(estado);
             new CapituloCuatroConsola(repositorioPartidas).presentarSiPendiente(estado);
+            new CapituloCincoConsola(repositorioPartidas).presentarSiPendiente(estado);
             Expedicion exp = aldea.bucle();
             estado = aldea.getEstado();
             if (exp == null) {
@@ -96,7 +97,7 @@ public class Juego {
             estado.renovarContratacion();
             resolverVuelta(r, mision);
             if (estado.isCampanaGanada() && mision instanceof MisionJefe && ((MisionJefe) mision).esFinal()) {
-                pantallaFinal();
+                new CapituloCincoConsola(repositorioPartidas).mostrarEpilogo(estado);
                 // La partida continua en modo libre si el jugador quiere.
             }
         }
@@ -138,7 +139,7 @@ public class Juego {
                             + nombres + "/3).", UI.CIAN));
                 }
                 if (mision instanceof MisionJefe && ((MisionJefe) mision).esFinal())
-                    estado.setCampanaGanada(true);
+                    new CapituloCincoConsola(repositorioPartidas).resolverFinal(estado);
                 if (mision.getNombre().equals("El rey de las sogas")) cerrarCapituloUno();
                 if (mision.getNombre().equals("Los sudarios de Aldara"))
                     new ServicioCapituloDos().registrarJefe(estado, Region.BRANAS_HUNDIDAS);
@@ -192,19 +193,4 @@ public class Juego {
         UI.log(UI.pintar("CAPÍTULO I COMPLETADO — Brañas Hundidas y Camino de los Difuntos desbloqueados.", UI.AMARILLO));
     }
 
-    private void pantallaFinal() {
-        UI.limpiar();
-        System.out.println(UI.pintar("\n  ═══════════════════════════════════════════════════════", UI.AMARILLO));
-        System.out.println(UI.pintar("        LA VELA SE APAGA. LA PROCESION SE DETIENE.", UI.MAGENTA));
-        System.out.println(UI.pintar("  ═══════════════════════════════════════════════════════", UI.AMARILLO));
-        UI.log("");
-        UI.log("La Santa Compania se deshace en jirones de niebla. Las campanas de");
-        UI.log("Valdesombra, por primera vez en anos, doblan por los vivos.");
-        UI.log("");
-        UI.log(UI.pintar("Tu nombre, " + estado.getJugador().getNombre()
-                + ", ya es una leyenda... y las leyendas nunca se olvidan.", UI.AMARILLO));
-        UI.log("");
-        UI.log(UI.pintar("(Puedes seguir jugando en modo libre: siempre habra parajes que limpiar.)", UI.TENUE));
-        UI.pausa();
-    }
 }

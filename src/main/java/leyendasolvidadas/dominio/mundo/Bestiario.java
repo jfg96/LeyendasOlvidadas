@@ -101,6 +101,16 @@ public final class Bestiario {
     private static Enemigo criadoSinNombre(int niv) {
         Enemigo e = new Enemigo("Criado Sin Nombre", niv, false); e.anadirMovimiento(new MovimientoEnemigo("Servicio Eterno", 0.7, TipoEfecto.MARCADO, 55, 2, 0, 6, 3, F(1,2,3), false, false)); return e;
     }
+    private static Enemigo portadorCirio(int niv) {
+        Enemigo e = new Enemigo("Portador del Cirio", niv, false);
+        e.anadirMovimiento(new MovimientoEnemigo("Cera de Mortaja", 0.8, TipoEfecto.DEBILITADO, 60, 2, 0, 6, 3, F(1,2,3), false, false));
+        e.anadirMovimiento(MovimientoEnemigo.golpe("Vara Procesional", 1.05, 3)); return e;
+    }
+    private static Enemigo penitenteSinRostro(int niv) {
+        Enemigo e = new Enemigo("Penitente Sin Rostro", niv, false);
+        e.anadirMovimiento(new MovimientoEnemigo("Nombre Borrado", 0.7, TipoEfecto.MARCADO, 65, 2, 0, 9, 3, F(1,2,3), false, false));
+        e.setFilaPreferida(3); return e;
+    }
     // ---------- Elites ----------
     private static Enemigo lobisome(int niv) {
         Enemigo e = new Enemigo("Lobisome", niv, true);
@@ -137,6 +147,14 @@ public final class Bestiario {
         return grupo;
     }
     public static List<Enemigo> crearGrupo(Region region, int nivelZona, Dificultad dif) {
+        if (region == Region.HOSPITAL_DEL_CAMINO_VIEJO) {
+            int niv = Math.max(1, nivelZona + Rng.entre(-1, 1));
+            List<Enemigo> grupo = new ArrayList<>();
+            grupo.add(portadorCirio(niv)); grupo.add(penitenteSinRostro(niv));
+            if (dif != Dificultad.FACIL) grupo.add(Rng.prob(50) ? campanero(niv) : peregrinoQuemado(niv));
+            grupo.sort((a, b) -> Integer.compare(a.getFilaPreferida(), b.getFilaPreferida()));
+            return grupo;
+        }
         if (region == Region.BRANAS_HUNDIDAS || region == Region.CAMINO_DE_LOS_DIFUNTOS) {
             int niv = Math.max(1, nivelZona + Rng.entre(-1, 1));
             int cuantos = dif == Dificultad.FACIL ? 2 : 3;
