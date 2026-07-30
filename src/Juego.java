@@ -77,6 +77,7 @@ public class Juego {
         Aldea aldea = new Aldea(estado);
         while (true) {
             Expedicion exp = aldea.bucle();
+            estado = aldea.getEstado();
             if (exp == null) {
                 UI.log("La aldea te vera volver. O eso espera.");
                 return;

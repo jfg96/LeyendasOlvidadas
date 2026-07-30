@@ -6,6 +6,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Opción **Cargar partida** en el menú de la aldea, con confirmación antes de
+  descartar el progreso actual y mensajes específicos cuando no existe un
+  guardado o no se puede recuperar.
 - **6 clases jugables nuevas** (de 3 a 9): Meiga (sanadora), Montero
   (ballestero), Gaitero (soporte), Lobishome (bruiser de sangrado), Zahorí
   (control) y Fraile (exorcista). Un archivo por clase, mismo patrón que las

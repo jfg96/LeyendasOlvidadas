@@ -5,16 +5,17 @@ import java.util.List;
  * taberna, herreria y gestion del equipo.
  */
 public class Aldea {
-    private final EstadoJuego estado;
+    private EstadoJuego estado;
 
     public Aldea(EstadoJuego estado) { this.estado = estado; }
+    public EstadoJuego getEstado() { return estado; }
 
     /**
      * Bucle de la aldea. @return la expedicion elegida, o null si el jugador sale del juego.
      */
     public Expedicion bucle() {
-        Personaje h = estado.getJugador();
         while (true) {
+            Personaje h = estado.getJugador();
             UI.limpiar();
             UI.titulo("ALDEA DE VALDESOMBRA — Semana " + estado.getSemana());
             System.out.println("  " + UI.barra("Vida", h.getVida(), h.getVidaMax(), UI.VERDE)
@@ -29,8 +30,9 @@ public class Aldea {
             System.out.println("  4. Herreria " + UI.pintar("(comprar, vender, forjar)", UI.TENUE));
             System.out.println("  5. Mochila y equipo");
             System.out.println("  6. Guardar partida");
-            System.out.println("  7. Guardar y salir del juego");
-            switch (UI.leerOpcion(1, 7)) {
+            System.out.println("  7. Cargar partida");
+            System.out.println("  8. Guardar y salir del juego");
+            switch (UI.leerOpcion(1, 8)) {
                 case 1: {
                     Expedicion e = tablon();
                     if (e != null) return e;
@@ -41,9 +43,26 @@ public class Aldea {
                 case 4: herreria(h); break;
                 case 5: h.getInventario().menuUsar(h, null); UI.pausa(); break;
                 case 6: GuardarCargar.guardar(estado); UI.pausa(); break;
-                case 7: GuardarCargar.guardar(estado); return null;
+                case 7: cargarPartida(); break;
+                case 8: GuardarCargar.guardar(estado); return null;
             }
         }
+    }
+
+    private void cargarPartida() {
+        if (!GuardarCargar.existePartida()) {
+            UI.log(UI.pintar("No hay ninguna partida guardada que cargar.", UI.ROJO));
+            UI.pausa();
+            return;
+        }
+        if (!UI.confirmar("¿Cargar la partida guardada? Perderas el progreso no guardado")) return;
+
+        EstadoJuego cargado = GuardarCargar.cargar();
+        if (cargado != null) {
+            estado = cargado;
+            UI.log(UI.pintar("Partida cargada. Regresas a Valdesombra.", UI.VERDE));
+        }
+        UI.pausa();
     }
 
     // ---------------------------------------------------------------- tablon
