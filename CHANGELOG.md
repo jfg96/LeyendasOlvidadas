@@ -16,6 +16,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   acorde al progreso de la compañía, con coste de contratación escalable.
 - Gestión de compañía desde la aldea: contratar, despedir y escoger los dos
   acompañantes que formarán junto al protagonista el grupo activo.
+- Motor de combate por formaciones con iniciativa basada en velocidad, turnos
+  individuales para cada integrante, objetivos enemigos y aliados, huida
+  conjunta y reparto de experiencia a toda la formación.
+- Expediciones adaptadas a grupos de tres: el estrés ambiental afecta a toda
+  la formación, las trampas escogen una víctima, los campamentos recuperan al
+  grupo y no se permite partir con plazas vacías.
 - Opción **Cargar partida** en el menú de la aldea, con confirmación antes de
   descartar el progreso actual y mensajes específicos cuando no existe un
   guardado o no se puede recuperar.
@@ -30,6 +36,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ### Cambiado
 - Capital inicial aumentado de 40 a 180 reales para poder contratar dos
   acompañantes y preparar la primera expedición sin vaciar la tesorería.
+- Recompensas, experiencia de misión, recuperación y penalizaciones de derrota
+  aplicadas a la compañía completa; los grupos enemigos ahora contienen dos o
+  tres criaturas para compensar la nueva economía de acciones.
 - Menú de creación de personaje ampliado de 3 a 9 opciones (`Juego`).
 - Renombradas las 3 clases originales por nombres de folclore ibérico:
   Guerrero → **Alabardero**, Mago → **Animero**, Pícaro → **Bandolero**

@@ -17,7 +17,7 @@ public class Gaitero extends Personaje {
             new Habilidad("Aturuxo", "Grito de guerra: se crece ante el peligro", 20, 3, 0,
                     new int[]{}, false, TipoEfecto.FORTALECIDO, 100, 3, 0, true, 0, 0, -6),
             new Habilidad("Alborada", "Melodia serena que regenera y calma la mente", 22, 4, 0,
-                    new int[]{}, false, TipoEfecto.REGENERACION, 100, 3, 8, true, 0, 0, -12),
+                    new int[]{}, false, TipoEfecto.REGENERACION, 100, 3, 8, true, 0, 0, -12).aAliado(),
             new Habilidad("Muneira Marcial", "Compas atronador que quiebra a toda la horda", 30, 3, 0.75,
                     new int[]{1, 2, 3}, true, TipoEfecto.DEBILITADO, 60, 2, 0, false, 0, 0, 0)
         );

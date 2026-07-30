@@ -13,6 +13,7 @@ public class Habilidad implements Serializable {
     final int probEfecto, durEfecto;
     final double potEfecto;
     final boolean sobreSi;      // el efecto se aplica al propio heroe
+    boolean sobreAliado;        // permite escoger un integrante de la formacion
     final int critBonus;        // bonus de critico de esta habilidad
     final double robo;          // fraccion del dano que se roba como vida
     final int estresPropio;     // estres que se inflige (+) o alivia (-) el heroe
@@ -30,6 +31,7 @@ public class Habilidad implements Serializable {
         return new Habilidad(n, d, coste, 0, mult, filas, false, null, 0, 0, 0, false, 0, 0, 0);
     }
     public boolean disponible(Personaje p) { return cdActual == 0 && p.getRecurso() >= coste; }
+    public Habilidad aAliado() { sobreAliado = true; return this; }
     public String filasTexto() {
         StringBuilder sb = new StringBuilder();
         for (int f : filas) sb.append(f);

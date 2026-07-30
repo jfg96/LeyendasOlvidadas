@@ -16,7 +16,7 @@ public class Compania implements Serializable {
     private final Personaje protagonista;
     private final List<Personaje> plantilla = new ArrayList<>();
     private final List<Personaje> formacionActiva = new ArrayList<>();
-    private final Inventario inventarioCompartido;
+    private Inventario inventarioCompartido;
 
     public Compania(Personaje protagonista) {
         if (protagonista == null) throw new IllegalArgumentException("El protagonista es obligatorio");
@@ -29,7 +29,10 @@ public class Compania implements Serializable {
     public Personaje getProtagonista() { return protagonista; }
     public List<Personaje> getPlantilla() { return Collections.unmodifiableList(plantilla); }
     public List<Personaje> getFormacionActiva() { return Collections.unmodifiableList(formacionActiva); }
-    public Inventario getInventario() { return inventarioCompartido; }
+    public Inventario getInventario() {
+        if (inventarioCompartido == null) inventarioCompartido = protagonista.getInventario();
+        return inventarioCompartido;
+    }
     public boolean esProtagonista(Personaje personaje) { return protagonista == personaje; }
     public boolean estaCompleta() { return formacionActiva.size() == MAX_FORMACION; }
     public boolean plantillaLlena() { return plantilla.size() == MAX_PLANTILLA; }

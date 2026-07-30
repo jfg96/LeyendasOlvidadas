@@ -89,20 +89,21 @@ public class Juego {
     }
 
     private void resolverVuelta(Expedicion.Resultado r, Mision mision) {
-        Personaje h = estado.getJugador();
+        Compania compania = estado.getCompania();
+        java.util.List<Personaje> grupo = compania.getFormacionActiva();
         UI.limpiar();
         switch (r) {
             case EXITO: {
                 UI.titulo("REGRESO TRIUNFAL");
                 estado.registrarVictoria();
-                h.getInventario().ganarOro(mision.getOroRecompensa());
+                compania.getInventario().ganarOro(mision.getOroRecompensa());
                 UI.log(UI.pintar("Cobras el encargo: +" + mision.getOroRecompensa() + " reales.", UI.AMARILLO));
-                h.ganarExperiencia(mision.getXpRecompensa());
+                for (Personaje heroe : grupo) heroe.ganarExperiencia(mision.getXpRecompensa());
                 if (mision.getItemRecompensa() != null) {
                     UI.log("Te entregan ademas " + mision.getItemRecompensa().nombreColoreado() + ".");
-                    h.getInventario().anadir(mision.getItemRecompensa());
+                    compania.getInventario().anadir(mision.getItemRecompensa());
                 }
-                h.aliviarEstres(20);
+                for (Personaje heroe : grupo) heroe.aliviarEstres(20);
                 if (mision instanceof MisionJefe && ((MisionJefe) mision).esFinal())
                     estado.setCampanaGanada(true);
                 break;
@@ -113,14 +114,16 @@ public class Juego {
                 break;
             case MUERTE: {
                 UI.titulo("TE ARRASTRAN DE VUELTA");
-                int perdido = h.getInventario().getOro() / 2;
-                h.getInventario().gastarOro(perdido);
-                h.setVida(h.getVidaMax() * 0.5);
-                h.limpiarEfectos();
-                h.resetMental();
-                h.aliviarEstres(30);
+                int perdido = compania.getInventario().getOro() / 2;
+                compania.getInventario().gastarOro(perdido);
+                for (Personaje heroe : grupo) {
+                    heroe.setVida(heroe.getVidaMax() * 0.5);
+                    heroe.limpiarEfectos();
+                    heroe.resetMental();
+                    heroe.aliviarEstres(30);
+                }
                 UI.log(UI.pintar("Unos carboneros te encuentran medio muerto en el camino.", UI.ROJO));
-                UI.log(UI.pintar("El fisico de la aldea cobra caro: pierdes " + perdido + " reales.", UI.ROJO));
+                UI.log(UI.pintar("Los fisicos de la aldea cobran caro: pierdes " + perdido + " reales.", UI.ROJO));
                 break;
             }
         }

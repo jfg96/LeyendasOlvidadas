@@ -24,6 +24,8 @@ public class Aldea {
             UI.log(h.getNombre() + ", nivel " + h.getNivel() + " (" + h.getExperiencia() + "/"
                     + h.xpNecesaria() + " XP)   Oro: " + UI.pintar(h.getInventario().getOro() + " reales", UI.AMARILLO)
                     + "   Parajes limpiados: " + estado.getExpedicionesGanadas());
+            UI.log("Formacion: " + estado.getCompania().getFormacionActiva().stream()
+                    .map(Personaje::getNombre).reduce((a, b) -> a + " / " + b).orElse("-") );
             System.out.println();
             System.out.println("  1. Tablon de encargos " + UI.pintar("(partir de expedicion)", UI.TENUE));
             System.out.println("  2. Ermita " + UI.pintar("(curar cuerpo y alma)", UI.TENUE));
@@ -40,7 +42,11 @@ public class Aldea {
                     if (e != null) return e;
                     break;
                 }
-                case 2: ermita(h); break;
+                case 2: {
+                    Personaje paciente = elegirMiembro("\u00bfQuien necesita la ermita?");
+                    if (paciente != null) ermita(paciente);
+                    break;
+                }
                 case 3: taberna(h); break;
                 case 4: herreria(h); break;
                 case 5: gestionarEquipo(); break;
@@ -191,13 +197,19 @@ public class Aldea {
     // ---------------------------------------------------------------- tablon
     private Expedicion tablon() {
         Personaje h = estado.getJugador();
+        if (!estado.getCompania().estaCompleta()) {
+            UI.log(UI.pintar("Necesitas una formacion de tres antes de partir.", UI.ROJO));
+            UI.log("Contrata acompanantes y prepara el grupo desde Gestionar compania.");
+            UI.pausa();
+            return null;
+        }
         UI.limpiar();
         UI.seccion("TABLON DE ENCARGOS");
         boolean finalDisponible = estado.getExpedicionesGanadas() >= 4 && !estado.isCampanaGanada();
         Mision[] ofertas = new Mision[3];
         Dificultad[] difs = {Dificultad.FACIL, Dificultad.MEDIA, Dificultad.DIFICIL};
         for (int i = 0; i < 3; i++) {
-            ofertas[i] = GestorMisiones.generar(h.getNivel(), difs[i]);
+            ofertas[i] = GestorMisiones.generar(estado.getCompania().nivelMedio(), difs[i]);
             System.out.printf("  %d. [%s] %-24s %s%n", i + 1,
                     UI.pintar(difs[i].getTitulo(), difs[i] == Dificultad.FACIL ? UI.VERDE
                             : difs[i] == Dificultad.MEDIA ? UI.AMARILLO : UI.ROJO),
@@ -215,7 +227,7 @@ public class Aldea {
                 ? new MisionJefe(Dificultad.DIFICIL, 500, 1000, Amuleto.aleatorio(30), true)
                 : ofertas[op - 1];
         if (!UI.confirmar("¿Partir hacia '" + elegida.getNombre() + "'?")) return null;
-        return new Expedicion(h, elegida, elegida.getDificultad());
+        return new Expedicion(estado.getCompania(), elegida, elegida.getDificultad());
     }
 
     // ---------------------------------------------------------------- ermita

@@ -73,7 +73,8 @@ public final class Bestiario {
     /** Genera un grupo de 1-3 enemigos para un combate normal. */
     public static List<Enemigo> crearGrupo(int nivelZona, Dificultad dif) {
         int niv = Math.max(1, nivelZona + Rng.entre(-1, 1));
-        int cuantos = 1 + (Rng.prob(70) ? 1 : 0) + (dif != Dificultad.FACIL && Rng.prob(45) ? 1 : 0);
+        int cuantos = dif == Dificultad.FACIL ? 2 : dif == Dificultad.MEDIA
+                ? (Rng.prob(55) ? 3 : 2) : 3;
         List<Enemigo> grupo = new ArrayList<>();
         int probElite = dif == Dificultad.FACIL ? 8 : dif == Dificultad.MEDIA ? 16 : 26;
         for (int i = 0; i < cuantos; i++) {

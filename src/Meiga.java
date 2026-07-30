@@ -14,7 +14,7 @@ public class Meiga extends Personaje {
         habilidades = List.of(
             Habilidad.ataque("Mal de Ojo", "Maldicion a cualquier fila", 5, 0.85, new int[]{1, 2, 3}),
             new Habilidad("Ensalmo", "Rezo que regenera la vida y serena el animo", 20, 3, 0,
-                    new int[]{}, false, TipoEfecto.REGENERACION, 100, 3, 12, true, 0, 0, -6),
+                    new int[]{}, false, TipoEfecto.REGENERACION, 100, 3, 12, true, 0, 0, -6).aAliado(),
             new Habilidad("Conxuro", "Ponzona que pudre a la retaguardia", 15, 1, 0.7,
                     new int[]{2, 3}, false, TipoEfecto.VENENO, 80, 3, 6, false, 0, 0, 0),
             new Habilidad("Bico da Meiga", "Beso que arranca la esencia y la vuelve vida", 25, 2, 1.0,

@@ -14,7 +14,9 @@ public class Expedicion {
     /** Resultado de la expedicion. */
     public enum Resultado { EXITO, ABANDONO, MUERTE }
 
-    private final Personaje heroe;
+    private final List<Personaje> heroes;
+    private final Personaje protagonista;
+    private final Inventario inventario;
     private final GestorMisiones gestor = new GestorMisiones();
     private final Dificultad dificultad;
     private final int nivelZona;
@@ -23,13 +25,19 @@ public class Expedicion {
     private Habitacion entrada;
     private int luz = 100;
 
-    public Expedicion(Personaje heroe, Mision mision, Dificultad dificultad) {
-        this.heroe = heroe;
+    public Expedicion(Compania compania, Mision mision, Dificultad dificultad) {
+        this.heroes = new ArrayList<>(compania.getFormacionActiva());
+        this.protagonista = compania.getProtagonista();
+        this.inventario = compania.getInventario();
         this.dificultad = dificultad;
-        this.nivelZona = heroe.getNivel() + dificultad.getNivelExtra();
+        this.nivelZona = (int) Math.round(heroes.stream().mapToInt(Personaje::getNivel)
+                .average().orElse(1)) + dificultad.getNivelExtra();
         gestor.asignar(mision);
         generarMapa(7 + dificultad.ordinal() * 2);
     }
+
+    private List<Personaje> heroesVivos() { return heroes.stream().filter(Personaje::estaVivo).toList(); }
+    private boolean companiaDerrotada() { return heroesVivos().isEmpty(); }
 
     // ------------------------------------------------------------------- luz
     public int getLuz() { return luz; }
@@ -160,10 +168,11 @@ public class Expedicion {
                     + "  [" + dificultad.getTitulo() + "]");
             dibujarMapa();
             System.out.println();
-            System.out.println("  " + UI.barra("Vida", heroe.getVida(), heroe.getVidaMax(), UI.VERDE)
-                    + "   " + UI.barra("Cordura", heroe.getCordura(), 100, UI.MAGENTA));
-            System.out.println("  " + UI.barra(heroe.nombreRecurso(), heroe.getRecurso(), heroe.getRecursoMax(), UI.AZUL)
-                    + "   Antorcha: " + luzTexto());
+            for (Personaje heroe : heroes)
+                System.out.println("  " + UI.barra(heroe.getNombre(), heroe.getVida(), heroe.getVidaMax(),
+                        heroe.estaVivo() ? UI.VERDE : UI.ROJO) + "   "
+                        + UI.barra("Cordura", heroe.getCordura(), 100, UI.MAGENTA));
+            System.out.println("  Antorcha: " + luzTexto());
             UI.log(UI.pintar("Encargo: " + gestor.getMision().progreso(), UI.CIAN));
             System.out.println();
             List<Character> salidas = new ArrayList<>(actual.getConexiones().keySet());
@@ -186,7 +195,8 @@ public class Expedicion {
                     break;
                 }
                 case 2:
-                    heroe.getInventario().menuUsar(heroe, this);
+                    Personaje usuario = elegirHeroeVivo("\u00bfQuien usa un objeto?");
+                    if (usuario != null) inventario.menuUsar(usuario, this);
                     UI.pausa();
                     break;
                 case 3:
@@ -201,12 +211,12 @@ public class Expedicion {
                     break;
                 case 6:
                     if (UI.confirmar("¿Abandonar? Perderas la recompensa y el animo (+15 estres)")) {
-                        heroe.sufrirEstres(15);
+                        for (Personaje heroe : heroesVivos()) heroe.sufrirEstres(15);
                         return Resultado.ABANDONO;
                     }
                     break;
             }
-            if (!heroe.estaVivo()) return Resultado.MUERTE;
+            if (companiaDerrotada()) return Resultado.MUERTE;
         }
     }
 
@@ -227,23 +237,23 @@ public class Expedicion {
         for (int s = 1; s <= segmentos; s++) {
             bajarLuz(5);
             int estres = estresPorPaso();
-            if (estres > 0) heroe.sufrirEstres(estres);
+            if (estres > 0) for (Personaje heroe : heroesVivos()) heroe.sufrirEstres(estres);
             System.out.println();
             UI.log(UI.pintar("Avanzas por el corredor (" + s + "/" + segmentos + ")... Luz " + luz + ".", UI.TENUE));
             int r = Rng.entre(1, 100);
             if (r <= 22) {
-                Combate.Resultado res = new Combate(heroe, Bestiario.crearGrupo(nivelZona, dificultad),
-                        this, gestor).ejecutar(Rng.prob(probEmboscada()));
+                Combate.Resultado res = nuevoCombate(Bestiario.crearGrupo(nivelZona, dificultad))
+                        .ejecutar(Rng.prob(probEmboscada()));
                 if (res == Combate.Resultado.DERROTA) return Resultado.MUERTE;
                 if (res == Combate.Resultado.HUIDA) return null; // vuelve a la sala anterior
             } else if (r <= 32) {
-                Evento.trampa(heroe);
-                if (!heroe.estaVivo()) return Resultado.MUERTE;
+                Evento.trampa(Rng.elegir(heroesVivos()));
+                if (companiaDerrotada()) return Resultado.MUERTE;
                 UI.pausa();
             } else if (r <= 40) {
-                List<Enemigo> mimico = Evento.cofre(heroe, this, false);
+                List<Enemigo> mimico = Evento.cofre(protagonista, this, false);
                 if (mimico != null) {
-                    Combate.Resultado res = new Combate(heroe, mimico, this, gestor).ejecutar(true);
+                    Combate.Resultado res = nuevoCombate(mimico).ejecutar(true);
                     if (res == Combate.Resultado.DERROTA) return Resultado.MUERTE;
                 }
                 UI.pausa();
@@ -273,23 +283,23 @@ public class Expedicion {
         if (esInicio) return null;
 
         System.out.println();
-        if (primeraVez) h.aplicarAmbiente(heroe);
-        if (!heroe.estaVivo()) return Resultado.MUERTE;
+        if (primeraVez) for (Personaje heroe : heroesVivos()) h.aplicarAmbiente(heroe);
+        if (companiaDerrotada()) return Resultado.MUERTE;
         if (h.estaResuelta()) return null;
 
         switch (h.getTipo()) {
             case COMBATE: {
                 h.resolver();
-                Combate.Resultado res = new Combate(heroe, Bestiario.crearGrupo(nivelZona, dificultad),
-                        this, gestor).ejecutar(Rng.prob(probEmboscada()));
+                Combate.Resultado res = nuevoCombate(Bestiario.crearGrupo(nivelZona, dificultad))
+                        .ejecutar(Rng.prob(probEmboscada()));
                 if (res == Combate.Resultado.DERROTA) return Resultado.MUERTE;
                 break;
             }
             case TESORO: {
                 h.resolver();
-                List<Enemigo> mimico = Evento.cofre(heroe, this, true);
+                List<Enemigo> mimico = Evento.cofre(protagonista, this, true);
                 if (mimico != null) {
-                    Combate.Resultado res = new Combate(heroe, mimico, this, gestor).ejecutar(true);
+                    Combate.Resultado res = nuevoCombate(mimico).ejecutar(true);
                     if (res == Combate.Resultado.DERROTA) return Resultado.MUERTE;
                 }
                 UI.pausa();
@@ -297,8 +307,8 @@ public class Expedicion {
             }
             case CURIO: {
                 h.resolver();
-                Evento.curioAleatorio(heroe, this);
-                if (!heroe.estaVivo()) return Resultado.MUERTE;
+                Evento.curioAleatorio(protagonista, this);
+                if (companiaDerrotada()) return Resultado.MUERTE;
                 UI.pausa();
                 break;
             }
@@ -317,11 +327,11 @@ public class Expedicion {
         if (m instanceof MisionJefe) {
             h.resolver();
             Jefe jefe = ((MisionJefe) m).esFinal()
-                    ? Bestiario.crearJefeFinal(heroe.getNivel())
+                    ? Bestiario.crearJefeFinal(nivelZona)
                     : Bestiario.crearJefe(nivelZona, Juego.getInstancia().getEstado().getExpedicionesGanadas());
             System.out.println(UI.pintar("\n  Has llegado a la guarida. Algo enorme respira en la oscuridad...", UI.MAGENTA));
             UI.pausa();
-            Combate.Resultado res = new Combate(heroe, List.of(jefe), this, gestor).ejecutar(false);
+            Combate.Resultado res = nuevoCombate(List.of(jefe)).ejecutar(false);
             if (res == Combate.Resultado.DERROTA) return Resultado.MUERTE;
         } else if (m instanceof MisionReliquia) {
             if (!h.estaResuelta()) {
@@ -332,7 +342,7 @@ public class Expedicion {
             }
         } else {
             h.resolver();
-            Evento.cofre(heroe, this, true);
+            Evento.cofre(protagonista, this, true);
             UI.pausa();
         }
         return null;
@@ -343,20 +353,36 @@ public class Expedicion {
         UI.limpiar();
         UI.seccion("CAMPAMENTO");
         UI.log("Enciendes una fogata al abrigo de las piedras. El mundo, por un rato, calla.");
-        heroe.curar(heroe.getVidaMax() * 0.35);
-        heroe.setRecurso(heroe.getRecursoMax());
-        heroe.aliviarEstres(25);
-        heroe.limpiarEfectosNegativos();
+        for (Personaje heroe : heroes) {
+            if (!heroe.estaVivo()) heroe.setVida(heroe.getVidaMax() * 0.15);
+            heroe.curar(heroe.getVidaMax() * 0.35);
+            heroe.setRecurso(heroe.getRecursoMax());
+            heroe.aliviarEstres(25);
+            heroe.limpiarEfectosNegativos();
+        }
         subirLuz(30);
         UI.log(UI.pintar("+35% vida, recurso al maximo, -25 estres, males purgados, +30 luz.", UI.VERDE));
         if (Rng.prob(20)) {
             UI.log(UI.pintar("...pero unos pasos te despiertan de madrugada.", UI.ROJO));
             UI.pausa();
-            new Combate(heroe, Bestiario.crearGrupo(nivelZona, dificultad), this, gestor).ejecutar(true);
+            nuevoCombate(Bestiario.crearGrupo(nivelZona, dificultad)).ejecutar(true);
         } else {
             UI.pausa();
         }
     }
 
     public GestorMisiones getGestor() { return gestor; }
+
+    private Combate nuevoCombate(List<Enemigo> enemigos) {
+        return new Combate(heroes, enemigos, this, gestor, inventario);
+    }
+
+    private Personaje elegirHeroeVivo(String titulo) {
+        List<Personaje> vivos = heroesVivos();
+        if (vivos.isEmpty()) return null;
+        UI.seccion(titulo);
+        for (int i = 0; i < vivos.size(); i++)
+            UI.log((i + 1) + ". " + vivos.get(i).getNombre());
+        return vivos.get(UI.leerOpcion(1, vivos.size()) - 1);
+    }
 }

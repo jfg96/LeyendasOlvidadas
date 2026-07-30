@@ -26,6 +26,9 @@ public class CompaniaTest {
         comprobar(compania.despedir(meiga), "Debe permitir despedir a un acompanante");
         comprobar(!compania.getFormacionActiva().contains(meiga),
                 "Un despedido no puede seguir en la formacion");
+
+        Habilidad ensalmo = new Meiga("Leria").getHabilidades().get(1);
+        comprobar(ensalmo.sobreAliado, "El ensalmo debe poder dirigirse a otro aliado");
     }
 
     private static void comprobar(boolean condicion, String mensaje) {
