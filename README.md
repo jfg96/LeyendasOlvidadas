@@ -119,9 +119,10 @@ La partida se guarda desde la aldea en `partida.sav`, dentro del directorio
 desde el que se haya iniciado el juego. Al arrancar, el menú principal permite
 continuar esa partida o comenzar una nueva.
 
-El archivo utiliza serialización nativa de Java. Conviene conservar una copia de
-seguridad antes de cambiar entre versiones del juego, ya que no se garantiza la
-compatibilidad de partidas antiguas.
+El archivo utiliza el formato binario versionado LOSV, independiente de los
+nombres de las clases Java. Conviene conservar una copia de seguridad antes de
+cambiar entre versiones mayores; las partidas experimentales creadas con la
+antigua serialización nativa no son compatibles.
 
 ## Estructura del proyecto
 

@@ -10,17 +10,11 @@ import leyendasolvidadas.dominio.mundo.*;
 import leyendasolvidadas.infraestructura.*;
 import leyendasolvidadas.interfaz.consola.*;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /** Prueba de integracion minima del combate y sus recompensas compartidas. */
 public class CombateCompaniaTest {
     public static void main(String[] args) {
-        String entradas = "\n" + "1\n\n".repeat(12);
-        System.setIn(new ByteArrayInputStream(entradas.getBytes(StandardCharsets.UTF_8)));
-        UI.color = false;
-
         Personaje protagonista = FabricaHeroes.crear(1, "Aldan");
         Personaje meiga = FabricaHeroes.crear(4, "Iria");
         Personaje bandolero = FabricaHeroes.crear(3, "Lope");
@@ -33,7 +27,7 @@ public class CombateCompaniaTest {
         enemigo.anadirMovimiento(MovimientoEnemigo.golpe("Roce", 0.1, 1));
         enemigo.setVida(1);
         Combate combate = new Combate(compania.getFormacionActiva(), List.of(enemigo),
-                null, null, compania.getInventario());
+                null, null, compania.getInventario(), new VistaAutomatica());
 
         comprobar(combate.ejecutar(false) == Combate.Resultado.VICTORIA,
                 "La compania debe poder ganar el encuentro");
@@ -44,5 +38,18 @@ public class CombateCompaniaTest {
 
     private static void comprobar(boolean condicion, String mensaje) {
         if (!condicion) throw new AssertionError(mensaje);
+    }
+
+    private static class VistaAutomatica implements VistaCombate {
+        public void mostrarInicio(boolean emboscada, List<Enemigo> enemigos) {}
+        public void mostrarEstado(int ronda, int luz, List<Personaje> heroes,
+                                  List<Enemigo> enemigos, Personaje actor) {}
+        public int elegirAccion(Personaje heroe, List<Habilidad> habilidades) { return 1; }
+        public Personaje elegirAliado(List<Personaje> aliados) { return aliados.get(0); }
+        public Enemigo elegirEnemigo(List<Enemigo> alcanzables, List<Enemigo> formacion) {
+            return alcanzables.get(0);
+        }
+        public boolean usarInventario(Inventario inventario, Personaje personaje, FuenteLuz luz) { return false; }
+        public void pausa() {}
     }
 }

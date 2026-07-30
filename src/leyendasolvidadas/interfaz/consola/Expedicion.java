@@ -21,7 +21,7 @@ import java.util.Map;
  * Una expedicion a un paraje maldito: mapa procedural de habitaciones,
  * gestion de la antorcha (luz) y bucle de exploracion.
  */
-public class Expedicion implements FuenteLuz {
+public class Expedicion implements ContextoCombate {
 
     /** Resultado de la expedicion. */
     public enum Resultado { EXITO, ABANDONO, MUERTE }
@@ -388,7 +388,7 @@ public class Expedicion implements FuenteLuz {
     public GestorMisiones getGestor() { return gestor; }
 
     private Combate nuevoCombate(List<Enemigo> enemigos) {
-        return new Combate(heroes, enemigos, this, gestor, inventario);
+        return new Combate(heroes, enemigos, this, gestor, inventario, new VistaCombateConsola());
     }
 
     private Personaje elegirHeroeVivo(String titulo) {

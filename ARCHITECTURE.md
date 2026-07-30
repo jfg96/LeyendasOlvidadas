@@ -32,6 +32,9 @@ interfaz decide cómo representarlos.
 - `EstadoJuego`: estado persistente de la campaña.
 - `ServicioCompania`: contratar, despedir y preparar la formación.
 - `ServicioAldea`: curación, calma, compra, venta y forja.
+- `Combate`: motor completo de iniciativa, acciones, IA y recompensas.
+- `VistaCombate`: puerto de decisiones y representación; permite ejecutar el
+  mismo motor desde consola, JavaFX o una prueba automática.
 - `RepositorioPartidas`: puerto de almacenamiento.
 - `ResultadoAccion`: respuesta neutral de un caso de uso.
 
@@ -47,7 +50,8 @@ clase no altera automáticamente los archivos guardados.
 ## Interfaz de consola
 
 Contiene el arranque, la representación ANSI y los controladores interactivos de
-aldea, expedición, eventos, inventario y combate. Esta es una adaptación del
+aldea, expedición, eventos e inventario. `VistaCombateConsola` adapta el motor
+de aplicación a la terminal. Esta es una adaptación del
 juego a terminal, no una dependencia del dominio.
 
 Una futura interfaz JavaFX deberá:
@@ -55,8 +59,8 @@ Una futura interfaz JavaFX deberá:
 1. Conectar un receptor propio a `BusEventos`.
 2. Consumir `EstadoJuego` y los servicios de aplicación.
 3. Implementar o reutilizar un adaptador para `RepositorioPartidas`.
-4. Representar las decisiones de expedición y combate sin introducir JavaFX en
-   los paquetes internos.
+4. Implementar `VistaCombate` para representar sus decisiones sin introducir
+   JavaFX en los paquetes internos.
 
 ## Comprobación automática
 

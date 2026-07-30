@@ -1,14 +1,12 @@
-package leyendasolvidadas.interfaz.consola;
+package leyendasolvidadas.aplicacion;
 
 import leyendasolvidadas.dominio.azar.*;
-import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
 import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
 import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.*;
-import leyendasolvidadas.infraestructura.*;
-import leyendasolvidadas.interfaz.consola.*;
+import leyendasolvidadas.dominio.eventos.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,18 +20,20 @@ public class Combate {
 
     private final List<Personaje> heroes;
     private final List<Enemigo> enemigos;
-    private final Expedicion exp;
+    private final ContextoCombate exp;
     private final GestorMisiones gestor;
     private final Inventario inventario;
+    private final VistaCombate vista;
     private int ronda = 1;
 
     /** Constructor de compatibilidad para encuentros de un solo heroe. */
-    public Combate(Personaje heroe, List<Enemigo> enemigos, Expedicion exp, GestorMisiones gestor) {
-        this(List.of(heroe), enemigos, exp, gestor, heroe.getInventario());
+    public Combate(Personaje heroe, List<Enemigo> enemigos, ContextoCombate exp,
+                   GestorMisiones gestor, VistaCombate vista) {
+        this(List.of(heroe), enemigos, exp, gestor, heroe.getInventario(), vista);
     }
 
-    public Combate(List<Personaje> heroes, List<Enemigo> enemigos, Expedicion exp,
-                   GestorMisiones gestor, Inventario inventario) {
+    public Combate(List<Personaje> heroes, List<Enemigo> enemigos, ContextoCombate exp,
+                   GestorMisiones gestor, Inventario inventario, VistaCombate vista) {
         if (heroes == null || heroes.isEmpty())
             throw new IllegalArgumentException("El combate necesita al menos un heroe");
         this.heroes = new ArrayList<>(heroes);
@@ -41,6 +41,7 @@ public class Combate {
         this.exp = exp;
         this.gestor = gestor;
         this.inventario = inventario;
+        this.vista = vista;
     }
 
     private int luz() { return exp != null ? exp.getLuz() : 60; }
@@ -49,19 +50,15 @@ public class Combate {
     private List<Personaje> heroesVivos() { return heroes.stream().filter(Personaje::estaVivo).toList(); }
 
     public Resultado ejecutar(boolean emboscada) {
-        UI.limpiar();
-        UI.titulo(emboscada ? "\u00a1TE EMBOSCAN EN LA PENUMBRA!" : "\u00a1COMBATE!");
-        for (Enemigo e : enemigos)
-            UI.log(UI.pintar((e.esElite() ? "\u2620 " : "\u2022 ") + e.getNombre()
-                    + " (niv " + e.getNivel() + ")", e.esElite() ? UI.MAGENTA : UI.RESET));
+        vista.mostrarInicio(emboscada, List.copyOf(enemigos));
 
         if (emboscada) {
-            UI.log(UI.pintar("\u00a1La oscuridad les da el primer golpe!", UI.ROJO));
+            BusEventos.publicar("\u00a1La oscuridad les da el primer golpe!", TipoMensaje.PELIGRO);
             for (Personaje h : heroesVivos()) h.sufrirEstres(6);
             for (Enemigo e : new ArrayList<>(enemigos)) if (e.estaVivo()) turnoEnemigo(e);
             if (heroesVivos().isEmpty()) return derrota();
         }
-        UI.pausa();
+        vista.pausa();
 
         while (!heroesVivos().isEmpty() && !enemigos.isEmpty()) {
             Map<Personaje, Integer> iniciativa = new HashMap<>();
@@ -83,7 +80,7 @@ public class Combate {
                     continue;
                 }
                 if (aturdido) {
-                    UI.log(UI.pintar(actor.getNombre() + " esta aturdido y pierde el turno.", UI.CIAN));
+                    BusEventos.publicar(actor.getNombre() + " esta aturdido y pierde el turno.", TipoMensaje.PROGRESO);
                     continue;
                 }
 
@@ -92,7 +89,7 @@ public class Combate {
                     turnoEnemigo(enemigo);
                     if (enemigo instanceof Jefe jefe && jefe.enFaseDos()
                             && enemigo.estaVivo() && !heroesVivos().isEmpty()) {
-                        UI.log(UI.pintar(jefe.getNombre() + " encadena otra accion en su frenesí.", UI.MAGENTA));
+                        BusEventos.publicar(jefe.getNombre() + " encadena otra accion en su frenesí.", TipoMensaje.HORROR);
                         turnoEnemigo(enemigo);
                     }
                 } else {
@@ -112,60 +109,50 @@ public class Combate {
         for (Habilidad h : heroe.getHabilidades()) if (h.getCooldownActual() > 0) h.reducirCooldown();
 
         if ("PARANOIA".equals(heroe.getAflixion()) && Rng.prob(20)) {
-            UI.log(UI.pintar(heroe.getNombre() + " se paraliza por la paranoia.", UI.MAGENTA));
-            UI.pausa();
+            BusEventos.publicar(heroe.getNombre() + " se paraliza por la paranoia.", TipoMensaje.HORROR);
+            vista.pausa();
             return null;
         }
         if ("DESESPERACION".equals(heroe.getAflixion()) && Rng.prob(15)) {
             heroe.recibirDanio(4, true);
             heroe.sufrirEstres(4);
-            UI.log(UI.pintar(heroe.getNombre() + " se hace dano presa de la desesperacion.", UI.MAGENTA));
-            UI.pausa();
+            BusEventos.publicar(heroe.getNombre() + " se hace dano presa de la desesperacion.", TipoMensaje.HORROR);
+            vista.pausa();
             return null;
         }
 
         while (true) {
-            render(heroe);
+            vista.mostrarEstado(ronda, luz(), List.copyOf(heroes), List.copyOf(enemigos), heroe);
             List<Habilidad> habilidades = heroe.getHabilidades();
-            for (int i = 0; i < habilidades.size(); i++) {
-                Habilidad h = habilidades.get(i);
-                String estado = h.getCooldownActual() > 0 ? " [enfriando " + h.getCooldownActual() + "]"
-                        : heroe.getRecurso() < h.getCoste() ? " [sin recurso]" : "";
-                System.out.printf("  %d. %-20s (coste %d)%s  %s%n", i + 1, h.getNombre(), h.getCoste(),
-                        UI.pintar(estado, UI.ROJO), UI.pintar(h.getDescripcion(), UI.TENUE));
-            }
-            System.out.println("  5. Mochila");
-            System.out.println("  6. Recuperar aliento");
-            System.out.println("  7. Huir del combate");
-            int op = UI.leerOpcion(1, 7);
+            int op = vista.elegirAccion(heroe, habilidades);
 
             if (op <= 4) {
                 Habilidad h = habilidades.get(op - 1);
                 if (!h.disponible(heroe)) {
-                    UI.log(UI.pintar("Aun no puedes usar esa tecnica.", UI.ROJO));
+                    BusEventos.publicar("Aun no puedes usar esa tecnica.", TipoMensaje.PELIGRO);
                     continue;
                 }
-                if (usarHabilidad(heroe, h)) { UI.pausa(); return null; }
+                if (usarHabilidad(heroe, h)) { vista.pausa(); return null; }
             } else if (op == 5) {
-                if (ControladorInventario.menuUsar(inventario, heroe, exp)) { UI.pausa(); return null; }
+                if (vista.usarInventario(inventario, heroe, exp)) { vista.pausa(); return null; }
             } else if (op == 6) {
                 heroe.setRecurso(heroe.getRecurso() + heroe.getRecursoMax() * 0.4);
                 heroe.curar(heroe.getVidaMax() * 0.10);
                 heroe.aliviarEstres(4);
-                UI.log(heroe.getNombre() + " recupera el aliento.");
-                UI.pausa();
+                BusEventos.publicar(heroe.getNombre() + " recupera el aliento.", TipoMensaje.EXITO);
+                vista.pausa();
                 return null;
             } else {
                 int prob = Math.min(90, 35 + heroesVivos().stream()
                         .mapToInt(Personaje::getVelocidad).sum() * 3);
                 if (Rng.prob(prob)) {
                     for (Personaje miembro : heroesVivos()) miembro.sufrirEstres(8);
-                    UI.log(UI.pintar("La compania escapa entre las sombras.", UI.MAGENTA));
-                    UI.pausa();
+                    BusEventos.publicar("La compania escapa entre las sombras.", TipoMensaje.HORROR);
+                    vista.pausa();
                     return Resultado.HUIDA;
                 }
-                UI.log(UI.pintar("\u00a1Les cortan la retirada!", UI.ROJO));
-                UI.pausa();
+                BusEventos.publicar("\u00a1Les cortan la retirada!", TipoMensaje.PELIGRO);
+                vista.pausa();
                 return null;
             }
         }
@@ -178,22 +165,23 @@ public class Combate {
         else if (h.getEstresPropio() > 0) heroe.sufrirEstres(h.getEstresPropio());
 
         if (h.esSobreSi()) {
-            Personaje objetivo = h.esSobreAliado() ? elegirAliado() : heroe;
+            Personaje objetivo = h.esSobreAliado() ? vista.elegirAliado(heroesVivos()) : heroe;
             if (objetivo == null) { devolverCoste(heroe, h); return false; }
             objetivo.aplicarEfecto(h.getEfecto(), h.getDuracionEfecto(), h.getPotenciaEfecto());
-            UI.log(heroe.getNombre() + " usa " + UI.pintar(h.getNombre(), UI.CIAN) + " sobre "
-                    + objetivo.getNombre() + ".");
+            BusEventos.publicar(heroe.getNombre() + " usa " + h.getNombre() + " sobre "
+                    + objetivo.getNombre() + ".", TipoMensaje.PROGRESO);
             return true;
         }
 
         List<Enemigo> objetivos = objetivosValidos(h);
         if (objetivos.isEmpty()) {
-            UI.log(UI.pintar("Ningun enemigo esta al alcance.", UI.ROJO));
+            BusEventos.publicar("Ningun enemigo esta al alcance.", TipoMensaje.PELIGRO);
             devolverCoste(heroe, h);
             return false;
         }
-        List<Enemigo> golpeados = h.esArea() ? objetivos : List.of(elegirEnemigo(objetivos));
-        UI.log(heroe.getNombre() + " usa " + UI.pintar(h.getNombre(), UI.CIAN) + ".");
+        List<Enemigo> golpeados = h.esArea() ? objetivos
+                : List.of(vista.elegirEnemigo(objetivos, List.copyOf(enemigos)));
+        BusEventos.publicar(heroe.getNombre() + " usa " + h.getNombre() + ".", TipoMensaje.PROGRESO);
         for (Enemigo e : new ArrayList<>(golpeados)) golpear(heroe, h, e);
         return true;
     }
@@ -201,25 +189,6 @@ public class Combate {
     private void devolverCoste(Personaje heroe, Habilidad h) {
         heroe.setRecurso(heroe.getRecurso() + h.getCoste());
         h.setCooldownActual(0);
-    }
-
-    private Personaje elegirAliado() {
-        List<Personaje> vivos = heroesVivos();
-        System.out.println("  \u00bfA quien ayudas?");
-        for (int i = 0; i < vivos.size(); i++)
-            System.out.println("  " + (i + 1) + ". " + vivos.get(i).getNombre());
-        return vivos.get(UI.leerOpcion(1, vivos.size()) - 1);
-    }
-
-    private Enemigo elegirEnemigo(List<Enemigo> objetivos) {
-        if (objetivos.size() == 1) return objetivos.get(0);
-        System.out.println("  \u00bfA quien golpeas?");
-        for (int i = 0; i < objetivos.size(); i++) {
-            Enemigo e = objetivos.get(i);
-            System.out.printf("  %d. [fila %d] %s (%d PV)%n", i + 1,
-                    enemigos.indexOf(e) + 1, e.getNombre(), (int) e.getVida());
-        }
-        return objetivos.get(UI.leerOpcion(1, objetivos.size()) - 1);
     }
 
     private List<Enemigo> objetivosValidos(Habilidad h) {
@@ -231,7 +200,7 @@ public class Combate {
 
     private void golpear(Personaje heroe, Habilidad h, Enemigo enemigo) {
         if (Rng.prob(enemigo.esquivaActual())) {
-            UI.log(UI.pintar(enemigo.getNombre() + " esquiva el golpe.", UI.TENUE));
+            BusEventos.publicar(enemigo.getNombre() + " esquiva el golpe.");
             return;
         }
         boolean critico = Rng.prob(heroe.criticoActual() + h.getBonusCritico());
@@ -239,8 +208,8 @@ public class Combate {
         if (critico) danio *= 1.6;
         if (h.getMultiplicador() > 0) {
             double real = enemigo.recibirDanio(danio, false);
-            UI.log((critico ? UI.pintar("\u00a1CRITICO! ", UI.AMARILLO) : "") + enemigo.getNombre()
-                    + " sufre " + (int) real + " de dano.");
+            BusEventos.publicar((critico ? "\u00a1CRITICO! " : "") + enemigo.getNombre()
+                    + " sufre " + (int) real + " de dano.", critico ? TipoMensaje.RECOMPENSA : TipoMensaje.PELIGRO);
             if (critico) heroe.aliviarEstres(3);
             if (h.getRoboVida() > 0) heroe.curar(real * h.getRoboVida());
         }
@@ -261,24 +230,24 @@ public class Combate {
 
         if (movimiento.seCura()) {
             enemigo.curar(enemigo.getVidaMax() * 0.15);
-            UI.log(enemigo.getNombre() + " usa " + movimiento.getNombre() + " y se cura.");
+            BusEventos.publicar(enemigo.getNombre() + " usa " + movimiento.getNombre() + " y se cura.", TipoMensaje.EXITO);
             return;
         }
         if (movimiento.esSobreSi()) {
             enemigo.aplicarEfecto(movimiento.getEfecto(), movimiento.getDuracionEfecto(), movimiento.getPotenciaEfecto());
-            UI.log(enemigo.getNombre() + " usa " + movimiento.getNombre() + ".");
+            BusEventos.publicar(enemigo.getNombre() + " usa " + movimiento.getNombre() + ".", TipoMensaje.PELIGRO);
             aplicarTerror(movimiento, objetivo);
             return;
         }
-        UI.log(enemigo.getNombre() + " usa " + UI.pintar(movimiento.getNombre(), UI.ROJO)
-                + " contra " + objetivo.getNombre() + ".");
+        BusEventos.publicar(enemigo.getNombre() + " usa " + movimiento.getNombre()
+                + " contra " + objetivo.getNombre() + ".", TipoMensaje.PELIGRO);
         if (movimiento.getMultiplicador() > 0 && !Rng.prob(objetivo.esquivaActual())) {
             boolean critico = Rng.prob(8 + (luz() < 15 ? 7 : 0));
             double danio = enemigo.getDanioBase() * movimiento.getMultiplicador() * enemigo.multFase()
                     * multDanioEnemigo() * enemigo.modDanioSaliente() * Rng.variacion();
             if (critico) danio *= 1.6;
             double real = objetivo.recibirDanio(danio, false);
-            UI.log(objetivo.getNombre() + " sufre " + (int) real + " de dano.");
+            BusEventos.publicar(objetivo.getNombre() + " sufre " + (int) real + " de dano.", TipoMensaje.PELIGRO);
             if (critico) objetivo.sufrirEstres(8);
             if (movimiento.getEfecto() != null && Rng.prob(movimiento.getProbabilidadEfecto()))
                 objetivo.aplicarEfecto(movimiento.getEfecto(), movimiento.getDuracionEfecto(), movimiento.getPotenciaEfecto());
@@ -290,12 +259,12 @@ public class Combate {
         if (movimiento.getEstres() <= 0) return;
         int total = movimiento.getEstres() + estresExtra();
         objetivo.sufrirEstres(total);
-        UI.log(UI.pintar(objetivo.getNombre() + " sufre +" + total + " estres.", UI.MAGENTA));
+        BusEventos.publicar(objetivo.getNombre() + " sufre +" + total + " estres.", TipoMensaje.HORROR);
     }
 
     private void procesarMuerte(Enemigo enemigo) {
         if (!enemigos.remove(enemigo)) return;
-        UI.log(UI.pintar("\u2620 " + enemigo.getNombre() + " cae abatido.", UI.VERDE));
+        BusEventos.publicar("\u2620 " + enemigo.getNombre() + " cae abatido.", TipoMensaje.EXITO);
         int oro = enemigo.getOro();
         inventario.ganarOro(oro);
         for (Personaje heroe : heroes) heroe.ganarExperiencia(enemigo.getXpRecompensa());
@@ -307,33 +276,16 @@ public class Combate {
     }
 
     private Resultado victoria() {
-        UI.log(UI.pintar("\n  \u2550\u2550\u2550\u2550\u2550\u2550 VICTORIA \u2550\u2550\u2550\u2550\u2550\u2550", UI.AMARILLO));
+        BusEventos.publicar("VICTORIA", TipoMensaje.RECOMPENSA);
         for (Personaje heroe : heroesVivos()) heroe.aliviarEstres(5);
-        UI.pausa();
+        vista.pausa();
         return Resultado.VICTORIA;
     }
 
     private Resultado derrota() {
-        UI.log(UI.pintar("\n  La compania cae derrotada. La oscuridad reclama sus nombres...", UI.ROJO));
-        UI.pausa();
+        BusEventos.publicar("La compania cae derrotada. La oscuridad reclama sus nombres...", TipoMensaje.PELIGRO);
+        vista.pausa();
         return Resultado.DERROTA;
     }
 
-    private void render(Personaje actor) {
-        UI.limpiar();
-        UI.seccion("RONDA " + ronda + "   TURNO DE " + actor.getNombre().toUpperCase());
-        System.out.println(UI.pintar("  \u2500\u2500\u2500 ENEMIGOS \u2500\u2500\u2500", UI.ROJO));
-        for (int i = 0; i < enemigos.size(); i++) {
-            Enemigo e = enemigos.get(i);
-            System.out.printf("  [%d] %-24s %s%s%n", i + 1, e.getNombre(),
-                    UI.barra("", e.getVida(), e.getVidaMax(), UI.ROJO), e.efectosTexto());
-        }
-        System.out.println(UI.pintar("\n  \u2500\u2500\u2500 COMPANIA \u2500\u2500\u2500", UI.CIAN));
-        for (int i = 0; i < heroes.size(); i++) {
-            Personaje h = heroes.get(i);
-            System.out.printf("  [%d] %-16s %s  %s%s%n", i + 1, h.getNombre(),
-                    UI.barra("Vida", h.getVida(), h.getVidaMax(), h.estaVivo() ? UI.VERDE : UI.ROJO),
-                    UI.barra("Cordura", h.getCordura(), 100, UI.MAGENTA), h.efectosTexto());
-        }
-    }
 }

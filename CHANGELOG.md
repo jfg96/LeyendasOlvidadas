@@ -11,6 +11,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 - Puerto `RepositorioPartidas` e implementación de archivo inyectada desde el
   punto de entrada; eliminados el singleton global de `Juego` y la persistencia
   estática.
+- Puerto `VistaCombate` y adaptador `VistaCombateConsola`: el motor de combate
+  completo se ejecuta ahora desde aplicación sin importar consola ni leer
+  teclado. Su prueba de integración usa una vista automática headless.
 - Eventos de dominio con intención semántica y adaptador de colores en consola.
 - Prueba arquitectónica que impide dependencias de presentación en las capas
   internas, y documentación específica en `ARCHITECTURE.md`.
