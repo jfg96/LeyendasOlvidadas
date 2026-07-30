@@ -43,5 +43,7 @@ public final class ServicioCapituloUno {
         estado.getProgresoCampana().registrarDecision("cap1.ines." + actitud.name().toLowerCase());
         estado.getProgresoCampana().registrarDecision("cap1.ines_en_valdesombra");
         estado.getProgresoCampana().avanzarA(CapituloCampana.CAMINOS_DE_ANIMAS);
+        estado.getRegistroCampana().anotar("Capítulo I: O Rei dos Aforcados cayó; Inés quedó bajo "
+                + actitud.name().toLowerCase().replace('_', ' ') + ".");
     }
 }

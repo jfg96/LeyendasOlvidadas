@@ -27,6 +27,12 @@ quebrarse.
 - **Historias personales.** Cinco mercenarios únicos pueden aparecer durante la
   campaña. Sus cadenas de misiones terminan en lealtad permanente, cicatrices,
   abandono o sacrificio y pueden abrir el desenlace más difícil.
+- **Una campaña que deja memoria.** El diario conserva expediciones y decisiones,
+  mientras el bestiario revela las criaturas ya encontradas.
+- **Combate legible.** Los enemigos anuncian su siguiente intención y permiten
+  decidir cuándo atacar, protegerse o controlar una amenaza.
+- **Valdesombra evoluciona.** Sus seis edificios pueden alcanzar nivel tres y
+  ofrecen mejoras de curación, equipo, experiencia, contratos o serenidad.
 - **Combate por turnos, filas e iniciativa.** Cada integrante actúa según su
   velocidad y cada habilidad alcanza objetivos concretos, aliados o enemigos.
 - **Nueve clases jugables.** Cada una dispone de atributos, recurso y cuatro
@@ -148,8 +154,8 @@ desde el que se haya iniciado el juego. El prólogo también crea puntos de
 guardado automáticos entre escenas. Al arrancar, el menú principal permite
 continuar esa partida o comenzar una nueva.
 
-El archivo utiliza el formato binario versionado LOSV v6, independiente de los
-nombres de las clases Java. La versión actual puede migrar partidas LOSV v1–v5;
+El archivo utiliza el formato binario versionado LOSV v7, independiente de los
+nombres de las clases Java. La versión actual puede migrar partidas LOSV v1–v6;
 las partidas experimentales creadas con la antigua serialización nativa no son
 compatibles.
 

@@ -14,7 +14,7 @@ public class ServicioCompania {
         if (candidato == null || !estado.getCandidatos().contains(candidato))
             return ResultadoAccion.error("El candidato ya no esta disponible.");
         if (compania.plantillaLlena()) return ResultadoAccion.error("La compania ya tiene seis miembros.");
-        int coste = EstadoJuego.costeContratacion(candidato);
+        int coste = costeContratacion(estado, candidato);
         if (!compania.getInventario().gastarOro(coste))
             return ResultadoAccion.error("No hay suficientes reales en la tesoreria.");
         if (!compania.contratar(candidato)) {
@@ -26,6 +26,10 @@ public class ServicioCompania {
             estado.getProgresoCampana().registrarDecision("mercenario." + candidato.getIdentidadUnica().id() + ".contratado");
         return ResultadoAccion.exito(candidato.getNombre() + " se une a la compania.");
     }
+    public int costeContratacion(EstadoJuego estado, Personaje candidato) {
+        return Math.max(20, EstadoJuego.costeContratacion(candidato)
+                - estado.getEstadoAldea().nivel(leyendasolvidadas.dominio.mundo.EdificioAldea.CUARTEL) * 5);
+    }
 
     public ResultadoAccion prepararFormacion(EstadoJuego estado, List<Personaje> miembros) {
         Personaje insumiso = miembros == null ? null : miembros.stream()
@@ -34,6 +38,8 @@ public class ServicioCompania {
         try {
             estado.getCompania().prepararFormacion(miembros);
             aplicarCohesion(estado.getCompania(), miembros);
+            int campanas = estado.getEstadoAldea().nivel(leyendasolvidadas.dominio.mundo.EdificioAldea.CAMPANARIO);
+            if (campanas > 0) miembros.forEach(p -> p.aliviarEstres(campanas * 2));
             return ResultadoAccion.exito("Formacion preparada con " + miembros.size() + " integrante(s).");
         } catch (IllegalArgumentException e) {
             return ResultadoAccion.error(e.getMessage());

@@ -46,5 +46,7 @@ public final class ServicioCapituloTres {
         for (EdificioAldea edificio : new EdificioAldea[]{EdificioAldea.ARCHIVO, EdificioAldea.ERMITA, EdificioAldea.HERRERIA})
             if (edificio != protegido) e.getEstadoAldea().danar(edificio);
         e.getProgresoCampana().avanzarA(CapituloCampana.LIBRO_DE_LOS_NOMBRES);
+        e.getRegistroCampana().anotar("Capítulo III: la compañía defendió " + defensa.name().toLowerCase()
+                + " y selló una alianza con " + alianza.name().toLowerCase().replace('_', ' ') + ".");
     }
 }

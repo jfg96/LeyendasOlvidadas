@@ -20,7 +20,7 @@ import java.util.Set;
 /** Formato binario estable y versionado, independiente de la serializacion Java. */
 public final class CodecPartida {
     public static final int MAGIC = 0x4C4F5356; // LOSV
-    public static final int VERSION = 6;
+    public static final int VERSION = 7;
 
     private CodecPartida() {}
 
@@ -39,6 +39,7 @@ public final class CodecPartida {
         escribirEstadoAldea(out, estado.getEstadoAldea());
         escribirDesarrollo(out, estado.getCompania(), estado.getCandidatos());
         escribirRelaciones(out, estado.getCompania());
+        escribirRegistro(out, estado.getRegistroCampana());
     }
 
     public static EstadoJuego leer(DataInputStream in) throws IOException {
@@ -67,6 +68,7 @@ public final class CodecPartida {
         EstadoJuego estado = new EstadoJuego();
         estado.restaurarProgreso(semana, victorias, campana, compania, ofertas, candidatos, progreso);
         estado.restaurarEstadoAldea(estadoAldea);
+        if (version >= 7) estado.restaurarRegistroCampana(leerRegistro(in));
         estado.prepararTrasCarga();
         return estado;
     }
@@ -285,6 +287,21 @@ public final class CodecPartida {
         for (int i = 0; i < plantilla.size(); i++) for (int j = i + 1; j < plantilla.size(); j++) {
             out.writeInt(i); out.writeInt(j); out.writeInt(compania.afinidad(plantilla.get(i), plantilla.get(j)));
         }
+    }
+
+    private static void escribirRegistro(DataOutputStream out, RegistroCampana registro) throws IOException {
+        out.writeInt(registro.getDiario().size());
+        for (String entrada : registro.getDiario()) out.writeUTF(entrada);
+        out.writeInt(registro.getCriaturas().size());
+        for (String criatura : registro.getCriaturas()) out.writeUTF(criatura);
+    }
+
+    private static RegistroCampana leerRegistro(DataInputStream in) throws IOException {
+        int totalEntradas = leerCantidad(in, 200); List<String> entradas = new ArrayList<>();
+        for (int i = 0; i < totalEntradas; i++) entradas.add(in.readUTF());
+        int totalCriaturas = leerCantidad(in, 128); Set<String> criaturas = new LinkedHashSet<>();
+        for (int i = 0; i < totalCriaturas; i++) criaturas.add(in.readUTF());
+        return RegistroCampana.restaurar(entradas, criaturas);
     }
 
     private static void leerRelaciones(DataInputStream in, Compania compania) throws IOException {

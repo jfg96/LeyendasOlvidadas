@@ -57,10 +57,12 @@ public class Aldea {
             System.out.println("  5. Mochila y equipo");
             System.out.println("  6. Gestionar compania " + UI.pintar("(contratar y formar grupo)", UI.TENUE));
             System.out.println("  7. Estado y reparaciones de Valdesombra");
-            System.out.println("  8. Guardar partida");
-            System.out.println("  9. Cargar partida");
-            System.out.println("  10. Guardar y salir del juego");
-            switch (UI.leerOpcion(1, 10)) {
+            System.out.println("  8. Diario de campaña");
+            System.out.println("  9. Bestiario");
+            System.out.println("  10. Guardar partida");
+            System.out.println("  11. Cargar partida");
+            System.out.println("  12. Guardar y salir del juego");
+            switch (UI.leerOpcion(1, 12)) {
                 case 1: {
                     Expedicion e = tablon();
                     if (e != null) return e;
@@ -76,22 +78,60 @@ public class Aldea {
                 case 5: gestionarEquipo(); break;
                 case 6: gestionarCompania(); break;
                 case 7: repararAldea(); break;
-                case 8: repositorioPartidas.guardar(estado); UI.pausa(); break;
-                case 9: cargarPartida(); break;
-                case 10: repositorioPartidas.guardar(estado); return null;
+                case 8: mostrarDiario(); break;
+                case 9: mostrarBestiario(); break;
+                case 10: repositorioPartidas.guardar(estado); UI.pausa(); break;
+                case 11: cargarPartida(); break;
+                case 12: repositorioPartidas.guardar(estado); return null;
             }
         }
     }
 
     private void repararAldea() {
-        List<EdificioAldea> danados = estado.getEstadoAldea().getNiveles().keySet().stream()
-                .filter(estado.getEstadoAldea()::estaDanado).toList();
         UI.seccion("VALDESOMBRA");
-        if (danados.isEmpty()) { UI.log("Todos los edificios permanecen en pie."); UI.pausa(); return; }
-        for (int i=0;i<danados.size();i++) UI.log((i+1)+". "+danados.get(i).getNombre()+" — "
-                +(80+estado.getEstadoAldea().nivel(danados.get(i))*20)+" reales");
-        System.out.println("  0. Volver"); int op=UI.leerOpcion(0,danados.size());
-        if(op>0) mostrarResultado(servicioAldea.reparar(estado,danados.get(op-1))); UI.pausa();
+        EdificioAldea[] edificios = EdificioAldea.values();
+        for (int i = 0; i < edificios.length; i++) {
+            EdificioAldea e = edificios[i];
+            String accion = estado.getEstadoAldea().estaDanado(e) ? "REPARAR"
+                    : estado.getEstadoAldea().nivel(e) < 3 ? "mejorar por " + servicioAldea.costeMejora(estado, e) : "máximo";
+            UI.log((i + 1) + ". " + e.getNombre() + " · nivel " + estado.getEstadoAldea().nivel(e) + " · " + accion);
+            UI.log(UI.pintar("   " + efectoEdificio(e), UI.TENUE));
+        }
+        System.out.println("  0. Volver"); int op = UI.leerOpcion(0, edificios.length);
+        if (op > 0) {
+            EdificioAldea e = edificios[op - 1];
+            mostrarResultado(estado.getEstadoAldea().estaDanado(e) ? servicioAldea.reparar(estado, e)
+                    : servicioAldea.mejorar(estado, e));
+        }
+        UI.pausa();
+    }
+
+    private String efectoEdificio(EdificioAldea e) {
+        return switch (e) {
+            case ERMITA -> "Reduce el coste de curar cuerpo y secuelas.";
+            case HERRERIA -> "Mejora la calidad semanal y abarata la forja.";
+            case TABERNA -> "El vino cuesta menos y alivia más estrés.";
+            case ARCHIVO -> "Aumenta la experiencia obtenida en expediciones.";
+            case CUARTEL -> "Reduce el coste de contratar mercenarios.";
+            case CAMPANARIO -> "La formación parte con mayor serenidad.";
+        };
+    }
+
+    private void mostrarDiario() {
+        UI.seccion("DIARIO DE CAMPAÑA");
+        List<String> entradas = estado.getRegistroCampana().getDiario();
+        if (entradas.isEmpty()) UI.log("La crónica aún espera su primera línea.");
+        else entradas.forEach(e -> UI.log("• " + e));
+        UI.pausa();
+    }
+
+    private void mostrarBestiario() {
+        UI.seccion("BESTIARIO DE VALDESOMBRA");
+        if (estado.getRegistroCampana().getCriaturas().isEmpty()) UI.log("Todavía no habéis estudiado criatura alguna.");
+        else for (String criatura : estado.getRegistroCampana().getCriaturas()) {
+            UI.log(UI.pintar(criatura, UI.AMARILLO)); UI.log("   " + Bestiario.descripcion(criatura));
+        }
+        UI.pausa();
     }
 
     private void gestionarEquipo() {
@@ -160,7 +200,7 @@ public class Aldea {
             Personaje p = candidatos.get(i);
             UI.log((i + 1) + ". " + p.getNombre() + " — " + p.getClass().getSimpleName()
                     + " niv " + p.getNivel() + "  "
-                    + UI.pintar(EstadoJuego.costeContratacion(p) + " reales", UI.AMARILLO));
+                    + UI.pintar(servicioCompania.costeContratacion(estado, p) + " reales", UI.AMARILLO));
             if (p.getTrasfondo() != null)
                 UI.log(UI.pintar("   " + p.getTrasfondo().origen() + " · " + p.getTrasfondo().rasgo(), UI.TENUE));
         }
@@ -170,7 +210,7 @@ public class Aldea {
         Personaje candidato = candidatos.get(op - 1);
         mostrarTrasfondo(candidato);
         if (!UI.confirmar("¿Contratar a " + candidato.getNombre() + " por "
-                + EstadoJuego.costeContratacion(candidato) + " reales?")) return;
+                + servicioCompania.costeContratacion(estado, candidato) + " reales?")) return;
         mostrarResultado(servicioCompania.contratar(estado, candidato));
         UI.pausa();
     }
@@ -331,7 +371,7 @@ public class Aldea {
         Mision elegida = op > 3 ? especiales.get(op - 4) : ofertas[op - 1];
         if (!UI.confirmar("¿Partir hacia '" + elegida.getNombre() + "'?")) return null;
         return new Expedicion(estado.getCompania(), elegida, elegida.getDificultad(),
-                estado.getExpedicionesGanadas());
+                estado.getExpedicionesGanadas(), estado.getRegistroCampana());
     }
 
     // ---------------------------------------------------------------- ermita
@@ -339,11 +379,11 @@ public class Aldea {
         UI.limpiar();
         UI.seccion("LA ERMITA DEL SANTO OLVIDADO");
         UI.log("La ermitaña te recibe con un gesto sereno.");
-        int costeCura = 15 + h.getNivel() * 5;
+        int costeCura = servicioAldea.costeSanar(estado, h);
         int costeCalma = 25;
         System.out.println("  1. Sanar las heridas por completo (" + costeCura + " reales)");
         System.out.println("  2. Confesion y rezo: -35 estres (" + costeCalma + " reales)");
-        if (!h.getHeridas().isEmpty()) System.out.println("  3. Tratar una secuela (" + (35 + h.getNivel() * 10) + " reales)");
+        if (!h.getHeridas().isEmpty()) System.out.println("  3. Tratar una secuela (" + servicioAldea.costeTratar(estado, h) + " reales)");
         System.out.println("  0. Salir");
         switch (UI.leerOpcion(0, h.getHeridas().isEmpty() ? 2 : 3)) {
             case 1:
@@ -367,13 +407,16 @@ public class Aldea {
     private void taberna(Personaje h) {
         UI.limpiar();
         UI.seccion("TABERNA \"EL CANDIL TORCIDO\"");
-        System.out.println("  1. Un vaso de vino: -15 estres (10 reales)");
+        int nivelTaberna = estado.getEstadoAldea().nivel(EdificioAldea.TABERNA);
+        int alivioTaberna = 12 + nivelTaberna * 5;
+        int costeTaberna = Math.max(4, 12 - nivelTaberna * 2);
+        System.out.println("  1. Un vaso de vino: -" + alivioTaberna + " estres (" + costeTaberna + " reales)");
         System.out.println("  2. Escuchar rumores (gratis)");
         System.out.println("  3. Jugar a los dados (apuesta lo que quieras)");
         System.out.println("  0. Salir");
         switch (UI.leerOpcion(0, 3)) {
             case 1:
-                mostrarResultado(servicioAldea.calmar(estado, h, 10, 15));
+                mostrarResultado(servicioAldea.calmar(estado, h, costeTaberna, alivioTaberna));
                 break;
             case 2: {
                 String[] rumores = {
@@ -417,7 +460,7 @@ public class Aldea {
                         UI.pintar(it.descripcion(), UI.TENUE),
                         UI.pintar(it.getValorOro() + " reales", UI.AMARILLO));
             }
-            int costeForja = h.getArma() != null ? 50 * (h.getArma().getMejoras() + 1) : 0;
+            int costeForja = servicioAldea.costeForjar(estado, h);
             System.out.println("  4. Vender objetos de la mochila (mitad de su valor)");
             if (h.getArma() != null)
                 System.out.println("  5. Forjar tu arma: +3 de danio (" + costeForja + " reales)");

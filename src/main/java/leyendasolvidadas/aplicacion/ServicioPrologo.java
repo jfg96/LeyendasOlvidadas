@@ -70,6 +70,7 @@ public final class ServicioPrologo {
         exigirPaso(estado, Paso.DESENLACE);
         estado.getProgresoCampana().registrarDecision("prologo.nina_olvidada");
         estado.getProgresoCampana().avanzarA(CapituloCampana.CAMPANAS_DE_VALDESOMBRA);
+        estado.getRegistroCampana().anotar("Prólogo: la desaparición de Lúa revela el robo de los nombres.");
     }
 
     private static void recuperarTrasDerrota(Personaje protagonista) {

@@ -9,6 +9,7 @@ import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.*;
 import leyendasolvidadas.infraestructura.*;
 import leyendasolvidadas.interfaz.consola.*;
+import leyendasolvidadas.dominio.campana.RegistroCampana;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -38,14 +39,21 @@ public class Expedicion implements ContextoCombate {
     private Habitacion actual;
     private Habitacion entrada;
     private int luz = 100;
+    private final RegistroCampana registro;
 
     public Expedicion(Compania compania, Mision mision, Dificultad dificultad, int victoriasPrevias) {
+        this(compania, mision, dificultad, victoriasPrevias, null);
+    }
+
+    public Expedicion(Compania compania, Mision mision, Dificultad dificultad, int victoriasPrevias,
+                      RegistroCampana registro) {
         this.heroes = new ArrayList<>(compania.getFormacionActiva());
         this.protagonista = compania.getProtagonista();
         this.inventario = compania.getInventario();
         this.dificultad = dificultad;
         this.victoriasPrevias = victoriasPrevias;
         this.region = mision.getRegion();
+        this.registro = registro;
         this.nivelZona = (int) Math.round(heroes.stream().mapToInt(Personaje::getNivel)
                 .average().orElse(1)) + dificultad.getNivelExtra();
         gestor.asignar(mision);
@@ -414,6 +422,7 @@ public class Expedicion implements ContextoCombate {
     public GestorMisiones getGestor() { return gestor; }
 
     private Combate nuevoCombate(List<Enemigo> enemigos) {
+        if (registro != null) for (Enemigo enemigo : enemigos) registro.descubrir(enemigo.getNombre());
         return new Combate(heroes, enemigos, this, gestor, inventario, new VistaCombateConsola());
     }
 

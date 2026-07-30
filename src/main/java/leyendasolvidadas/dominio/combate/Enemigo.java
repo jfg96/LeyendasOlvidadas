@@ -18,6 +18,7 @@ public class Enemigo extends Personaje {
     private final boolean elite;
     private final List<MovimientoEnemigo> movimientos = new ArrayList<>();
     private int filaPreferida; // 1 = vanguardia, 3 = retaguardia
+    private transient MovimientoEnemigo intencion;
 
     public Enemigo(String nombre, int nivel, boolean elite) {
         super(nombre, nivel, (30 + 18 * nivel) * (elite ? 1.5 : 1.0),
@@ -53,6 +54,12 @@ public class Enemigo extends Personaje {
             if (tirada <= 0) return m;
         }
         return usables.get(0);
+    }
+    public void prepararIntencion(int fila) { intencion = elegirMovimiento(fila); }
+    public MovimientoEnemigo getIntencion() { return intencion; }
+    public MovimientoEnemigo consumirIntencion(int fila) {
+        MovimientoEnemigo elegida = intencion != null ? intencion : elegirMovimiento(fila);
+        intencion = null; return elegida;
     }
 
     /**

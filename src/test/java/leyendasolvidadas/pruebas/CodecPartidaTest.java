@@ -51,6 +51,8 @@ public class CodecPartidaTest {
         original.getProgresoCampana().avanzarA(CapituloCampana.CAMINOS_DE_ANIMAS);
         original.getProgresoCampana().registrarDecision("peregrino.liberado");
         original.getEstadoAldea().danar(EdificioAldea.ARCHIVO);
+        original.getRegistroCampana().anotar("La compañía llegó a Valdesombra.");
+        original.getRegistroCampana().descubrir("Ahorcado Verde");
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         CodecPartida.escribir(new DataOutputStream(bytes), original);
         EstadoJuego copia = CodecPartida.leer(new DataInputStream(new ByteArrayInputStream(bytes.toByteArray())));
@@ -66,6 +68,9 @@ public class CodecPartidaTest {
                 "Debe conservar las regiones desbloqueadas");
         comprobar(copia.getEstadoAldea().estaDanado(EdificioAldea.ARCHIVO),
                 "Debe conservar los daños de Valdesombra");
+        comprobar(copia.getRegistroCampana().getDiario().size() == 1
+                        && copia.getRegistroCampana().getCriaturas().contains("Ahorcado Verde"),
+                "Debe conservar diario y bestiario");
         comprobar(copia.getCompania().getPlantilla().size() == 3, "Debe conservar la plantilla");
         comprobar("Brañas Hundidas".equals(copia.getCompania().getPlantilla().get(1).getTrasfondo().origen()),
                 "Debe conservar la identidad narrativa de los mercenarios");

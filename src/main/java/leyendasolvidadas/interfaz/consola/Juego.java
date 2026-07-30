@@ -112,10 +112,14 @@ public class Juego {
             case EXITO: {
                 UI.titulo("REGRESO TRIUNFAL");
                 estado.registrarVictoria();
+                estado.getRegistroCampana().anotar("Semana " + estado.getSemana() + ": victoria en «"
+                        + mision.getNombre() + "» (" + (mision.getRegion() == null ? "paraje desconocido" : mision.getRegion().getNombre()) + ").");
                 new ServicioCompania().registrarConvivencia(compania, ServicioCompania.ResultadoExpedicion.VICTORIA);
                 compania.getInventario().ganarOro(mision.getOroRecompensa());
                 UI.log(UI.pintar("Cobras el encargo: +" + mision.getOroRecompensa() + " reales.", UI.AMARILLO));
-                for (Personaje heroe : grupo) heroe.ganarExperiencia(mision.getXpRecompensa());
+                int xp = (int)Math.round(mision.getXpRecompensa()
+                        * (1 + estado.getEstadoAldea().nivel(EdificioAldea.ARCHIVO) * 0.05));
+                for (Personaje heroe : grupo) heroe.ganarExperiencia(xp);
                 if (mision.getItemRecompensa() != null) {
                     UI.log("Te entregan ademas " + UI.item(mision.getItemRecompensa()) + ".");
                     compania.getInventario().anadir(mision.getItemRecompensa());
@@ -165,11 +169,13 @@ public class Juego {
                 break;
             }
             case ABANDONO:
+                estado.getRegistroCampana().anotar("Semana " + estado.getSemana() + ": la compañía abandonó «" + mision.getNombre() + "».");
                 new ServicioCompania().registrarConvivencia(compania, ServicioCompania.ResultadoExpedicion.ABANDONO);
                 UI.titulo("RETIRADA");
                 UI.log("Vuelves con las manos casi vacias y la mirada baja. Habra otra semana.");
                 break;
             case MUERTE: {
+                estado.getRegistroCampana().anotar("Semana " + estado.getSemana() + ": derrota y nuevas secuelas en «" + mision.getNombre() + "».");
                 new ServicioCompania().registrarConvivencia(compania, ServicioCompania.ResultadoExpedicion.DERROTA);
                 UI.titulo("TE ARRASTRAN DE VUELTA");
                 int perdido = compania.getInventario().getOro() / 2;

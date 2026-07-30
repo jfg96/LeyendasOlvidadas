@@ -17,6 +17,18 @@ public final class Bestiario {
 
     private static int[] F(int... f) { return f; }
 
+    public static String descripcion(String nombre) {
+        if (nombre.contains("Ahorcado")) return "Un muerto sostenido por raíces y rencor; debilita antes de cerrar la soga.";
+        if (nombre.contains("Lavandeira")) return "Lava sudarios de quienes todavía viven y contamina cuerpo y memoria.";
+        if (nombre.contains("Campanero")) return "Una figura sin rostro cuyo toque aturde y descompone la voluntad.";
+        if (nombre.contains("Lobisome") || nombre.contains("Lobo")) return "Cazador veloz que abre heridas y persigue a quien sangra.";
+        if (nombre.contains("Compa") || nombre.contains("Cirio") || nombre.contains("Penitente"))
+            return "Integrante de la procesión: mezcla daño, terror y marcas de condena.";
+        if (nombre.contains("Meiga")) return "Bruja de retaguardia experta en fuego fatuo y debilitación.";
+        if (nombre.contains("Cuelebre")) return "Bestia acorazada cuyo fuego castiga a toda formación descuidada.";
+        return "Criatura de la niebla. Sus intenciones revelan la mejor forma de responder.";
+    }
+
     // ---------- Criaturas comunes ----------
     private static Enemigo duende(int niv) {
         Enemigo e = new Enemigo("Duende Burlon", niv, false);

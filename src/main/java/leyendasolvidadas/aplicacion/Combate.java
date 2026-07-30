@@ -61,6 +61,7 @@ public class Combate {
         vista.pausa();
 
         while (!heroesVivos().isEmpty() && !enemigos.isEmpty()) {
+            for (int i = 0; i < enemigos.size(); i++) enemigos.get(i).prepararIntencion(i + 1);
             Map<Personaje, Integer> iniciativa = new HashMap<>();
             List<Personaje> orden = new ArrayList<>(heroesVivos());
             orden.addAll(enemigos.stream().filter(Personaje::estaVivo).toList());
@@ -225,7 +226,7 @@ public class Combate {
         List<Personaje> vivos = heroesVivos();
         if (vivos.isEmpty()) return;
         int fila = enemigos.indexOf(enemigo) + 1;
-        MovimientoEnemigo movimiento = enemigo.elegirMovimiento(fila);
+        MovimientoEnemigo movimiento = enemigo.consumirIntencion(fila);
         Personaje objetivo = Rng.elegir(vivos);
 
         if (movimiento.seCura()) {

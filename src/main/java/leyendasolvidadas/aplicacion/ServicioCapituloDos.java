@@ -50,5 +50,7 @@ public final class ServicioCapituloDos {
         estado.getProgresoCampana().registrarDecision("cap2.verdad." + verdad.name().toLowerCase());
         estado.getProgresoCampana().registrarDecision("cap2.matanza_revelada");
         estado.getProgresoCampana().avanzarA(CapituloCampana.DEUDA_DE_LOS_VIVOS);
+        estado.getRegistroCampana().anotar("Capítulo II: la verdad sobre los peregrinos se resolvió mediante "
+                + verdad.name().toLowerCase() + ".");
     }
 }

@@ -6,6 +6,17 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Diario persistente de campaña con resultados de expediciones, cierres de
+  capítulo, decisiones centrales, historias personales y epílogo alcanzado.
+- Bestiario desbloqueable al encontrar criaturas, con descripciones tácticas y
+  acceso directo desde Valdesombra.
+- Intenciones enemigas visibles antes de actuar, permitiendo responder a golpes,
+  control, terror y efectos en lugar de combatir a ciegas.
+- Mejoras financiables hasta nivel tres para los seis edificios: descuentos de
+  curación, mejor forja, taberna eficiente, bonificación de experiencia,
+  contratos más baratos y serenidad al formar la compañía.
+- Prueba automatizada de campaña completa desde el prólogo hasta el epílogo,
+  junto con pruebas de economía de edificios e intenciones enemigas.
 - Cinco mercenarios únicos reclutables y no repetibles: El Retornado, Sor Erea,
   Xoán das Navallas, A Filla do Lobo y Martiño el Tuerto, cada uno con clase,
   identidad, personalidad mecánica y momento propio de aparición.
@@ -170,6 +181,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- Guardado actualizado a **LOSV v7** para conservar diario y bestiario,
+  manteniendo migración automática desde LOSV v1–v6.
 - Guardado actualizado a **LOSV v6** para conservar la identidad estable de los
   mercenarios únicos, manteniendo migración automática desde LOSV v1–v5.
 - Guardado actualizado a **LOSV v5** para conservar rasgos, defectos, lealtad,

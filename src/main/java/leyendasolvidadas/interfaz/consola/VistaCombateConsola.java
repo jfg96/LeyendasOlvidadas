@@ -26,6 +26,8 @@ public class VistaCombateConsola implements VistaCombate {
             Enemigo enemigo = enemigos.get(i);
             System.out.printf("  [%d] %-24s %s%s%n", i + 1, enemigo.getNombre(),
                     UI.barra("", enemigo.getVida(), enemigo.getVidaMax(), UI.ROJO), enemigo.efectosTexto());
+            if (enemigo.getIntencion() != null)
+                UI.log(UI.pintar("      Intención: " + enemigo.getIntencion().getNombre(), UI.AMARILLO));
         }
         System.out.println(UI.pintar("\n  ─── COMPANIA ───", UI.CIAN));
         for (int i = 0; i < heroes.size(); i++) {

@@ -58,6 +58,8 @@ public final class ServicioMisionesPersonales {
         }
         estado.getProgresoCampana().registrarDecision(id(unico, "desenlace." + desenlace.name().toLowerCase()));
         estado.getProgresoCampana().registrarDecision(id(unico, "resuelta"));
+        estado.getRegistroCampana().anotar("Historia personal de " + unico.getNombre() + ": "
+                + desenlace.name().toLowerCase().replace('_', ' ') + ".");
         return ResultadoAccion.exito(unico.getNombre() + " cierra su historia: "
                 + desenlace.name().toLowerCase().replace('_', ' ') + ".");
     }

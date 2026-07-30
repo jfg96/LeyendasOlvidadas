@@ -54,6 +54,8 @@ public final class ServicioCapituloCinco {
             estado.getProgresoCampana().registrarDecision("cap5.nuevo_guia." + nuevoGuia.name().toLowerCase());
         estado.setCampanaGanada(true);
         estado.getProgresoCampana().avanzarA(CapituloCampana.EPILOGO);
+        estado.getRegistroCampana().anotar("Epílogo alcanzado: "
+                + finalCampana.name().toLowerCase().replace('_', ' ') + ".");
     }
 
     private boolean puedePerdonarDeuda(EstadoJuego estado) {

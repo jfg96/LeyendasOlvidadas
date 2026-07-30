@@ -49,6 +49,8 @@ public final class ServicioCapituloCuatro {
         estado.getProgresoCampana().registrarDecision("cap4.preparacion." + preparacion.name().toLowerCase());
         estado.getProgresoCampana().registrarDecision("cap4.ciento_doce_nombres_devuelto");
         estado.getProgresoCampana().avanzarA(CapituloCampana.ULTIMA_PROCESION);
+        estado.getRegistroCampana().anotar("Capítulo IV: el nombre 113 fue reconocido como "
+                + nombre.name().toLowerCase().replace('_', ' ') + ".");
     }
 
     private int numeroFragmentos(EstadoJuego estado) {

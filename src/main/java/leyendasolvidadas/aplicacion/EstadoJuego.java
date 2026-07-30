@@ -24,6 +24,7 @@ public class EstadoJuego {
     private List<Personaje> candidatos = new ArrayList<>();
     private ProgresoCampana progresoCampana = new ProgresoCampana();
     private EstadoAldea estadoAldea = new EstadoAldea();
+    private RegistroCampana registroCampana = new RegistroCampana();
 
     public Compania getCompania() {
         if (compania == null && jugador != null) {
@@ -59,13 +60,19 @@ public class EstadoJuego {
         return estadoAldea;
     }
     public void restaurarEstadoAldea(EstadoAldea estadoAldea) { this.estadoAldea = estadoAldea; }
+    public RegistroCampana getRegistroCampana() {
+        if (registroCampana == null) registroCampana = new RegistroCampana();
+        return registroCampana;
+    }
+    public void restaurarRegistroCampana(RegistroCampana registro) { this.registroCampana = registro; }
 
     /** Renueva el genero de la herreria (se llama cada semana). */
     public void renovarHerreria() {
         ofertasHerreria.clear();
         int niv = getCompania().nivelMedio();
-        ofertasHerreria.add(Arma.aleatoria(niv, 5));
-        ofertasHerreria.add(Armadura.aleatoria(niv, 5));
+        int calidad = 5 + getEstadoAldea().nivel(EdificioAldea.HERRERIA) * 5;
+        ofertasHerreria.add(Arma.aleatoria(niv, calidad));
+        ofertasHerreria.add(Armadura.aleatoria(niv, calidad));
         ofertasHerreria.add(Rng.prob(50) ? Amuleto.aleatorio(5)
                 : (Rng.prob(50) ? Pocion.vida() : Pocion.antorcha()));
     }
