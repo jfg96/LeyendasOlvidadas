@@ -63,13 +63,14 @@ public class Combate {
                 if (actor instanceof Enemigo enemigo && !enemigos.contains(enemigo)) continue;
                 if (!(actor instanceof Enemigo) && !heroes.contains(actor)) continue;
 
+                boolean aturdido = actor.tieneEfecto(TipoEfecto.ATURDIDO);
                 actor.tickEfectos();
                 if (!actor.estaVivo()) {
                     if (actor instanceof Enemigo enemigo) procesarMuerte(enemigo);
                     if (heroesVivos().isEmpty()) return derrota();
                     continue;
                 }
-                if (actor.tieneEfecto(TipoEfecto.ATURDIDO)) {
+                if (aturdido) {
                     UI.log(UI.pintar(actor.getNombre() + " esta aturdido y pierde el turno.", UI.CIAN));
                     continue;
                 }
@@ -77,6 +78,11 @@ public class Combate {
                 if (actor instanceof Enemigo enemigo) {
                     if (enemigo instanceof Jefe jefe) jefe.comprobarFase();
                     turnoEnemigo(enemigo);
+                    if (enemigo instanceof Jefe jefe && jefe.enFaseDos()
+                            && enemigo.estaVivo() && !heroesVivos().isEmpty()) {
+                        UI.log(UI.pintar(jefe.getNombre() + " encadena otra accion en su frenesí.", UI.MAGENTA));
+                        turnoEnemigo(enemigo);
+                    }
                 } else {
                     Resultado resultado = turnoHeroe(actor);
                     if (resultado != null) return resultado;

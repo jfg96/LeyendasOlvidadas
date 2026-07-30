@@ -6,6 +6,10 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Simulador Monte Carlo reproducible de equilibrio: compara tres composiciones,
+  tres niveles y tres dificultades en expediciones de cuatro encuentros, además
+  de los jefes normales y la Santa Compaña. Sus franjas automáticas detectan
+  combates triviales, injustos o excesivamente largos.
 - Modelo persistente **`Compania`**: conserva un protagonista obligatorio,
   admite una plantilla de hasta seis personajes y valida una formación activa
   de hasta tres integrantes. Incluye compatibilidad inicial con los guardados
@@ -36,6 +40,14 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- Saltos de nivel de Veterano y Pesadilla reducidos de `+2/+4` a `+1/+2`;
+  la dificultad alta conserva grupos más numerosos en vez de depender de una
+  diferencia de nivel desproporcionada.
+- Jefes adaptados a la economía de tres acciones: 50 % más de vida y una
+  segunda acción durante la fase dos. La Santa Compaña queda un nivel por encima
+  de la zona, evitando sumar dos veces la dificultad.
+- **Alborada** del Gaitero mejorada de 8 a 12 de regeneración y enfriamiento
+  reducido de 4 a 3 turnos para que una formación de control tenga sostén real.
 - Capital inicial aumentado de 40 a 180 reales para poder contratar dos
   acompañantes y preparar la primera expedición sin vaciar la tesorería.
 - Recompensas, experiencia de misión, recuperación y penalizaciones de derrota
@@ -43,6 +55,10 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   tres criaturas para compensar la nueva economía de acciones.
 - Mochila compartida ampliada de 14 a 24 espacios; al despedir un aventurero,
   su equipo vuelve al almacén de la compañía.
+
+### Corregido
+- El efecto **Aturdido** de un turno ya impide actuar antes de expirar. Antes se
+  eliminaba al comenzar el turno y nunca llegaba a cancelar la acción.
 - Menú de creación de personaje ampliado de 3 a 9 opciones (`Juego`).
 - Renombradas las 3 clases originales por nombres de folclore ibérico:
   Guerrero → **Alabardero**, Mago → **Animero**, Pícaro → **Bandolero**

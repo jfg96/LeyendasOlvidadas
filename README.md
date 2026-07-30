@@ -153,3 +153,20 @@ directa y sin configuración adicional.
 El juego es funcional y se encuentra en desarrollo. Incluye el bucle completo
 de aldea, contratación, expedición, combate por compañías, progresión y jefe final; consulta
 [`CHANGELOG.md`](CHANGELOG.md) para ver las incorporaciones más recientes.
+
+## Pruebas y equilibrio
+
+Las pruebas no necesitan dependencias externas. Desde la raíz del proyecto:
+
+```bash
+mkdir -p out
+javac -encoding UTF-8 -d out src/*.java test/*.java
+java -cp out CompaniaTest
+java -cp out CombateCompaniaTest
+java -cp out SimuladorEquilibrio
+```
+
+El simulador ejecuta miles de expediciones reproducibles con composiciones,
+niveles, dificultades y jefes distintos. Además de presentar tasas de victoria,
+rondas y desgaste, falla si alguno de esos escenarios sale de las franjas de
+equilibrio definidas para el proyecto.

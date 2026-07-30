@@ -73,8 +73,8 @@ public final class Bestiario {
     /** Genera un grupo de 1-3 enemigos para un combate normal. */
     public static List<Enemigo> crearGrupo(int nivelZona, Dificultad dif) {
         int niv = Math.max(1, nivelZona + Rng.entre(-1, 1));
-        int cuantos = dif == Dificultad.FACIL ? 2 : dif == Dificultad.MEDIA
-                ? (Rng.prob(55) ? 3 : 2) : 3;
+        int cuantos = dif == Dificultad.FACIL ? (Rng.prob(20) ? 3 : 2) : dif == Dificultad.MEDIA
+                ? (Rng.prob(60) ? 3 : 2) : 3;
         List<Enemigo> grupo = new ArrayList<>();
         int probElite = dif == Dificultad.FACIL ? 8 : dif == Dificultad.MEDIA ? 16 : 26;
         for (int i = 0; i < cuantos; i++) {
@@ -109,7 +109,7 @@ public final class Bestiario {
 
     /** Jefes de expedicion, rotan segun las victorias acumuladas. */
     public static Jefe crearJefe(int nivelZona, int victorias) {
-        int niv = nivelZona + 2;
+        int niv = nivelZona;
         switch (victorias % 3) {
             case 0: {
                 Jefe j = new Jefe("El Ahorcado del Roble", niv, "¡La soga nunca perdona!");
@@ -136,14 +136,14 @@ public final class Bestiario {
     }
 
     /** El jefe final de la campana: La Santa Compania. */
-    public static Jefe crearJefeFinal(int nivelHeroe) {
-        Jefe j = new Jefe("La Santa Compania", nivelHeroe + 4,
+    public static Jefe crearJefeFinal(int nivelZona) {
+        Jefe j = new Jefe("La Santa Compania", nivelZona + 1,
                 "La procesion de las animas reclama tu vela...");
         j.anadirMovimiento(new MovimientoEnemigo("Cirio Apagado", 1.1, null, 0, 0, 0, 8, 3, F(1,2,3), false, false));
         j.anadirMovimiento(new MovimientoEnemigo("Letania Sepulcral", 0, null, 0, 0, 0, 14, 2, F(1,2,3), false, false));
         j.anadirMovimiento(new MovimientoEnemigo("Toque de Difuntos", 0.9, TipoEfecto.DEBILITADO, 80, 2, 0, 6, 2, F(1,2,3), false, false));
         j.anadirMovimientoFase2(new MovimientoEnemigo("Procesion de las Animas", 1.7, null, 0, 0, 0, 10, 4, F(1,2,3), false, false));
-        j.anadirMovimientoFase2(new MovimientoEnemigo("Ultima Vela", 0.8, TipoEfecto.QUEMADURA, 100, 3, 5 + nivelHeroe, 8, 2, F(1,2,3), false, false));
+        j.anadirMovimientoFase2(new MovimientoEnemigo("Ultima Vela", 0.8, TipoEfecto.QUEMADURA, 100, 3, 5 + nivelZona, 8, 2, F(1,2,3), false, false));
         return j;
     }
 }

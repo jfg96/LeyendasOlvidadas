@@ -13,7 +13,9 @@ public class Jefe extends Enemigo {
     public Jefe(String nombre, int nivel, String gritoFase2) {
         super(nombre, nivel, true);
         this.gritoFase2 = gritoFase2;
-        setVidaMaxBase(getVidaMaxBase() * 2);
+        // Un jefe combate solo contra tres heroes: necesita aguantar la
+        // economia de acciones del grupo sin limitarse a ser una esponja.
+        setVidaMaxBase(getVidaMaxBase() * 3);
         setVida(getVidaMax());
     }
     public void anadirMovimientoFase2(MovimientoEnemigo m) { movimientosFase2.add(m); }
