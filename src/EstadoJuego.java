@@ -6,14 +6,23 @@ import java.util.List;
 public class EstadoJuego implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    /** Campo conservado para poder recuperar guardados anteriores al sistema de compania. */
     private Personaje jugador;
+    private Compania compania;
     private int semana = 1;
     private int expedicionesGanadas = 0;
     private boolean campanaGanada = false;
     private List<Item> ofertasHerreria = new ArrayList<>();
 
-    public Personaje getJugador() { return jugador; }
-    public void setJugador(Personaje j) { jugador = j; }
+    public Compania getCompania() {
+        if (compania == null && jugador != null) compania = new Compania(jugador);
+        return compania;
+    }
+    public Personaje getJugador() { return getCompania().getProtagonista(); }
+    public void setJugador(Personaje j) {
+        jugador = j;
+        compania = new Compania(j);
+    }
     public int getSemana() { return semana; }
     public void avanzarSemana() { semana++; }
     public int getExpedicionesGanadas() { return expedicionesGanadas; }
@@ -25,7 +34,7 @@ public class EstadoJuego implements Serializable {
     /** Renueva el genero de la herreria (se llama cada semana). */
     public void renovarHerreria() {
         ofertasHerreria.clear();
-        int niv = jugador.getNivel();
+        int niv = getCompania().nivelMedio();
         ofertasHerreria.add(Arma.aleatoria(niv, 5));
         ofertasHerreria.add(Armadura.aleatoria(niv, 5));
         ofertasHerreria.add(Rng.prob(50) ? Amuleto.aleatorio(5)

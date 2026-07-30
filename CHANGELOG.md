@@ -6,6 +6,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Modelo persistente **`Compania`**: conserva un protagonista obligatorio,
+  admite una plantilla de hasta seis personajes y valida una formación activa
+  de hasta tres integrantes. Incluye compatibilidad inicial con los guardados
+  que todavía almacenan un único jugador.
+- Pruebas automáticas sin dependencias para las invariantes de contratación,
+  despido y formación de la compañía.
 - Opción **Cargar partida** en el menú de la aldea, con confirmación antes de
   descartar el progreso actual y mensajes específicos cuando no existe un
   guardado o no se puede recuperar.
