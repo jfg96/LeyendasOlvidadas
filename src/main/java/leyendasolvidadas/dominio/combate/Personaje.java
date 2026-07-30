@@ -33,6 +33,7 @@ public abstract class Personaje {
     private Arma arma; private Armadura armadura; private Amuleto amuleto;
     private final List<EfectoEstado> efectos = new ArrayList<>();
     private transient boolean progresionSilenciosa;
+    private TrasfondoMercenario trasfondo;
 
     public Personaje(String nombre, int nivel, double vidaMax, int defensa,
                      int esquiva, int critico, int velocidad, double recursoMax, int regenRecurso) {
@@ -75,6 +76,8 @@ public abstract class Personaje {
     public Amuleto getAmuleto() { return amuleto; }
     public void setAmuleto(Amuleto a) { amuleto = a; }
     public List<EfectoEstado> getEfectos() { return efectos; }
+    public TrasfondoMercenario getTrasfondo() { return trasfondo; }
+    public void setTrasfondo(TrasfondoMercenario trasfondo) { this.trasfondo = trasfondo; }
 
     // --- Estadisticas derivadas ---
     private int bonusAmuleto(Amuleto.Don don) {

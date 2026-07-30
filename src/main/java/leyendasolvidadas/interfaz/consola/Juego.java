@@ -50,6 +50,7 @@ public class Juego {
         }
         UI.pausa();
         new PrologoConsola(repositorioPartidas).jugar(estado);
+        new CapituloUnoConsola(repositorioPartidas).presentarSiPendiente(estado);
         bucle();
     }
 

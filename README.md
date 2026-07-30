@@ -18,6 +18,8 @@ quebrarse.
 
 - **Compañía de tres héroes.** Crea a tu protagonista, contrata aventureros en
   Valdesombra y prepara una formación con habilidades complementarias.
+- **Aventureros con identidad.** Los candidatos tienen origen, personalidad,
+  rasgos, defectos, motivaciones y una voz propia antes de ser contratados.
 - **Combate por turnos, filas e iniciativa.** Cada integrante actúa según su
   velocidad y cada habilidad alcanza objetivos concretos, aliados o enemigos.
 - **Nueve clases jugables.** Cada una dispone de atributos, recurso y cuatro
@@ -121,8 +123,8 @@ desde el que se haya iniciado el juego. El prólogo también crea puntos de
 guardado automáticos entre escenas. Al arrancar, el menú principal permite
 continuar esa partida o comenzar una nueva.
 
-El archivo utiliza el formato binario versionado LOSV v2, independiente de los
-nombres de las clases Java. La versión actual puede migrar partidas LOSV v1;
+El archivo utiliza el formato binario versionado LOSV v3, independiente de los
+nombres de las clases Java. La versión actual puede migrar partidas LOSV v1 y v2;
 las partidas experimentales creadas con la antigua serialización nativa no son
 compatibles.
 

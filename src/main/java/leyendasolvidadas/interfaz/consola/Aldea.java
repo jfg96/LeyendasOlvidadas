@@ -131,13 +131,30 @@ public class Aldea {
             UI.log((i + 1) + ". " + p.getNombre() + " — " + p.getClass().getSimpleName()
                     + " niv " + p.getNivel() + "  "
                     + UI.pintar(EstadoJuego.costeContratacion(p) + " reales", UI.AMARILLO));
+            if (p.getTrasfondo() != null)
+                UI.log(UI.pintar("   " + p.getTrasfondo().origen() + " · " + p.getTrasfondo().rasgo(), UI.TENUE));
         }
         System.out.println("  0. Volver");
         int op = UI.leerOpcion(0, candidatos.size());
         if (op == 0) return;
         Personaje candidato = candidatos.get(op - 1);
+        mostrarTrasfondo(candidato);
+        if (!UI.confirmar("¿Contratar a " + candidato.getNombre() + " por "
+                + EstadoJuego.costeContratacion(candidato) + " reales?")) return;
         mostrarResultado(servicioCompania.contratar(estado, candidato));
         UI.pausa();
+    }
+
+    private void mostrarTrasfondo(Personaje candidato) {
+        TrasfondoMercenario t = candidato.getTrasfondo();
+        if (t == null) return;
+        UI.seccion(candidato.getNombre().toUpperCase());
+        UI.log(t.descripcion());
+        UI.log("Origen: " + t.origen());
+        UI.log(UI.pintar("Rasgo: " + t.rasgo(), UI.VERDE));
+        UI.log(UI.pintar("Defecto: " + t.defecto(), UI.ROJO));
+        UI.log("Motivación: " + t.motivacion());
+        UI.log(UI.pintar("\"" + t.frase() + "\"", UI.CIAN));
     }
 
     private void prepararFormacion() {

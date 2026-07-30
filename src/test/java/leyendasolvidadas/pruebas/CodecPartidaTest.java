@@ -28,6 +28,8 @@ public class CodecPartidaTest {
         protagonista.prepararNivelInicial(3);
         protagonista.getArma().mejorar();
         Personaje meiga = FabricaHeroes.crear(4, "Iria");
+        meiga.setTrasfondo(new TrasfondoMercenario("Brañas Hundidas", "No mira su reflejo.",
+                "Temple", "Miedo al agua", "Encontrar a su hermana", "El barro también recuerda."));
         Personaje gaitero = FabricaHeroes.crear(6, "Xoan");
         Compania compania = new Compania(protagonista);
         compania.contratar(meiga);
@@ -57,6 +59,8 @@ public class CodecPartidaTest {
         comprobar(copia.getProgresoCampana().estaDesbloqueada(Region.BRANAS_HUNDIDAS),
                 "Debe conservar las regiones desbloqueadas");
         comprobar(copia.getCompania().getPlantilla().size() == 3, "Debe conservar la plantilla");
+        comprobar("Brañas Hundidas".equals(copia.getCompania().getPlantilla().get(1).getTrasfondo().origen()),
+                "Debe conservar la identidad narrativa de los mercenarios");
         comprobar(copia.getCompania().getFormacionActiva().size() == 3, "Debe conservar la formacion");
         comprobar(copia.getCompania().getInventario().getOro() == 237, "Debe conservar el oro");
         comprobar(copia.getCompania().getInventario().getItems().size() == 2, "Debe conservar objetos");

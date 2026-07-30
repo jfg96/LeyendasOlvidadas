@@ -6,6 +6,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Apertura del capítulo I con Padre Tomé, el Libro de los Nombres mutilado y
+  una primera actitud persistente: confiar, desconfiar o presionarlo.
+- Trasfondos completos para candidatos: origen, descripción, rasgo, defecto,
+  motivación y frase característica, visibles antes de confirmar un contrato.
+- Generación procedural de identidades y perfil de legado para aventureros
+  procedentes de partidas anteriores.
 - Prólogo jugable **La novena campanada**: carta del concejo, motivo personal
   para acudir a Valdesombra, funeral interrumpido, primera decisión sobre Lúa,
   encuentro tutorial en el cementerio y revelación sobre el robo de nombres.
@@ -74,6 +80,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- Guardado actualizado a **LOSV v3** para conservar la identidad narrativa de
+  plantilla y candidatos, manteniendo lectura de LOSV v1 y v2.
 - Guardado actualizado a **LOSV v2** para conservar capítulo, decisiones y
   regiones. El lector mantiene compatibilidad con LOSV v1 y marca de forma
   explícita las campañas antiguas que ya estaban completadas.

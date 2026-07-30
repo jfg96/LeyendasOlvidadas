@@ -20,7 +20,7 @@ import java.util.Set;
 /** Formato binario estable y versionado, independiente de la serializacion Java. */
 public final class CodecPartida {
     public static final int MAGIC = 0x4C4F5356; // LOSV
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
 
     private CodecPartida() {}
 
@@ -35,6 +35,7 @@ public final class CodecPartida {
         out.writeInt(estado.getCandidatos().size());
         for (Personaje candidato : estado.getCandidatos()) escribirHeroe(out, candidato);
         escribirProgresoCampana(out, estado.getProgresoCampana());
+        escribirTrasfondos(out, estado.getCompania(), estado.getCandidatos());
     }
 
     public static EstadoJuego leer(DataInputStream in) throws IOException {
@@ -52,10 +53,59 @@ public final class CodecPartida {
         for (int i = 0; i < totalCandidatos; i++) candidatos.add(leerHeroe(in));
         ProgresoCampana progreso = version >= 2
                 ? leerProgresoCampana(in) : migrarProgresoV1(campana);
+        if (version >= 3) leerTrasfondos(in, compania, candidatos);
+        else completarTrasfondosLegado(compania, candidatos);
         EstadoJuego estado = new EstadoJuego();
         estado.restaurarProgreso(semana, victorias, campana, compania, ofertas, candidatos, progreso);
         estado.prepararTrasCarga();
         return estado;
+    }
+
+    private static void escribirTrasfondos(DataOutputStream out, Compania compania,
+                                             List<Personaje> candidatos) throws IOException {
+        out.writeInt(compania.getPlantilla().size());
+        for (Personaje heroe : compania.getPlantilla()) escribirTrasfondo(out, heroe.getTrasfondo());
+        out.writeInt(candidatos.size());
+        for (Personaje candidato : candidatos) escribirTrasfondo(out, candidato.getTrasfondo());
+    }
+
+    private static void leerTrasfondos(DataInputStream in, Compania compania,
+                                        List<Personaje> candidatos) throws IOException {
+        int plantilla = leerCantidad(in, Compania.MAX_PLANTILLA);
+        if (plantilla != compania.getPlantilla().size()) throw new IOException("Plantilla de trasfondos incoherente");
+        for (Personaje heroe : compania.getPlantilla()) heroe.setTrasfondo(leerTrasfondo(in));
+        int totalCandidatos = leerCantidad(in, Compania.MAX_PLANTILLA);
+        if (totalCandidatos != candidatos.size()) throw new IOException("Candidatos de trasfondos incoherentes");
+        for (Personaje candidato : candidatos) candidato.setTrasfondo(leerTrasfondo(in));
+    }
+
+    private static void escribirTrasfondo(DataOutputStream out, TrasfondoMercenario trasfondo) throws IOException {
+        out.writeBoolean(trasfondo != null);
+        if (trasfondo == null) return;
+        out.writeUTF(trasfondo.origen());
+        out.writeUTF(trasfondo.descripcion());
+        out.writeUTF(trasfondo.rasgo());
+        out.writeUTF(trasfondo.defecto());
+        out.writeUTF(trasfondo.motivacion());
+        out.writeUTF(trasfondo.frase());
+    }
+
+    private static TrasfondoMercenario leerTrasfondo(DataInputStream in) throws IOException {
+        if (!in.readBoolean()) return null;
+        try {
+            return new TrasfondoMercenario(in.readUTF(), in.readUTF(), in.readUTF(),
+                    in.readUTF(), in.readUTF(), in.readUTF());
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Trasfondo de mercenario no valido", e);
+        }
+    }
+
+    private static void completarTrasfondosLegado(Compania compania, List<Personaje> candidatos) {
+        for (Personaje heroe : compania.getPlantilla())
+            if (!compania.esProtagonista(heroe) && heroe.getTrasfondo() == null)
+                heroe.setTrasfondo(TrasfondoMercenario.legado());
+        for (Personaje candidato : candidatos)
+            if (candidato.getTrasfondo() == null) candidato.setTrasfondo(TrasfondoMercenario.legado());
     }
 
     private static void escribirProgresoCampana(DataOutputStream out, ProgresoCampana progreso)
