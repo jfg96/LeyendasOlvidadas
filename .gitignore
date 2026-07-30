@@ -1,0 +1,19 @@
+# Compilación de Java
+*.class
+out/
+build/
+target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Configuración local de asistentes
+.claude/
+
+# Partidas y datos generados durante la ejecución
+partida.sav
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db

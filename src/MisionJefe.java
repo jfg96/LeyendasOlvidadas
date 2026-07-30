@@ -1,0 +1,20 @@
+/** Mision de jefe: dar caza a la bestia que domina el paraje. */
+public class MisionJefe extends Mision {
+    private final boolean esFinal;
+    private boolean jefeMuerto = false;
+
+    public MisionJefe(Dificultad dif, int oro, int xp, Item item, boolean esFinal) {
+        super(esFinal ? "La Ultima Procesion" : "Cabeza de la Bestia",
+              esFinal ? "Enfrentarse a la Santa Compania y romper la maldicion."
+                      : "Abatir al senor del paraje en su guarida.", dif, oro, xp, item);
+        this.esFinal = esFinal;
+    }
+    public boolean esFinal() { return esFinal; }
+    @Override public boolean requiereObjetivo() { return true; }
+    @Override public void notificarMuerte(Enemigo e) {
+        if (e instanceof Jefe) { jefeMuerto = true; completar(); }
+    }
+    @Override public String progreso() {
+        return jefeMuerto ? "La bestia ha caido" : "La guarida esta marcada (♦)";
+    }
+}
