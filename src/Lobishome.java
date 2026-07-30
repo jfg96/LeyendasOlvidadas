@@ -33,6 +33,6 @@ public class Lobishome extends Personaje {
         setVida(getVidaMax());
         setRecursoMax(getRecursoMax() + 12);
         setRecurso(getRecursoMax());
-        UI.log("La bestia gana terreno bajo tu piel. (+Vida, +Furia)");
+        logProgresion("La bestia gana terreno bajo tu piel. (+Vida, +Furia)");
     }
 }

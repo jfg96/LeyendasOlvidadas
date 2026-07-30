@@ -32,6 +32,6 @@ public class Alabardero extends Personaje {
         setDefensaBase(getDefensaBase() + 2);
         setRecursoMax(getRecursoMax() + 10);
         setRecurso(getRecursoMax());
-        UI.log("El acero pesa menos en tus manos. (+Vida, +Defensa, +Aguante)");
+        logProgresion("El acero pesa menos en tus manos. (+Vida, +Defensa, +Aguante)");
     }
 }

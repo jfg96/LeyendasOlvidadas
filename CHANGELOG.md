@@ -12,6 +12,10 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   que todavía almacenan un único jugador.
 - Pruebas automáticas sin dependencias para las invariantes de contratación,
   despido y formación de la compañía.
+- Fábrica común de héroes y generación semanal de tres candidatos de nivel
+  acorde al progreso de la compañía, con coste de contratación escalable.
+- Gestión de compañía desde la aldea: contratar, despedir y escoger los dos
+  acompañantes que formarán junto al protagonista el grupo activo.
 - Opción **Cargar partida** en el menú de la aldea, con confirmación antes de
   descartar el progreso actual y mensajes específicos cuando no existe un
   guardado o no se puede recuperar.
@@ -24,6 +28,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- Capital inicial aumentado de 40 a 180 reales para poder contratar dos
+  acompañantes y preparar la primera expedición sin vaciar la tesorería.
 - Menú de creación de personaje ampliado de 3 a 9 opciones (`Juego`).
 - Renombradas las 3 clases originales por nombres de folclore ibérico:
   Guerrero → **Alabardero**, Mago → **Animero**, Pícaro → **Bandolero**

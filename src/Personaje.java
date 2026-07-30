@@ -26,6 +26,7 @@ public abstract class Personaje implements Serializable {
     private final Inventario inventario = new Inventario();
     private Arma arma; private Armadura armadura; private Amuleto amuleto;
     private final List<EfectoEstado> efectos = new ArrayList<>();
+    private transient boolean progresionSilenciosa;
 
     public Personaje(String nombre, int nivel, double vidaMax, int defensa,
                      int esquiva, int critico, int velocidad, double recursoMax, int regenRecurso) {
@@ -201,6 +202,19 @@ public abstract class Personaje implements Serializable {
     /** Sube de nivel. Las subclases mejoran aqui sus estadisticas. */
     public void subirNivel() {
         setNivel(nivel + 1);
-        System.out.println(UI.pintar("\n  *** ¡" + nombre.toUpperCase() + " ALCANZA EL NIVEL " + nivel + "! ***", UI.AMARILLO));
+        if (!progresionSilenciosa)
+            System.out.println(UI.pintar("\n  *** ¡" + nombre.toUpperCase() + " ALCANZA EL NIVEL " + nivel + "! ***", UI.AMARILLO));
+    }
+
+    /** Escala un recluta sin mostrar mensajes de subida durante su generacion. */
+    public void prepararNivelInicial(int objetivo) {
+        progresionSilenciosa = true;
+        while (nivel < Math.min(30, objetivo)) subirNivel();
+        progresionSilenciosa = false;
+        experiencia = 0;
+    }
+
+    protected void logProgresion(String mensaje) {
+        if (!progresionSilenciosa) UI.log(mensaje);
     }
 }

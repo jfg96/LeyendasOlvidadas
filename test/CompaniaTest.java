@@ -9,6 +9,8 @@ public class CompaniaTest {
         Compania compania = new Compania(protagonista);
 
         comprobar(compania.getProtagonista() == protagonista, "Debe conservar al protagonista");
+        comprobar(compania.getInventario() == protagonista.getInventario(),
+                "El inventario fundador debe convertirse en el inventario compartido");
         comprobar(!compania.despedir(protagonista), "No debe permitir despedir al protagonista");
         comprobar(compania.contratar(meiga), "Debe permitir contratar un miembro");
         comprobar(compania.contratar(fraile), "Debe permitir contratar un segundo miembro");

@@ -33,6 +33,6 @@ public class Fraile extends Personaje {
         setDefensaBase(getDefensaBase() + 2);
         setRecursoMax(getRecursoMax() + 12);
         setRecurso(getRecursoMax());
-        UI.log("Tu fe pesa mas que el acero. (+Vida, +Defensa, +Fervor)");
+        logProgresion("Tu fe pesa mas que el acero. (+Vida, +Defensa, +Fervor)");
     }
 }

@@ -32,6 +32,6 @@ public class Meiga extends Personaje {
         setVida(getVidaMax());
         setRecursoMax(getRecursoMax() + 18);
         setRecurso(getRecursoMax());
-        UI.log("Los viejos ensalmos brotan mas hondos. (+Vida, +Fe)");
+        logProgresion("Los viejos ensalmos brotan mas hondos. (+Vida, +Fe)");
     }
 }

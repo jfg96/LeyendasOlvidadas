@@ -31,6 +31,6 @@ public class Animero extends Personaje {
         setVida(getVidaMax());
         setRecursoMax(getRecursoMax() + 20);
         setRecurso(getRecursoMax());
-        UI.log("Las animas susurran nuevos secretos. (+Mana)");
+        logProgresion("Las animas susurran nuevos secretos. (+Mana)");
     }
 }

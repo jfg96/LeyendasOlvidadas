@@ -33,6 +33,6 @@ public class Gaitero extends Personaje {
         setVida(getVidaMax());
         setRecursoMax(getRecursoMax() + 14);
         setRecurso(getRecursoMax());
-        UI.log("Tu gaita llega mas lejos que el miedo. (+Vida, +Aliento)");
+        logProgresion("Tu gaita llega mas lejos que el miedo. (+Vida, +Aliento)");
     }
 }

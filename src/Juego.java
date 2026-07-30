@@ -37,6 +37,7 @@ public class Juego {
             estado = new EstadoJuego();
             estado.setJugador(crearPersonaje());
             estado.renovarHerreria();
+            estado.renovarContratacion();
         }
         UI.pausa();
         bucle();
@@ -55,18 +56,10 @@ public class Juego {
         System.out.println("  9. " + UI.pintar("Fraile", UI.VERDE) + "     — Exorcista errante. Aturde, quema y se ampara tras la fe.");
         int clase = UI.leerOpcion(1, 9);
         String nombre = UI.leerTexto("¿Tu nombre, forastero?");
-        Personaje p = switch (clase) {
-            case 1 -> new Alabardero(nombre, new Arma("Alabarda Mellada", 6, Rareza.COMUN));
-            case 2 -> new Animero(nombre);
-            case 3 -> new Bandolero(nombre, new Arma("Daga Cachicuerna", 5, Rareza.COMUN));
-            case 4 -> new Meiga(nombre);
-            case 5 -> new Montero(nombre);
-            case 6 -> new Gaitero(nombre);
-            case 7 -> new Lobishome(nombre);
-            case 8 -> new Zahori(nombre);
-            default -> new Fraile(nombre);
-        };
-        p.getInventario().ganarOro(40);
+        Personaje p = FabricaHeroes.crear(clase, nombre);
+        // Capital suficiente para fundar una compania de tres y conservar
+        // margen para provisiones o curacion durante la primera semana.
+        p.getInventario().ganarOro(180);
         p.getInventario().anadir(Pocion.vida());
         p.getInventario().anadir(Pocion.antorcha());
         UI.log(UI.pintar("\nBienvenido a Valdesombra, " + nombre + ". Que la vela no se te apague.", UI.CIAN));
@@ -86,6 +79,7 @@ public class Juego {
             Expedicion.Resultado r = exp.explorar();
             estado.avanzarSemana();
             estado.renovarHerreria();
+            estado.renovarContratacion();
             resolverVuelta(r, mision);
             if (estado.isCampanaGanada() && mision instanceof MisionJefe && ((MisionJefe) mision).esFinal()) {
                 pantallaFinal();

@@ -32,6 +32,6 @@ public class Montero extends Personaje {
         setVida(getVidaMax());
         setRecursoMax(getRecursoMax() + 15);
         setRecurso(getRecursoMax());
-        UI.log("Tu pulso no tiembla ni en la niebla. (+Vida, +Pulso)");
+        logProgresion("Tu pulso no tiembla ni en la niebla. (+Vida, +Pulso)");
     }
 }

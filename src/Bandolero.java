@@ -32,6 +32,6 @@ public class Bandolero extends Personaje {
         setVida(getVidaMax());
         setRecursoMax(getRecursoMax() + 15);
         setRecurso(getRecursoMax());
-        UI.log("Tus pies apenas rozan el suelo. (+Vida, +Energia)");
+        logProgresion("Tus pies apenas rozan el suelo. (+Vida, +Energia)");
     }
 }

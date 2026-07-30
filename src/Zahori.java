@@ -32,6 +32,6 @@ public class Zahori extends Personaje {
         setVida(getVidaMax());
         setRecursoMax(getRecursoMax() + 18);
         setRecurso(getRecursoMax());
-        UI.log("Los presagios se revelan mas nitidos. (+Presagio)");
+        logProgresion("Los presagios se revelan mas nitidos. (+Presagio)");
     }
 }

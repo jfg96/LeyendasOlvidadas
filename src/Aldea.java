@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,10 +30,11 @@ public class Aldea {
             System.out.println("  3. Taberna " + UI.pintar("(rumores, vino y dados)", UI.TENUE));
             System.out.println("  4. Herreria " + UI.pintar("(comprar, vender, forjar)", UI.TENUE));
             System.out.println("  5. Mochila y equipo");
-            System.out.println("  6. Guardar partida");
-            System.out.println("  7. Cargar partida");
-            System.out.println("  8. Guardar y salir del juego");
-            switch (UI.leerOpcion(1, 8)) {
+            System.out.println("  6. Gestionar compania " + UI.pintar("(contratar y formar grupo)", UI.TENUE));
+            System.out.println("  7. Guardar partida");
+            System.out.println("  8. Cargar partida");
+            System.out.println("  9. Guardar y salir del juego");
+            switch (UI.leerOpcion(1, 9)) {
                 case 1: {
                     Expedicion e = tablon();
                     if (e != null) return e;
@@ -41,12 +43,133 @@ public class Aldea {
                 case 2: ermita(h); break;
                 case 3: taberna(h); break;
                 case 4: herreria(h); break;
-                case 5: h.getInventario().menuUsar(h, null); UI.pausa(); break;
-                case 6: GuardarCargar.guardar(estado); UI.pausa(); break;
-                case 7: cargarPartida(); break;
-                case 8: GuardarCargar.guardar(estado); return null;
+                case 5: gestionarEquipo(); break;
+                case 6: gestionarCompania(); break;
+                case 7: GuardarCargar.guardar(estado); UI.pausa(); break;
+                case 8: cargarPartida(); break;
+                case 9: GuardarCargar.guardar(estado); return null;
             }
         }
+    }
+
+    private void gestionarEquipo() {
+        Personaje elegido = elegirMiembro("¿Quien revisa el equipo?");
+        if (elegido != null) estado.getCompania().getInventario().menuUsar(elegido, null);
+        UI.pausa();
+    }
+
+    private void gestionarCompania() {
+        while (true) {
+            UI.limpiar();
+            mostrarCompania();
+            System.out.println("  1. Contratar aventurero");
+            System.out.println("  2. Preparar formacion activa");
+            System.out.println("  3. Despedir aventurero");
+            System.out.println("  0. Volver a la plaza");
+            switch (UI.leerOpcion(0, 3)) {
+                case 0: return;
+                case 1: contratar(); break;
+                case 2: prepararFormacion(); break;
+                case 3: despedir(); break;
+            }
+        }
+    }
+
+    private void mostrarCompania() {
+        Compania compania = estado.getCompania();
+        UI.seccion("LA COMPANIA  Plantilla " + compania.getPlantilla().size() + "/" + Compania.MAX_PLANTILLA);
+        for (int i = 0; i < compania.getPlantilla().size(); i++) {
+            Personaje p = compania.getPlantilla().get(i);
+            String marcas = compania.esProtagonista(p) ? " [PROTAGONISTA]" : "";
+            if (compania.getFormacionActiva().contains(p)) marcas += " [ACTIVO]";
+            UI.log((i + 1) + ". " + p.getNombre() + " — " + p.getClass().getSimpleName()
+                    + " niv " + p.getNivel() + UI.pintar(marcas, UI.CIAN));
+        }
+        UI.log("Tesoreria: " + UI.pintar(compania.getInventario().getOro() + " reales", UI.AMARILLO));
+    }
+
+    private void contratar() {
+        Compania compania = estado.getCompania();
+        if (compania.plantillaLlena()) {
+            UI.log(UI.pintar("La compania ya tiene seis miembros.", UI.ROJO));
+            UI.pausa();
+            return;
+        }
+        List<Personaje> candidatos = estado.getCandidatos();
+        if (candidatos.isEmpty()) {
+            UI.log(UI.pintar("No quedan aventureros disponibles esta semana.", UI.ROJO));
+            UI.pausa();
+            return;
+        }
+        UI.seccion("AVENTUREROS EN BUSCA DE COMPANIA");
+        for (int i = 0; i < candidatos.size(); i++) {
+            Personaje p = candidatos.get(i);
+            UI.log((i + 1) + ". " + p.getNombre() + " — " + p.getClass().getSimpleName()
+                    + " niv " + p.getNivel() + "  "
+                    + UI.pintar(EstadoJuego.costeContratacion(p) + " reales", UI.AMARILLO));
+        }
+        System.out.println("  0. Volver");
+        int op = UI.leerOpcion(0, candidatos.size());
+        if (op == 0) return;
+        Personaje candidato = candidatos.get(op - 1);
+        int coste = EstadoJuego.costeContratacion(candidato);
+        if (!compania.getInventario().gastarOro(coste)) {
+            UI.log(UI.pintar("No hay suficientes reales en la tesoreria.", UI.ROJO));
+        } else if (compania.contratar(candidato)) {
+            candidatos.remove(candidato);
+            UI.log(UI.pintar(candidato.getNombre() + " se une a la compania.", UI.VERDE));
+        } else {
+            compania.getInventario().ganarOro(coste);
+        }
+        UI.pausa();
+    }
+
+    private void prepararFormacion() {
+        Compania compania = estado.getCompania();
+        List<Personaje> disponibles = new ArrayList<>(compania.getPlantilla());
+        disponibles.remove(compania.getProtagonista());
+        List<Personaje> formacion = new ArrayList<>();
+        formacion.add(compania.getProtagonista());
+
+        while (formacion.size() < Compania.MAX_FORMACION && !disponibles.isEmpty()) {
+            UI.seccion("ELIGE ACOMPANANTE " + formacion.size() + " DE " + (Compania.MAX_FORMACION - 1));
+            for (int i = 0; i < disponibles.size(); i++) {
+                Personaje p = disponibles.get(i);
+                UI.log((i + 1) + ". " + p.getNombre() + " — " + p.getClass().getSimpleName()
+                        + " niv " + p.getNivel());
+            }
+            System.out.println("  0. Terminar formacion");
+            int op = UI.leerOpcion(0, disponibles.size());
+            if (op == 0) break;
+            formacion.add(disponibles.remove(op - 1));
+        }
+        compania.prepararFormacion(formacion);
+        UI.log(UI.pintar("Formacion preparada con " + formacion.size() + " integrante(s).", UI.VERDE));
+        UI.pausa();
+    }
+
+    private void despedir() {
+        Personaje elegido = elegirMiembro("¿A quien quieres despedir?");
+        if (elegido == null) return;
+        if (estado.getCompania().esProtagonista(elegido)) {
+            UI.log(UI.pintar("El protagonista no puede abandonar su propia leyenda.", UI.ROJO));
+        } else if (UI.confirmar("¿Despedir a " + elegido.getNombre() + "?")) {
+            estado.getCompania().despedir(elegido);
+            UI.log(UI.pintar(elegido.getNombre() + " abandona Valdesombra.", UI.TENUE));
+        }
+        UI.pausa();
+    }
+
+    private Personaje elegirMiembro(String titulo) {
+        List<Personaje> miembros = estado.getCompania().getPlantilla();
+        UI.seccion(titulo);
+        for (int i = 0; i < miembros.size(); i++) {
+            Personaje p = miembros.get(i);
+            UI.log((i + 1) + ". " + p.getNombre() + " — " + p.getClass().getSimpleName());
+        }
+        System.out.println("  0. Cancelar");
+        int op = UI.leerOpcion(0, miembros.size());
+        return op == 0 ? null : miembros.get(op - 1);
     }
 
     private void cargarPartida() {
