@@ -77,4 +77,24 @@ public final class FabricaHeroes {
             default -> DefectoMecanico.DESCONFIANZA;
         };
     }
+
+    public static Personaje crearUnico(MercenarioUnico unico) {
+        Personaje p = switch (unico) {
+            case EL_RETORNADO -> crear(1, unico.getNombre());
+            case SOR_EREA -> crear(6, unico.getNombre());
+            case XOAN_DAS_NAVALLAS -> crear(3, unico.getNombre());
+            case A_FILLA_DO_LOBO -> crear(7, unico.getNombre());
+            case MARTINO_EL_TUERTO -> crear(8, unico.getNombre());
+        };
+        p.setIdentidadUnica(unico);
+        p.setTrasfondo(switch (unico) {
+            case EL_RETORNADO -> new TrasfondoMercenario("Una fosa sin lápida", "No recuerda haber regresado de la última expedición.", "Instinto de supervivencia", "Sueño intranquilo", "Descubrir quién llamó a su cadáver", "He soñado este camino desde debajo de la tierra.");
+            case SOR_EREA -> new TrasfondoMercenario("Convento de Santa Comba", "Esconde bajo el hábito una campana sin badajo.", "Temple de hierro", "Desconfianza hacia la Iglesia", "Obligar a un santo a escuchar", "La fe también necesita que la despierten.");
+            case XOAN_DAS_NAVALLAS -> new TrasfondoMercenario("Los callejones de Noia", "Sonríe como quien ya ha elegido por dónde escapar.", "Manos firmes", "Codicia", "Sobrevivir a la familia que traicionó", "Perdonar es dejar al enemigo para mañana.");
+            case A_FILLA_DO_LOBO -> new TrasfondoMercenario("Los montes de Barbanza", "Los lobos bajan la cabeza cuando perciben su olor.", "Lealtad obstinada", "Miedo al agua estancada", "Conocer la sangre de su familia", "No todos los aullidos piden caza.");
+            case MARTINO_EL_TUERTO -> new TrasfondoMercenario("Una fuente bajo el Pazo", "Conserva su ojo perdido dentro de un frasco de aguardiente.", "Ojo para el peligro", "Aversión a las campanas", "Devolver a la moura lo que aún ve", "Mi ojo recuerda cosas que yo nunca viví.");
+        });
+        p.setPersonalidadMecanica(rasgoDesde(p.getTrasfondo().rasgo()), defectoDesde(p.getTrasfondo().defecto()));
+        return p;
+    }
 }

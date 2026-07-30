@@ -20,7 +20,7 @@ import java.util.Set;
 /** Formato binario estable y versionado, independiente de la serializacion Java. */
 public final class CodecPartida {
     public static final int MAGIC = 0x4C4F5356; // LOSV
-    public static final int VERSION = 5;
+    public static final int VERSION = 6;
 
     private CodecPartida() {}
 
@@ -60,7 +60,7 @@ public final class CodecPartida {
         else completarTrasfondosLegado(compania, candidatos);
         EstadoAldea estadoAldea = version >= 4 ? leerEstadoAldea(in) : new EstadoAldea();
         if (version >= 5) {
-            leerDesarrollo(in, compania, candidatos);
+            leerDesarrollo(in, compania, candidatos, version);
             leerRelaciones(in, compania);
         }
         else completarDesarrolloLegado(compania, candidatos);
@@ -255,10 +255,11 @@ public final class CodecPartida {
         escribirNullable(out, heroe.getDefectoMecanico() == null ? null : heroe.getDefectoMecanico().name());
         out.writeInt(heroe.getLealtad()); out.writeInt(heroe.getHeridas().size());
         for (HeridaPersistente herida : heroe.getHeridas()) out.writeUTF(herida.name());
+        escribirNullable(out, heroe.getIdentidadUnica() == null ? null : heroe.getIdentidadUnica().name());
     }
 
     private static void leerDesarrollo(DataInputStream in, Compania compania,
-                                        List<Personaje> candidatos) throws IOException {
+                                        List<Personaje> candidatos, int version) throws IOException {
         List<Personaje> todos = new ArrayList<>(compania.getPlantilla()); todos.addAll(candidatos);
         if (leerCantidad(in, Compania.MAX_PLANTILLA * 2) != todos.size())
             throw new IOException("Desarrollo de plantilla incoherente");
@@ -269,6 +270,10 @@ public final class CodecPartida {
                 for (int i = 0; i < totalHeridas; i++) heridas.add(HeridaPersistente.valueOf(in.readUTF()));
                 heroe.restaurarDesarrollo(rasgo == null ? null : RasgoMecanico.valueOf(rasgo),
                         defecto == null ? null : DefectoMecanico.valueOf(defecto), lealtad, heridas);
+                if (version >= 6) {
+                    String unica = leerNullable(in);
+                    heroe.setIdentidadUnica(unica == null ? null : MercenarioUnico.valueOf(unica));
+                }
             }
         } catch (IllegalArgumentException e) { throw new IOException("Desarrollo de mercenario no válido", e); }
     }

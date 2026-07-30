@@ -28,6 +28,7 @@ public class CodecPartidaTest {
         protagonista.prepararNivelInicial(3);
         protagonista.getArma().mejorar();
         Personaje meiga = FabricaHeroes.crear(4, "Iria");
+        meiga.setIdentidadUnica(MercenarioUnico.SOR_EREA);
         meiga.setTrasfondo(new TrasfondoMercenario("Brañas Hundidas", "No mira su reflejo.",
                 "Temple", "Miedo al agua", "Encontrar a su hermana", "El barro también recuerda."));
         Personaje gaitero = FabricaHeroes.crear(6, "Xoan");
@@ -76,6 +77,8 @@ public class CodecPartidaTest {
         comprobar(meigaCargada.getRasgoMecanico() == RasgoMecanico.TEMPLE_DE_HIERRO
                         && copia.getCompania().afinidad(meigaCargada, gaiteroCargado) == 41,
                 "Debe conservar personalidad mecánica y relaciones");
+        comprobar(meigaCargada.getIdentidadUnica() == MercenarioUnico.SOR_EREA,
+                "Debe conservar la identidad de los mercenarios únicos");
         comprobar(copia.getCompania().getInventario().getOro() == 237, "Debe conservar el oro");
         comprobar(copia.getCompania().getInventario().getItems().size() == 2, "Debe conservar objetos");
         Armadura armadura = (Armadura) copia.getCompania().getInventario().getItems().get(0);

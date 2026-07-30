@@ -320,6 +320,7 @@ public class Aldea {
         if (ritualNombres) especiales.add(new MisionReliquia("La vigilia de los ciento doce",
                 "Llevar el Libro reconstruido hasta el osario y devolver los nombres a sus muertos.",
                 Dificultad.DIFICIL, 420, 650, Amuleto.aleatorio(30)).enRegion(Region.CAMINO_DE_LOS_DIFUNTOS));
+        especiales.addAll(new ServicioMisionesPersonales().disponibles(estado));
         for (int i = 0; i < especiales.size(); i++)
             System.out.println(UI.pintar("  " + (i + 4) + ". ☠ " + especiales.get(i).getNombre().toUpperCase()
                     + " — " + especiales.get(i).getDescripcion(), UI.MAGENTA));

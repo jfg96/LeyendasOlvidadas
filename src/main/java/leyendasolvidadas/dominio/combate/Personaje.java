@@ -39,6 +39,7 @@ public abstract class Personaje {
     private DefectoMecanico defectoMecanico;
     private int lealtad = 50;
     private final List<HeridaPersistente> heridas = new ArrayList<>();
+    private MercenarioUnico identidadUnica;
 
     public Personaje(String nombre, int nivel, double vidaMax, int defensa,
                      int esquiva, int critico, int velocidad, double recursoMax, int regenRecurso) {
@@ -101,6 +102,8 @@ public abstract class Personaje {
         lealtad = Math.max(0, Math.min(100, lealtad + cambio));
     }
     public List<HeridaPersistente> getHeridas() { return List.copyOf(heridas); }
+    public MercenarioUnico getIdentidadUnica() { return identidadUnica; }
+    public void setIdentidadUnica(MercenarioUnico identidadUnica) { this.identidadUnica = identidadUnica; }
     public boolean sufrirHerida(HeridaPersistente herida) {
         if (herida == null || heridas.contains(herida) || heridas.size() >= 2) return false;
         heridas.add(herida); setVida(vida); return true;

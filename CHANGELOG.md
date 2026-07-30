@@ -6,6 +6,19 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Cinco mercenarios únicos reclutables y no repetibles: El Retornado, Sor Erea,
+  Xoán das Navallas, A Filla do Lobo y Martiño el Tuerto, cada uno con clase,
+  identidad, personalidad mecánica y momento propio de aparición.
+- Diez encargos personales —dos por personaje— que solo aparecen cuando su
+  protagonista forma parte de la expedición y cuya segunda etapa depende de
+  haber desbloqueado la región correspondiente.
+- Desenlaces persistentes para cada historia: lealtad permanente y nuevo rasgo,
+  aceptación de una cicatriz, abandono definitivo o sacrificio mortal.
+- Las historias personales resueltas alteran afinidad, heridas, lealtad y
+  plantilla; además, al menos dos reconciliaciones forman parte de los
+  requisitos del final difícil **La deuda perdonada**.
+- Pruebas de aparición única, cadenas de dos etapas, consecuencias y bloqueo de
+  repeticiones.
 - Rasgos mecánicos para mercenarios: temple, percepción, precisión, lealtad e
   instinto de supervivencia modifican estrés, esquiva, crítico, progresión de
   lealtad o vida máxima.
@@ -157,6 +170,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- Guardado actualizado a **LOSV v6** para conservar la identidad estable de los
+  mercenarios únicos, manteniendo migración automática desde LOSV v1–v5.
 - Guardado actualizado a **LOSV v5** para conservar rasgos, defectos, lealtad,
   heridas y relaciones, manteniendo migración automática desde LOSV v1–v4.
 - Guardado actualizado a **LOSV v4** para conservar niveles y daños de la aldea,

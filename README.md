@@ -24,6 +24,9 @@ quebrarse.
 - **Compañeros que recuerdan.** La lealtad y las relaciones cambian al vencer,
   retirarse o caer juntos; las derrotas pueden dejar secuelas persistentes que
   requieren tratamiento en Valdesombra.
+- **Historias personales.** Cinco mercenarios únicos pueden aparecer durante la
+  campaña. Sus cadenas de misiones terminan en lealtad permanente, cicatrices,
+  abandono o sacrificio y pueden abrir el desenlace más difícil.
 - **Combate por turnos, filas e iniciativa.** Cada integrante actúa según su
   velocidad y cada habilidad alcanza objetivos concretos, aliados o enemigos.
 - **Nueve clases jugables.** Cada una dispone de atributos, recurso y cuatro
@@ -145,8 +148,8 @@ desde el que se haya iniciado el juego. El prólogo también crea puntos de
 guardado automáticos entre escenas. Al arrancar, el menú principal permite
 continuar esa partida o comenzar una nueva.
 
-El archivo utiliza el formato binario versionado LOSV v5, independiente de los
-nombres de las clases Java. La versión actual puede migrar partidas LOSV v1–v4;
+El archivo utiliza el formato binario versionado LOSV v6, independiente de los
+nombres de las clases Java. La versión actual puede migrar partidas LOSV v1–v5;
 las partidas experimentales creadas con la antigua serialización nativa no son
 compatibles.
 

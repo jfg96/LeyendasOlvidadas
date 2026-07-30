@@ -74,7 +74,17 @@ public class EstadoJuego {
     public void renovarContratacion() {
         getCandidatos().clear();
         int nivelBase = Math.max(1, getCompania().nivelMedio() - 1);
-        for (int i = 0; i < 3; i++)
+        List<MercenarioUnico> disponibles = java.util.Arrays.stream(MercenarioUnico.values())
+                .filter(u -> u.getCapitulo().ordinal() <= getProgresoCampana().getCapitulo().ordinal())
+                .filter(u -> !getProgresoCampana().haDecidido("mercenario." + u.id() + ".contratado"))
+                .filter(u -> getCompania().getPlantilla().stream().noneMatch(p -> p.getIdentidadUnica() == u))
+                .toList();
+        if (!disponibles.isEmpty()) {
+            MercenarioUnico unico = disponibles.get((semana - 1) % disponibles.size());
+            Personaje candidato = FabricaHeroes.crearUnico(unico); candidato.prepararNivelInicial(nivelBase);
+            getCandidatos().add(candidato);
+        }
+        while (getCandidatos().size() < 3)
             getCandidatos().add(FabricaHeroes.candidatoAleatorio(nivelBase + (Rng.prob(25) ? 1 : 0)));
     }
 

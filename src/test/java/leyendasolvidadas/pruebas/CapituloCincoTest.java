@@ -17,6 +17,8 @@ class CapituloCincoTest {
         p.registrarDecision("cap3.alianza.aldara"); p.registrarDecision("cap4.justicia.exigir_reparacion");
         p.registrarDecision("cap4.nombre113.ines_la_desmemoriada");
         p.registrarDecision("cap4.ciento_doce_nombres_devuelto"); p.registrarDecision("cap4.preparacion.reliquias");
+        p.registrarDecision("personal.el_retornado.desenlace.lealtad_permanente");
+        p.registrarDecision("personal.sor_erea.desenlace.cargar_con_la_cicatriz");
         ServicioCapituloCinco servicio = new ServicioCapituloCinco();
         servicio.iniciarProcesion(estado, ServicioCapituloCinco.Ruta.PASADIZOS_DEL_ARCHIVO);
         assertTrue(servicio.finalesDisponibles(estado).contains(ServicioCapituloCinco.FinalCampana.DEUDA_PERDONADA));

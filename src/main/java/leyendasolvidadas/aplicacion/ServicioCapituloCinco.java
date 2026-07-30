@@ -62,7 +62,15 @@ public final class ServicioCapituloCinco {
                 && !estado.getProgresoCampana().haDecidido("cap3.alianza.don_gonzalo")
                 && estado.getProgresoCampana().haDecidido("cap4.justicia.exigir_reparacion")
                 && estado.getProgresoCampana().haDecidido("cap4.nombre113.ines_la_desmemoriada")
-                && estado.getProgresoCampana().haDecidido("cap4.ciento_doce_nombres_devuelto");
+                && estado.getProgresoCampana().haDecidido("cap4.ciento_doce_nombres_devuelto")
+                && historiasPersonalesReconciliadas(estado) >= 2;
+    }
+
+    private long historiasPersonalesReconciliadas(EstadoJuego estado) {
+        return estado.getProgresoCampana().getDecisiones().stream()
+                .filter(id -> id.startsWith("personal.")
+                        && (id.endsWith("desenlace.lealtad_permanente")
+                        || id.endsWith("desenlace.cargar_con_la_cicatriz"))).count();
     }
 
     private void registrarAliado(EstadoJuego estado) {

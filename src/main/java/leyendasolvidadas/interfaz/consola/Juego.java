@@ -142,6 +142,9 @@ public class Juego {
                 }
                 if (mision instanceof MisionJefe && ((MisionJefe) mision).esFinal())
                     new CapituloCincoConsola(repositorioPartidas).resolverFinal(estado);
+                if (mision instanceof MisionPersonal personal
+                        && new ServicioMisionesPersonales().registrarVictoria(estado, personal))
+                    new MisionesPersonalesConsola(repositorioPartidas).resolver(estado, personal.getMercenario());
                 if (mision.getNombre().equals("El rey de las sogas")) cerrarCapituloUno();
                 if (mision.getNombre().equals("Los sudarios de Aldara"))
                     new ServicioCapituloDos().registrarJefe(estado, Region.BRANAS_HUNDIDAS);

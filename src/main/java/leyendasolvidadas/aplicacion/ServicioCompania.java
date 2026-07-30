@@ -22,6 +22,8 @@ public class ServicioCompania {
             return ResultadoAccion.error("No se pudo incorporar al candidato.");
         }
         estado.getCandidatos().remove(candidato);
+        if (candidato.getIdentidadUnica() != null)
+            estado.getProgresoCampana().registrarDecision("mercenario." + candidato.getIdentidadUnica().id() + ".contratado");
         return ResultadoAccion.exito(candidato.getNombre() + " se une a la compania.");
     }
 
