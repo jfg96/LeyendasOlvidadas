@@ -79,7 +79,8 @@ public class EstadoJuego {
     }
 
     public static int costeContratacion(Personaje candidato) {
-        return 35 + candidato.getNivel() * 30;
+        int base = 35 + candidato.getNivel() * 30;
+        return candidato.getDefectoMecanico() == DefectoMecanico.CODICIA ? (int)Math.ceil(base * 1.20) : base;
     }
 
     public void restaurarProgreso(int semana, int victorias, boolean campanaGanada,

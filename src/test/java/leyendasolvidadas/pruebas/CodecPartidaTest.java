@@ -35,6 +35,10 @@ public class CodecPartidaTest {
         compania.contratar(meiga);
         compania.contratar(gaitero);
         compania.prepararFormacion(List.of(protagonista, meiga, gaitero));
+        meiga.setPersonalidadMecanica(RasgoMecanico.TEMPLE_DE_HIERRO, DefectoMecanico.MIEDO_AL_AGUA);
+        meiga.modificarLealtad(23);
+        meiga.sufrirHerida(HeridaPersistente.RODILLA_DANADA);
+        compania.restaurarAfinidad(meiga, gaitero, 41);
         compania.getInventario().ganarOro(237);
         compania.getInventario().anadir(new Armadura("Coraza", 7, 22, Rareza.EPICA));
         compania.getInventario().anadir(new Amuleto("Higa", Amuleto.Don.TEMPLE, 13, Rareza.RARA));
@@ -65,6 +69,13 @@ public class CodecPartidaTest {
         comprobar("Brañas Hundidas".equals(copia.getCompania().getPlantilla().get(1).getTrasfondo().origen()),
                 "Debe conservar la identidad narrativa de los mercenarios");
         comprobar(copia.getCompania().getFormacionActiva().size() == 3, "Debe conservar la formacion");
+        Personaje meigaCargada = copia.getCompania().getPlantilla().get(1);
+        Personaje gaiteroCargado = copia.getCompania().getPlantilla().get(2);
+        comprobar(meigaCargada.getLealtad() == 73 && meigaCargada.getHeridas().contains(HeridaPersistente.RODILLA_DANADA),
+                "Debe conservar lealtad y heridas persistentes");
+        comprobar(meigaCargada.getRasgoMecanico() == RasgoMecanico.TEMPLE_DE_HIERRO
+                        && copia.getCompania().afinidad(meigaCargada, gaiteroCargado) == 41,
+                "Debe conservar personalidad mecánica y relaciones");
         comprobar(copia.getCompania().getInventario().getOro() == 237, "Debe conservar el oro");
         comprobar(copia.getCompania().getInventario().getItems().size() == 2, "Debe conservar objetos");
         Armadura armadura = (Armadura) copia.getCompania().getInventario().getItems().get(0);

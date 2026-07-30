@@ -4,6 +4,7 @@ import leyendasolvidadas.dominio.azar.*;
 import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
 import leyendasolvidadas.dominio.eventos.*;
+import leyendasolvidadas.dominio.mundo.Region;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,6 +35,10 @@ public abstract class Personaje {
     private final List<EfectoEstado> efectos = new ArrayList<>();
     private transient boolean progresionSilenciosa;
     private TrasfondoMercenario trasfondo;
+    private RasgoMecanico rasgoMecanico;
+    private DefectoMecanico defectoMecanico;
+    private int lealtad = 50;
+    private final List<HeridaPersistente> heridas = new ArrayList<>();
 
     public Personaje(String nombre, int nivel, double vidaMax, int defensa,
                      int esquiva, int critico, int velocidad, double recursoMax, int regenRecurso) {
@@ -53,7 +58,12 @@ public abstract class Personaje {
     public void setNivel(int n) { nivel = Math.max(1, Math.min(30, n)); }
     public double getVida() { return vida; }
     public void setVida(double v) { vida = Math.max(0, Math.min(getVidaMax(), v)); }
-    public double getVidaMax() { return vidaMax + (armadura != null ? armadura.getVidaExtra() : 0); }
+    public double getVidaMax() {
+        double total = vidaMax + (armadura != null ? armadura.getVidaExtra() : 0);
+        if (rasgoMecanico == RasgoMecanico.INSTINTO_DE_SUPERVIVENCIA) total *= 1.10;
+        if (heridas.contains(HeridaPersistente.CICATRIZ_PROFUNDA)) total *= 0.90;
+        return total;
+    }
     public void setVidaMaxBase(double v) { vidaMax = Math.max(1, Math.min(10000, v)); }
     public double getVidaMaxBase() { return vidaMax; }
     public int getDefensa() { return defensa + (armadura != null ? armadura.getDefensa() : 0); }
@@ -64,7 +74,7 @@ public abstract class Personaje {
     public double getRecursoMax() { return recursoMax; }
     public void setRecursoMax(double r) { recursoMax = Math.max(0, r); }
     public int getRegenRecurso() { return regenRecurso; }
-    public int getVelocidad() { return velocidad; }
+    public int getVelocidad() { return Math.max(1, velocidad - (heridas.contains(HeridaPersistente.RODILLA_DANADA) ? 2 : 0)); }
     public int getCordura() { return cordura; }
     public String getAflixion() { return aflixion; }
     public int getExperiencia() { return experiencia; }
@@ -78,6 +88,30 @@ public abstract class Personaje {
     public List<EfectoEstado> getEfectos() { return efectos; }
     public TrasfondoMercenario getTrasfondo() { return trasfondo; }
     public void setTrasfondo(TrasfondoMercenario trasfondo) { this.trasfondo = trasfondo; }
+    public RasgoMecanico getRasgoMecanico() { return rasgoMecanico; }
+    public DefectoMecanico getDefectoMecanico() { return defectoMecanico; }
+    public void setPersonalidadMecanica(RasgoMecanico rasgo, DefectoMecanico defecto) {
+        double proporcion = getVidaMax() <= 0 ? 1 : vida / getVidaMax();
+        this.rasgoMecanico = rasgo; this.defectoMecanico = defecto;
+        setVida(getVidaMax() * proporcion);
+    }
+    public int getLealtad() { return lealtad; }
+    public void modificarLealtad(int cambio) {
+        if (cambio > 0 && rasgoMecanico == RasgoMecanico.LEALTAD_OBSTINADA) cambio *= 2;
+        lealtad = Math.max(0, Math.min(100, lealtad + cambio));
+    }
+    public List<HeridaPersistente> getHeridas() { return List.copyOf(heridas); }
+    public boolean sufrirHerida(HeridaPersistente herida) {
+        if (herida == null || heridas.contains(herida) || heridas.size() >= 2) return false;
+        heridas.add(herida); setVida(vida); return true;
+    }
+    public boolean tratarHerida(HeridaPersistente herida) { return heridas.remove(herida); }
+    public void restaurarDesarrollo(RasgoMecanico rasgo, DefectoMecanico defecto, int lealtad,
+                                    List<HeridaPersistente> heridas) {
+        this.rasgoMecanico = rasgo; this.defectoMecanico = defecto;
+        this.lealtad = Math.max(0, Math.min(100, lealtad));
+        this.heridas.clear(); this.heridas.addAll(heridas.stream().distinct().limit(2).toList()); setVida(vida);
+    }
 
     // --- Estadisticas derivadas ---
     private int bonusAmuleto(Amuleto.Don don) {
@@ -85,12 +119,14 @@ public abstract class Personaje {
     }
     public int esquivaActual() {
         int e = esquiva + bonusAmuleto(Amuleto.Don.ESQUIVA);
+        if (rasgoMecanico == RasgoMecanico.OJO_PARA_EL_PELIGRO) e += 5;
         if (tieneEfecto(TipoEfecto.SOMBRA)) e += 25;
         if ("VIRTUD".equals(aflixion)) e += 8;
         return Math.min(75, e);
     }
     public int criticoActual() {
         int c = critico + bonusAmuleto(Amuleto.Don.CRITICO);
+        if (rasgoMecanico == RasgoMecanico.MANOS_FIRMES) c += 5;
         if ("VIRTUD".equals(aflixion)) c += 10;
         return Math.min(80, c);
     }
@@ -99,6 +135,7 @@ public abstract class Personaje {
         double m = 1.0 + bonusAmuleto(Amuleto.Don.FUROR) / 100.0;
         if (tieneEfecto(TipoEfecto.FORTALECIDO)) m *= 1.25;
         if (tieneEfecto(TipoEfecto.DEBILITADO)) m *= 0.75;
+        if (heridas.contains(HeridaPersistente.MANO_LESIONADA)) m *= 0.90;
         return m;
     }
 
@@ -125,7 +162,10 @@ public abstract class Personaje {
         return d;
     }
     public boolean estaVivo() { return vida > 0; }
-    public void curar(double cantidad) { setVida(vida + cantidad); }
+    public void curar(double cantidad) {
+        if (defectoMecanico == DefectoMecanico.SUENO_INTRANQUILO) cantidad *= 0.80;
+        setVida(vida + cantidad);
+    }
 
     // --- Efectos de estado ---
     public void aplicarEfecto(TipoEfecto tipo, int duracion, double potencia) {
@@ -170,10 +210,20 @@ public abstract class Personaje {
     /** Aumenta el estres; al llegar a 100 se resuelve una Prueba de Determinacion. */
     public void sufrirEstres(int cantidad) {
         int reduccion = bonusAmuleto(Amuleto.Don.TEMPLE);
+        if (rasgoMecanico == RasgoMecanico.TEMPLE_DE_HIERRO) reduccion += 15;
+        if (heridas.contains(HeridaPersistente.PULMON_QUEMADO)) cantidad = (int)Math.ceil(cantidad * 1.15);
         cantidad = (int) Math.max(0, Math.round(cantidad * (1 - reduccion / 100.0)));
         if (cantidad <= 0) return;
         cordura = Math.min(100, cordura + cantidad);
         if (cordura >= 100 && aflixion == null) pruebaDeterminacion();
+    }
+    public void sufrirEstresAmbiental(int cantidad, Region region) {
+        if (defectoMecanico == DefectoMecanico.MIEDO_AL_AGUA && region == Region.BRANAS_HUNDIDAS)
+            cantidad = (int)Math.ceil(cantidad * 1.25);
+        if (defectoMecanico == DefectoMecanico.AVERSION_A_LAS_CAMPANAS
+                && (region == Region.CAMINO_DE_LOS_DIFUNTOS || region == Region.HOSPITAL_DEL_CAMINO_VIEJO))
+            cantidad = (int)Math.ceil(cantidad * 1.25);
+        sufrirEstres(cantidad);
     }
     private void pruebaDeterminacion() {
         BusEventos.publicar("Tu mente se resquebraja... PRUEBA DE DETERMINACION", TipoMensaje.HORROR);

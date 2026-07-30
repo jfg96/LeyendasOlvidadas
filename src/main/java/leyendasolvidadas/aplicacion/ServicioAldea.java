@@ -4,6 +4,7 @@ import leyendasolvidadas.dominio.combate.Personaje;
 import leyendasolvidadas.dominio.compania.Inventario;
 import leyendasolvidadas.dominio.objetos.Item;
 import leyendasolvidadas.dominio.mundo.EdificioAldea;
+import leyendasolvidadas.dominio.compania.HeridaPersistente;
 
 /** Reglas economicas y de recuperacion de Valdesombra. */
 public class ServicioAldea {
@@ -20,6 +21,15 @@ public class ServicioAldea {
         if (!estado.getCompania().getInventario().gastarOro(coste)) return ResultadoAccion.error("No te llega el oro.");
         personaje.aliviarEstres(alivio);
         return ResultadoAccion.exito(personaje.getNombre() + " recupera el sosiego (-" + alivio + " estres).");
+    }
+
+    public ResultadoAccion tratarHerida(EstadoJuego estado, Personaje personaje, HeridaPersistente herida) {
+        if (estado.getEstadoAldea().estaDanado(EdificioAldea.ERMITA)) return ResultadoAccion.error("La ermita está dañada.");
+        if (herida == null || !personaje.getHeridas().contains(herida)) return ResultadoAccion.error("Esa secuela ya no requiere tratamiento.");
+        int coste = 35 + personaje.getNivel() * 10;
+        if (!estado.getCompania().getInventario().gastarOro(coste)) return ResultadoAccion.error("No te llega el oro.");
+        personaje.tratarHerida(herida);
+        return ResultadoAccion.exito(personaje.getNombre() + " supera " + herida.name().toLowerCase().replace('_', ' ') + ".");
     }
 
     public ResultadoAccion comprar(EstadoJuego estado, Item item) {

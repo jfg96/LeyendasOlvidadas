@@ -6,6 +6,21 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Rasgos mecánicos para mercenarios: temple, percepción, precisión, lealtad e
+  instinto de supervivencia modifican estrés, esquiva, crítico, progresión de
+  lealtad o vida máxima.
+- Defectos mecánicos con costes concretos: miedos regionales, codicia,
+  recuperación inquieta y desconfianza hacia otros miembros.
+- Lealtad individual de 0 a 100, alterada por victorias, retiradas y derrotas;
+  un mercenario cuya lealtad se rompe puede negarse a formar grupo.
+- Afinidad bilateral entre todos los integrantes, con confianza y rivalidad
+  nacidas de expediciones compartidas y consecuencias de estrés al formar una
+  compañía muy unida o enfrentada.
+- Cuatro heridas persistentes —cicatriz profunda, mano lesionada, rodilla dañada
+  y pulmón quemado— con límites, penalizaciones diferentes y tratamiento de
+  pago en la ermita.
+- Pruebas de efectos mecánicos, convivencia, tratamiento y persistencia completa
+  del desarrollo de la compañía.
 - Capítulo V completo, **La última procesión**, con entrada de la Compaña en una
   Valdesombra deformada, elección de ruta y aliado derivado de decisiones
   anteriores.
@@ -142,6 +157,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- Guardado actualizado a **LOSV v5** para conservar rasgos, defectos, lealtad,
+  heridas y relaciones, manteniendo migración automática desde LOSV v1–v4.
 - Guardado actualizado a **LOSV v4** para conservar niveles y daños de la aldea,
   manteniendo migración automática desde LOSV v1, v2 y v3.
 - La Santa Compaña ya no se desbloquea artificialmente tras cuatro expediciones:

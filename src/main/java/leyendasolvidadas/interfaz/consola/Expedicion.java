@@ -228,7 +228,7 @@ public class Expedicion implements ContextoCombate {
                     break;
                 case 6:
                     if (UI.confirmar("¿Abandonar? Perderas la recompensa y el animo (+15 estres)")) {
-                        for (Personaje heroe : heroesVivos()) heroe.sufrirEstres(15);
+                        for (Personaje heroe : heroesVivos()) heroe.sufrirEstresAmbiental(15, region);
                         return Resultado.ABANDONO;
                     }
                     break;
@@ -255,9 +255,9 @@ public class Expedicion implements ContextoCombate {
             bajarLuz(region == Region.MINAS_DE_SAN_LOURENZO ? 10
                     : region == Region.BOSQUE_DE_LOS_AHORCADOS ? 7 : 5);
             int estres = estresPorPaso();
-            if (estres > 0) for (Personaje heroe : heroesVivos()) heroe.sufrirEstres(estres);
+            if (estres > 0) for (Personaje heroe : heroesVivos()) heroe.sufrirEstresAmbiental(estres, region);
             if (region == Region.CAMINO_DE_LOS_DIFUNTOS)
-                for (Personaje heroe : heroesVivos()) heroe.sufrirEstres(2);
+                for (Personaje heroe : heroesVivos()) heroe.sufrirEstresAmbiental(2, region);
             if (region == Region.BRANAS_HUNDIDAS && Rng.prob(8)) {
                 Personaje victima = Rng.elegir(heroesVivos());
                 victima.aplicarEfecto(TipoEfecto.VENENO, 2, 2 + nivelZona / 2.0);

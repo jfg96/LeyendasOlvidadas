@@ -68,6 +68,7 @@ public class Juego {
         int clase = UI.leerOpcion(1, 9);
         String nombre = UI.leerTexto("¿Tu nombre, forastero?");
         Personaje p = FabricaHeroes.crear(clase, nombre);
+        p.setPersonalidadMecanica(RasgoMecanico.TEMPLE_DE_HIERRO, DefectoMecanico.DESCONFIANZA);
         // Capital suficiente para fundar una compania de tres y conservar
         // margen para provisiones o curacion durante la primera semana.
         p.getInventario().ganarOro(180);
@@ -111,6 +112,7 @@ public class Juego {
             case EXITO: {
                 UI.titulo("REGRESO TRIUNFAL");
                 estado.registrarVictoria();
+                new ServicioCompania().registrarConvivencia(compania, ServicioCompania.ResultadoExpedicion.VICTORIA);
                 compania.getInventario().ganarOro(mision.getOroRecompensa());
                 UI.log(UI.pintar("Cobras el encargo: +" + mision.getOroRecompensa() + " reales.", UI.AMARILLO));
                 for (Personaje heroe : grupo) heroe.ganarExperiencia(mision.getXpRecompensa());
@@ -160,10 +162,12 @@ public class Juego {
                 break;
             }
             case ABANDONO:
+                new ServicioCompania().registrarConvivencia(compania, ServicioCompania.ResultadoExpedicion.ABANDONO);
                 UI.titulo("RETIRADA");
                 UI.log("Vuelves con las manos casi vacias y la mirada baja. Habra otra semana.");
                 break;
             case MUERTE: {
+                new ServicioCompania().registrarConvivencia(compania, ServicioCompania.ResultadoExpedicion.DERROTA);
                 UI.titulo("TE ARRASTRAN DE VUELTA");
                 int perdido = compania.getInventario().getOro() / 2;
                 compania.getInventario().gastarOro(perdido);

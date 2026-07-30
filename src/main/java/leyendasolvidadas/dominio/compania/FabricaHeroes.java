@@ -53,6 +53,28 @@ public final class FabricaHeroes {
         candidato.prepararNivelInicial(Math.max(1, nivelObjetivo));
         candidato.setTrasfondo(new TrasfondoMercenario(Rng.elegir(ORIGENES), Rng.elegir(DESCRIPCIONES),
                 Rng.elegir(RASGOS), Rng.elegir(DEFECTOS), Rng.elegir(MOTIVACIONES), Rng.elegir(FRASES)));
+        candidato.setPersonalidadMecanica(rasgoDesde(candidato.getTrasfondo().rasgo()),
+                defectoDesde(candidato.getTrasfondo().defecto()));
         return candidato;
+    }
+
+    public static RasgoMecanico rasgoDesde(String nombre) {
+        return switch (nombre) {
+            case "Temple de hierro" -> RasgoMecanico.TEMPLE_DE_HIERRO;
+            case "Ojo para el peligro" -> RasgoMecanico.OJO_PARA_EL_PELIGRO;
+            case "Manos firmes" -> RasgoMecanico.MANOS_FIRMES;
+            case "Lealtad obstinada" -> RasgoMecanico.LEALTAD_OBSTINADA;
+            default -> RasgoMecanico.INSTINTO_DE_SUPERVIVENCIA;
+        };
+    }
+
+    public static DefectoMecanico defectoDesde(String nombre) {
+        return switch (nombre) {
+            case "Miedo al agua estancada" -> DefectoMecanico.MIEDO_AL_AGUA;
+            case "Aversión a las campanas" -> DefectoMecanico.AVERSION_A_LAS_CAMPANAS;
+            case "Codicia" -> DefectoMecanico.CODICIA;
+            case "Sueño intranquilo" -> DefectoMecanico.SUENO_INTRANQUILO;
+            default -> DefectoMecanico.DESCONFIANZA;
+        };
     }
 }

@@ -7,6 +7,8 @@ import leyendasolvidadas.dominio.objetos.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 /**
  * Plantilla persistente del jugador. El protagonista es su miembro fundador,
@@ -21,6 +23,7 @@ public class Compania {
     private final List<Personaje> plantilla = new ArrayList<>();
     private final List<Personaje> formacionActiva = new ArrayList<>();
     private Inventario inventarioCompartido;
+    private final Map<Personaje, Map<Personaje, Integer>> relaciones = new IdentityHashMap<>();
 
     public Compania(Personaje protagonista) {
         if (protagonista == null) throw new IllegalArgumentException("El protagonista es obligatorio");
@@ -75,5 +78,25 @@ public class Compania {
 
     public int nivelMedio() {
         return (int) Math.round(plantilla.stream().mapToInt(Personaje::getNivel).average().orElse(1));
+    }
+
+    public int afinidad(Personaje a, Personaje b) {
+        if (a == b) return 100;
+        return relaciones.getOrDefault(a, Map.of()).getOrDefault(b, 0);
+    }
+
+    public void modificarAfinidad(Personaje a, Personaje b, int cambio) {
+        if (a == null || b == null || a == b || !plantilla.contains(a) || !plantilla.contains(b)) return;
+        if (cambio > 0 && (a.getDefectoMecanico() == DefectoMecanico.DESCONFIANZA
+                || b.getDefectoMecanico() == DefectoMecanico.DESCONFIANZA)) cambio = Math.max(1, cambio / 2);
+        int valor = Math.max(-100, Math.min(100, afinidad(a, b) + cambio));
+        relaciones.computeIfAbsent(a, x -> new IdentityHashMap<>()).put(b, valor);
+        relaciones.computeIfAbsent(b, x -> new IdentityHashMap<>()).put(a, valor);
+    }
+
+    public void restaurarAfinidad(Personaje a, Personaje b, int valor) {
+        if (a == null || b == null || a == b) return;
+        relaciones.computeIfAbsent(a, x -> new IdentityHashMap<>()).put(b, Math.max(-100, Math.min(100, valor)));
+        relaciones.computeIfAbsent(b, x -> new IdentityHashMap<>()).put(a, Math.max(-100, Math.min(100, valor)));
     }
 }

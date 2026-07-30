@@ -125,7 +125,19 @@ public class Aldea {
             String marcas = compania.esProtagonista(p) ? " [PROTAGONISTA]" : "";
             if (compania.getFormacionActiva().contains(p)) marcas += " [ACTIVO]";
             UI.log((i + 1) + ". " + p.getNombre() + " — " + p.getClass().getSimpleName()
-                    + " niv " + p.getNivel() + UI.pintar(marcas, UI.CIAN));
+                    + " niv " + p.getNivel() + " · lealtad " + p.getLealtad()
+                    + (p.getHeridas().isEmpty() ? "" : " · " + p.getHeridas().size() + " secuela(s)")
+                    + UI.pintar(marcas, UI.CIAN));
+        }
+        List<Personaje> activos = compania.getFormacionActiva();
+        if (activos.size() > 1) {
+            UI.log(UI.pintar("Relaciones de la formación:", UI.TENUE));
+            for (int i = 0; i < activos.size(); i++) for (int j = i + 1; j < activos.size(); j++) {
+                int afinidad = compania.afinidad(activos.get(i), activos.get(j));
+                String vinculo = afinidad >= 30 ? "confianza" : afinidad <= -30 ? "rivalidad" : "distancia";
+                UI.log("   " + activos.get(i).getNombre() + " / " + activos.get(j).getNombre()
+                        + ": " + vinculo + " (" + (afinidad >= 0 ? "+" : "") + afinidad + ")");
+            }
         }
         UI.log("Tesoreria: " + UI.pintar(compania.getInventario().getOro() + " reales", UI.AMARILLO));
     }
@@ -170,7 +182,9 @@ public class Aldea {
         UI.log(t.descripcion());
         UI.log("Origen: " + t.origen());
         UI.log(UI.pintar("Rasgo: " + t.rasgo(), UI.VERDE));
+        if (candidato.getRasgoMecanico() != null) UI.log(UI.pintar("   Efecto: " + candidato.getRasgoMecanico().getEfecto(), UI.VERDE));
         UI.log(UI.pintar("Defecto: " + t.defecto(), UI.ROJO));
+        if (candidato.getDefectoMecanico() != null) UI.log(UI.pintar("   Efecto: " + candidato.getDefectoMecanico().getEfecto(), UI.ROJO));
         UI.log("Motivación: " + t.motivacion());
         UI.log(UI.pintar("\"" + t.frase() + "\"", UI.CIAN));
     }
@@ -328,13 +342,21 @@ public class Aldea {
         int costeCalma = 25;
         System.out.println("  1. Sanar las heridas por completo (" + costeCura + " reales)");
         System.out.println("  2. Confesion y rezo: -35 estres (" + costeCalma + " reales)");
+        if (!h.getHeridas().isEmpty()) System.out.println("  3. Tratar una secuela (" + (35 + h.getNivel() * 10) + " reales)");
         System.out.println("  0. Salir");
-        switch (UI.leerOpcion(0, 2)) {
+        switch (UI.leerOpcion(0, h.getHeridas().isEmpty() ? 2 : 3)) {
             case 1:
                 mostrarResultado(servicioAldea.sanar(estado, h));
                 break;
             case 2:
                 mostrarResultado(servicioAldea.calmar(estado, h, costeCalma, 35));
+                break;
+            case 3:
+                for (int i = 0; i < h.getHeridas().size(); i++)
+                    UI.log((i + 1) + ". " + h.getHeridas().get(i).name().replace('_', ' ').toLowerCase()
+                            + " — " + h.getHeridas().get(i).getEfecto());
+                int herida = UI.leerOpcion(1, h.getHeridas().size()) - 1;
+                mostrarResultado(servicioAldea.tratarHerida(estado, h, h.getHeridas().get(herida)));
                 break;
         }
         UI.pausa();

@@ -20,7 +20,7 @@ import java.util.Set;
 /** Formato binario estable y versionado, independiente de la serializacion Java. */
 public final class CodecPartida {
     public static final int MAGIC = 0x4C4F5356; // LOSV
-    public static final int VERSION = 4;
+    public static final int VERSION = 5;
 
     private CodecPartida() {}
 
@@ -37,6 +37,8 @@ public final class CodecPartida {
         escribirProgresoCampana(out, estado.getProgresoCampana());
         escribirTrasfondos(out, estado.getCompania(), estado.getCandidatos());
         escribirEstadoAldea(out, estado.getEstadoAldea());
+        escribirDesarrollo(out, estado.getCompania(), estado.getCandidatos());
+        escribirRelaciones(out, estado.getCompania());
     }
 
     public static EstadoJuego leer(DataInputStream in) throws IOException {
@@ -47,16 +49,21 @@ public final class CodecPartida {
         int semana = in.readInt();
         int victorias = in.readInt();
         boolean campana = in.readBoolean();
-        Compania compania = leerCompania(in);
+        Compania compania = leerCompania(in, version);
         List<Item> ofertas = leerItems(in);
         int totalCandidatos = leerCantidad(in, Compania.MAX_PLANTILLA);
         List<Personaje> candidatos = new ArrayList<>();
-        for (int i = 0; i < totalCandidatos; i++) candidatos.add(leerHeroe(in));
+        for (int i = 0; i < totalCandidatos; i++) candidatos.add(leerHeroe(in, version));
         ProgresoCampana progreso = version >= 2
                 ? leerProgresoCampana(in) : migrarProgresoV1(campana);
         if (version >= 3) leerTrasfondos(in, compania, candidatos);
         else completarTrasfondosLegado(compania, candidatos);
         EstadoAldea estadoAldea = version >= 4 ? leerEstadoAldea(in) : new EstadoAldea();
+        if (version >= 5) {
+            leerDesarrollo(in, compania, candidatos);
+            leerRelaciones(in, compania);
+        }
+        else completarDesarrolloLegado(compania, candidatos);
         EstadoJuego estado = new EstadoJuego();
         estado.restaurarProgreso(semana, victorias, campana, compania, ofertas, candidatos, progreso);
         estado.restaurarEstadoAldea(estadoAldea);
@@ -172,11 +179,11 @@ public final class CodecPartida {
         escribirItems(out, compania.getInventario().getItems());
     }
 
-    private static Compania leerCompania(DataInputStream in) throws IOException {
+    private static Compania leerCompania(DataInputStream in, int version) throws IOException {
         int total = leerCantidad(in, Compania.MAX_PLANTILLA);
         if (total == 0) throw new IOException("La compania guardada no tiene protagonista");
         List<Personaje> plantilla = new ArrayList<>();
-        for (int i = 0; i < total; i++) plantilla.add(leerHeroe(in));
+        for (int i = 0; i < total; i++) plantilla.add(leerHeroe(in, version));
         int indiceProtagonista = leerIndice(in, total);
         Compania compania = new Compania(plantilla.get(indiceProtagonista));
         for (Personaje heroe : plantilla) if (heroe != compania.getProtagonista()) compania.contratar(heroe);
@@ -211,7 +218,7 @@ public final class CodecPartida {
         for (Habilidad habilidad : heroe.getHabilidades()) out.writeInt(habilidad.getCooldownActual());
     }
 
-    private static Personaje leerHeroe(DataInputStream in) throws IOException {
+    private static Personaje leerHeroe(DataInputStream in, int version) throws IOException {
         String clase = in.readUTF();
         String nombre = in.readUTF();
         int nivel = in.readInt();
@@ -234,6 +241,69 @@ public final class CodecPartida {
         for (int i = 0; i < totalCooldowns; i++) cooldowns.add(in.readInt());
         heroe.restaurarEstado(vida, recurso, cordura, aflixion, experiencia, efectos, cooldowns);
         return heroe;
+    }
+
+    private static void escribirDesarrollo(DataOutputStream out, Compania compania,
+                                             List<Personaje> candidatos) throws IOException {
+        out.writeInt(compania.getPlantilla().size() + candidatos.size());
+        for (Personaje heroe : compania.getPlantilla()) escribirDesarrolloHeroe(out, heroe);
+        for (Personaje candidato : candidatos) escribirDesarrolloHeroe(out, candidato);
+    }
+
+    private static void escribirDesarrolloHeroe(DataOutputStream out, Personaje heroe) throws IOException {
+        escribirNullable(out, heroe.getRasgoMecanico() == null ? null : heroe.getRasgoMecanico().name());
+        escribirNullable(out, heroe.getDefectoMecanico() == null ? null : heroe.getDefectoMecanico().name());
+        out.writeInt(heroe.getLealtad()); out.writeInt(heroe.getHeridas().size());
+        for (HeridaPersistente herida : heroe.getHeridas()) out.writeUTF(herida.name());
+    }
+
+    private static void leerDesarrollo(DataInputStream in, Compania compania,
+                                        List<Personaje> candidatos) throws IOException {
+        List<Personaje> todos = new ArrayList<>(compania.getPlantilla()); todos.addAll(candidatos);
+        if (leerCantidad(in, Compania.MAX_PLANTILLA * 2) != todos.size())
+            throw new IOException("Desarrollo de plantilla incoherente");
+        try {
+            for (Personaje heroe : todos) {
+                String rasgo = leerNullable(in), defecto = leerNullable(in); int lealtad = in.readInt();
+                int totalHeridas = leerCantidad(in, 2); List<HeridaPersistente> heridas = new ArrayList<>();
+                for (int i = 0; i < totalHeridas; i++) heridas.add(HeridaPersistente.valueOf(in.readUTF()));
+                heroe.restaurarDesarrollo(rasgo == null ? null : RasgoMecanico.valueOf(rasgo),
+                        defecto == null ? null : DefectoMecanico.valueOf(defecto), lealtad, heridas);
+            }
+        } catch (IllegalArgumentException e) { throw new IOException("Desarrollo de mercenario no válido", e); }
+    }
+
+    private static void escribirRelaciones(DataOutputStream out, Compania compania) throws IOException {
+        List<Personaje> plantilla = compania.getPlantilla();
+        int pares = plantilla.size() * (plantilla.size() - 1) / 2;
+        out.writeInt(pares);
+        for (int i = 0; i < plantilla.size(); i++) for (int j = i + 1; j < plantilla.size(); j++) {
+            out.writeInt(i); out.writeInt(j); out.writeInt(compania.afinidad(plantilla.get(i), plantilla.get(j)));
+        }
+    }
+
+    private static void leerRelaciones(DataInputStream in, Compania compania) throws IOException {
+        List<Personaje> plantilla = compania.getPlantilla();
+        int max = plantilla.size() * (plantilla.size() - 1) / 2;
+        int total = leerCantidad(in, max);
+        for (int n = 0; n < total; n++) {
+            int a = leerIndice(in, plantilla.size()), b = leerIndice(in, plantilla.size()), valor = in.readInt();
+            if (a == b || valor < -100 || valor > 100) throw new IOException("Relación de compañía no válida");
+            compania.restaurarAfinidad(plantilla.get(a), plantilla.get(b), valor);
+        }
+    }
+
+    private static void completarDesarrolloLegado(Compania compania, List<Personaje> candidatos) {
+        for (Personaje heroe : compania.getPlantilla()) asignarDesarrolloLegado(heroe, compania.esProtagonista(heroe));
+        for (Personaje candidato : candidatos) asignarDesarrolloLegado(candidato, false);
+    }
+
+    private static void asignarDesarrolloLegado(Personaje heroe, boolean protagonista) {
+        if (protagonista) heroe.setPersonalidadMecanica(RasgoMecanico.TEMPLE_DE_HIERRO, DefectoMecanico.DESCONFIANZA);
+        else if (heroe.getTrasfondo() != null) heroe.setPersonalidadMecanica(
+                FabricaHeroes.rasgoDesde(heroe.getTrasfondo().rasgo()),
+                FabricaHeroes.defectoDesde(heroe.getTrasfondo().defecto()));
+        else heroe.setPersonalidadMecanica(RasgoMecanico.INSTINTO_DE_SUPERVIVENCIA, DefectoMecanico.DESCONFIANZA);
     }
 
     private static void escribirItems(DataOutputStream out, List<Item> items) throws IOException {
