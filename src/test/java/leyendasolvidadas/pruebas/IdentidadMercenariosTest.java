@@ -4,6 +4,8 @@ import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.campana.CapituloCampana;
 import leyendasolvidadas.dominio.combate.Personaje;
 import leyendasolvidadas.dominio.compania.FabricaHeroes;
+import leyendasolvidadas.dominio.misiones.GestorMisiones;
+import leyendasolvidadas.dominio.mundo.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,5 +36,19 @@ class IdentidadMercenariosTest {
         assertTrue(estado.getProgresoCampana().haDecidido("cap1.padre_tome.desconfiar"));
         assertThrows(IllegalStateException.class,
                 () -> servicio.conocerPadreTome(estado, ServicioCapituloUno.Actitud.CONFIAR));
+
+        assertEquals(1, servicio.registrarVictoria(estado, Region.BOSQUE_DE_LOS_AHORCADOS));
+        assertEquals(2, servicio.registrarVictoria(estado, Region.BOSQUE_DE_LOS_AHORCADOS));
+        assertEquals(3, servicio.registrarVictoria(estado, Region.BOSQUE_DE_LOS_AHORCADOS));
+        assertTrue(estado.getProgresoCampana().haDecidido("cap1.simbolo_peregrinos_descubierto"));
+    }
+
+    @Test
+    void generaEncargosYEnemigosPropiosDelBosque() {
+        assertEquals(Region.BOSQUE_DE_LOS_AHORCADOS,
+                GestorMisiones.generarBosque(1, Dificultad.FACIL).getRegion());
+        assertTrue(Bestiario.crearGrupo(Region.BOSQUE_DE_LOS_AHORCADOS, 1, Dificultad.FACIL)
+                .stream().allMatch(e -> e.getNombre().equals("Lobo de la Sierra")
+                        || e.getNombre().equals("Ahorcado Verde") || e.getNombre().equals("Corvo de Carne")));
     }
 }

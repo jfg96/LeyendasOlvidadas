@@ -6,6 +6,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Primer ciclo regional del **Bosque de los Ahorcados**, con tres encargos
+  propios: Las sogas vacías, El sendero que regresa y La medalla del ahorcado.
+- Enemigos regionales Ahorcado Verde y Corvo de Carne, junto a lobos y
+  lobisomes, y mayor consumo de antorcha por la escasa visibilidad del Bosque.
+- Progreso narrativo de las tres primeras victorias en el Bosque; la tercera
+  revela el símbolo de los peregrinos y queda registrada para escenas futuras.
 - Apertura del capítulo I con Padre Tomé, el Libro de los Nombres mutilado y
   una primera actitud persistente: confiar, desconfiar o presionarlo.
 - Trasfondos completos para candidatos: origen, descripción, rasgo, defecto,
@@ -80,6 +86,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- La Santa Compaña ya no se desbloquea artificialmente tras cuatro expediciones:
+  el enfrentamiento final queda reservado para `ULTIMA_PROCESION`.
 - Guardado actualizado a **LOSV v3** para conservar la identidad narrativa de
   plantilla y candidatos, manteniendo lectura de LOSV v1 y v2.
 - Guardado actualizado a **LOSV v2** para conservar capítulo, decisiones y

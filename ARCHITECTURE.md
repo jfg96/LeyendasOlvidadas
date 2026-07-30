@@ -45,6 +45,10 @@ interfaz decide cómo representarlos.
 Los servicios se pueden ejecutar directamente en pruebas o desde cualquier
 interfaz sin arrancar la consola.
 
+Cada `Mision` puede declarar una `Region`. La expedición consume ese dato para
+seleccionar ambientación, riesgos y grupos enemigos sin consultar el capítulo
+ni introducir reglas narrativas en la interfaz.
+
 ## Infraestructura
 
 `GuardarCargar` implementa `RepositorioPartidas`. `CodecPartida` usa el formato

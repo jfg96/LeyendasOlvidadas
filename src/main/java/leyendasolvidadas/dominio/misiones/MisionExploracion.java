@@ -10,7 +10,10 @@ public class MisionExploracion extends Mision {
     private int visitadas, totales = 1;
 
     public MisionExploracion(Dificultad dif, int oro, int xp, Item item) {
-        super("Cartografiar el Paraje", "Explorar el 90% de las estancias.", dif, oro, xp, item);
+        this("Cartografiar el Paraje", "Explorar el 90% de las estancias.", dif, oro, xp, item);
+    }
+    public MisionExploracion(String nombre, String descripcion, Dificultad dif, int oro, int xp, Item item) {
+        super(nombre, descripcion, dif, oro, xp, item);
     }
     private int necesarias() { return (int) Math.ceil(totales * 0.9); }
     @Override public void notificarVisita(int visitadas, int totales) {

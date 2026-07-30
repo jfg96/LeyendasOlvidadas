@@ -1,6 +1,7 @@
 package leyendasolvidadas.aplicacion;
 
 import leyendasolvidadas.dominio.campana.CapituloCampana;
+import leyendasolvidadas.dominio.mundo.Region;
 
 /** Primera presentación y decisión del capítulo Las campanas de Valdesombra. */
 public final class ServicioCapituloUno {
@@ -18,5 +19,18 @@ public final class ServicioCapituloUno {
         estado.getProgresoCampana().registrarDecision("cap1.padre_tome."
                 + actitud.name().toLowerCase());
         estado.getProgresoCampana().registrarDecision(PRESENTADO);
+    }
+
+    public int registrarVictoria(EstadoJuego estado, Region region) {
+        if (region != Region.BOSQUE_DE_LOS_AHORCADOS
+                || estado.getProgresoCampana().getCapitulo() != CapituloCampana.CAMPANAS_DE_VALDESOMBRA) return 0;
+        int victorias = (int) estado.getProgresoCampana().getDecisiones().stream()
+                .filter(id -> id.startsWith("cap1.bosque.victoria.")).count();
+        if (victorias < 3) {
+            victorias++;
+            estado.getProgresoCampana().registrarDecision("cap1.bosque.victoria." + victorias);
+        }
+        if (victorias == 3) estado.getProgresoCampana().registrarDecision("cap1.simbolo_peregrinos_descubierto");
+        return victorias;
     }
 }

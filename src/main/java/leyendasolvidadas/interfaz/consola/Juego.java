@@ -115,6 +115,13 @@ public class Juego {
                     compania.getInventario().anadir(mision.getItemRecompensa());
                 }
                 for (Personaje heroe : grupo) heroe.aliviarEstres(20);
+                int victoriasBosque = new ServicioCapituloUno().registrarVictoria(estado, mision.getRegion());
+                if (victoriasBosque > 0) {
+                    UI.log(UI.pintar("El Bosque de los Ahorcados recuerda vuestro paso ("
+                            + victoriasBosque + "/3).", UI.CIAN));
+                    if (victoriasBosque == 3)
+                        UI.log(UI.pintar("En una soga encontráis el mismo símbolo que llevaba Lúa: tres caminantes sin rostro.", UI.MAGENTA));
+                }
                 if (mision instanceof MisionJefe && ((MisionJefe) mision).esFinal())
                     estado.setCampanaGanada(true);
                 break;

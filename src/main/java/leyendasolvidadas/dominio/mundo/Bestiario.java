@@ -57,6 +57,18 @@ public final class Bestiario {
         e.setFilaPreferida(3);
         return e;
     }
+    private static Enemigo ahorcadoVerde(int niv) {
+        Enemigo e = new Enemigo("Ahorcado Verde", niv, false);
+        e.anadirMovimiento(new MovimientoEnemigo("Soga de Raíces", 0.9, TipoEfecto.DEBILITADO, 35, 2, 0, 3, 3, F(1,2), false, false));
+        e.anadirMovimiento(MovimientoEnemigo.golpe("Patada Pendular", 1.0, 2));
+        return e;
+    }
+    private static Enemigo corvoCarne(int niv) {
+        Enemigo e = new Enemigo("Corvo de Carne", niv, false);
+        e.anadirMovimiento(new MovimientoEnemigo("Picotazo", 0.8, TipoEfecto.SANGRADO, 35, 2, 2 + niv, 0, 3, F(1,2,3), false, false));
+        e.setFilaPreferida(3);
+        return e;
+    }
     // ---------- Elites ----------
     private static Enemigo lobisome(int niv) {
         Enemigo e = new Enemigo("Lobisome", niv, true);
@@ -89,6 +101,19 @@ public final class Bestiario {
             else grupo.add(comunAleatorio(niv));
         }
         // La retaguardia prefiere ir detras: ordenar por fila preferida.
+        grupo.sort((a, b) -> Integer.compare(a.getFilaPreferida(), b.getFilaPreferida()));
+        return grupo;
+    }
+    public static List<Enemigo> crearGrupo(Region region, int nivelZona, Dificultad dif) {
+        if (region != Region.BOSQUE_DE_LOS_AHORCADOS) return crearGrupo(nivelZona, dif);
+        int niv = Math.max(1, nivelZona + Rng.entre(-1, 1));
+        int cuantos = dif == Dificultad.FACIL ? 2 : 3;
+        List<Enemigo> grupo = new ArrayList<>();
+        for (int i = 0; i < cuantos; i++) {
+            int tipo = Rng.entre(0, 3);
+            grupo.add(tipo == 0 ? lobo(niv) : tipo == 1 ? ahorcadoVerde(niv)
+                    : tipo == 2 ? corvoCarne(niv) : (i == 0 && dif == Dificultad.DIFICIL ? lobisome(niv) : ahorcadoVerde(niv)));
+        }
         grupo.sort((a, b) -> Integer.compare(a.getFilaPreferida(), b.getFilaPreferida()));
         return grupo;
     }

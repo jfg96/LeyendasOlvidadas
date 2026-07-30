@@ -33,6 +33,7 @@ public class Expedicion implements ContextoCombate {
     private final Dificultad dificultad;
     private final int nivelZona;
     private final int victoriasPrevias;
+    private final Region region;
     private final List<Habitacion> habitaciones = new ArrayList<>();
     private Habitacion actual;
     private Habitacion entrada;
@@ -44,6 +45,7 @@ public class Expedicion implements ContextoCombate {
         this.inventario = compania.getInventario();
         this.dificultad = dificultad;
         this.victoriasPrevias = victoriasPrevias;
+        this.region = mision.getRegion();
         this.nivelZona = (int) Math.round(heroes.stream().mapToInt(Personaje::getNivel)
                 .average().orElse(1)) + dificultad.getNivelExtra();
         gestor.asignar(mision);
@@ -180,6 +182,7 @@ public class Expedicion implements ContextoCombate {
             UI.limpiar();
             UI.titulo("EXPEDICION: " + gestor.getMision().getNombre().toUpperCase()
                     + "  [" + dificultad.getTitulo() + "]");
+            if (region != null) UI.log(UI.pintar(region.getNombre() + " — " + region.getAmenaza(), UI.MAGENTA));
             dibujarMapa();
             System.out.println();
             for (Personaje heroe : heroes)
@@ -249,14 +252,14 @@ public class Expedicion implements ContextoCombate {
         // ---- travesia del pasillo ----
         int segmentos = Rng.entre(2, 3);
         for (int s = 1; s <= segmentos; s++) {
-            bajarLuz(5);
+            bajarLuz(region == Region.BOSQUE_DE_LOS_AHORCADOS ? 7 : 5);
             int estres = estresPorPaso();
             if (estres > 0) for (Personaje heroe : heroesVivos()) heroe.sufrirEstres(estres);
             System.out.println();
             UI.log(UI.pintar("Avanzas por el corredor (" + s + "/" + segmentos + ")... Luz " + luz + ".", UI.TENUE));
             int r = Rng.entre(1, 100);
             if (r <= 22) {
-                Combate.Resultado res = nuevoCombate(Bestiario.crearGrupo(nivelZona, dificultad))
+                Combate.Resultado res = nuevoCombate(crearGrupoRegional())
                         .ejecutar(Rng.prob(probEmboscada()));
                 if (res == Combate.Resultado.DERROTA) return Resultado.MUERTE;
                 if (res == Combate.Resultado.HUIDA) return null; // vuelve a la sala anterior
@@ -304,7 +307,7 @@ public class Expedicion implements ContextoCombate {
         switch (h.getTipo()) {
             case COMBATE: {
                 h.resolver();
-                Combate.Resultado res = nuevoCombate(Bestiario.crearGrupo(nivelZona, dificultad))
+                Combate.Resultado res = nuevoCombate(crearGrupoRegional())
                         .ejecutar(Rng.prob(probEmboscada()));
                 if (res == Combate.Resultado.DERROTA) return Resultado.MUERTE;
                 break;
@@ -379,7 +382,7 @@ public class Expedicion implements ContextoCombate {
         if (Rng.prob(20)) {
             UI.log(UI.pintar("...pero unos pasos te despiertan de madrugada.", UI.ROJO));
             UI.pausa();
-            nuevoCombate(Bestiario.crearGrupo(nivelZona, dificultad)).ejecutar(true);
+            nuevoCombate(crearGrupoRegional()).ejecutar(true);
         } else {
             UI.pausa();
         }
@@ -389,6 +392,11 @@ public class Expedicion implements ContextoCombate {
 
     private Combate nuevoCombate(List<Enemigo> enemigos) {
         return new Combate(heroes, enemigos, this, gestor, inventario, new VistaCombateConsola());
+    }
+
+    private List<Enemigo> crearGrupoRegional() {
+        return region == null ? Bestiario.crearGrupo(nivelZona, dificultad)
+                : Bestiario.crearGrupo(region, nivelZona, dificultad);
     }
 
     private Personaje elegirHeroeVivo(String titulo) {

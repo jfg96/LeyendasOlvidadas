@@ -37,9 +37,8 @@ quebrarse.
   cuatro rarezas: común, rara, épica y legendaria.
 - **Aldea como centro de operaciones.** Contrata y organiza la compañía, visita
   la ermita, la taberna y la herrería, acepta encargos o guarda la partida.
-- **Campaña y modo libre.** Tras cuatro expediciones victoriosas se desbloquea
-  el enfrentamiento final contra la Santa Compaña. La partida puede continuar
-  después de la victoria.
+- **Campaña por capítulos.** El prólogo y las decisiones persistentes abren
+  regiones y conducen progresivamente hacia la última procesión.
 - **Prólogo narrativo.** La llegada a Valdesombra, la desaparición de una niña
   y el primer encuentro con un Sin Rostro introducen el misterio y el combate.
 
@@ -107,6 +106,9 @@ La partida alterna entre dos espacios:
 Los encargos pueden exigir cazar criaturas, cartografiar una zona, recuperar
 una reliquia o derrotar a un jefe. Abandonar permite conservar la vida, mientras
 que morir devuelve al personaje a la aldea con la mitad de su oro.
+
+Durante el capítulo I, los encargos conducen al Bosque de los Ahorcados, donde
+la visibilidad consume más antorcha y aparecen criaturas propias de la región.
 
 El protagonista debe participar en todas las expediciones junto a dos
 acompañantes. El oro y la mochila de 24 espacios pertenecen a toda la compañía;

@@ -12,7 +12,10 @@ public class MisionCaza extends Mision {
     private int muertes = 0;
 
     public MisionCaza(Dificultad dif, int objetivo, int oro, int xp, Item item) {
-        super("Batida de Caza", "Exterminar " + objetivo + " criaturas del paraje.", dif, oro, xp, item);
+        this("Batida de Caza", "Exterminar " + objetivo + " criaturas del paraje.", dif, objetivo, oro, xp, item);
+    }
+    public MisionCaza(String nombre, String descripcion, Dificultad dif, int objetivo, int oro, int xp, Item item) {
+        super(nombre, descripcion, dif, oro, xp, item);
         this.objetivo = objetivo;
     }
     @Override public void notificarMuerte(Enemigo e) {

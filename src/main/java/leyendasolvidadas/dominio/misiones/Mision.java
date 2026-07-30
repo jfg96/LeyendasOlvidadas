@@ -17,6 +17,7 @@ public abstract class Mision {
     private final int oroRecompensa, xpRecompensa;
     private final Item itemRecompensa;
     private EstadoMision estado = EstadoMision.EN_CURSO;
+    private Region region;
 
     public Mision(String nombre, String descripcion, Dificultad dificultad,
                   int oroRecompensa, int xpRecompensa, Item itemRecompensa) {
@@ -31,6 +32,8 @@ public abstract class Mision {
     public int getXpRecompensa() { return xpRecompensa; }
     public Item getItemRecompensa() { return itemRecompensa; }
     public EstadoMision getEstado() { return estado; }
+    public Region getRegion() { return region; }
+    public Mision enRegion(Region region) { this.region = region; return this; }
     protected void completar() {
         if (estado == EstadoMision.EN_CURSO) {
             estado = EstadoMision.COMPLETADA;

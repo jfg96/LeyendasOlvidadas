@@ -49,4 +49,21 @@ public class GestorMisiones {
                     premio != null ? premio : Amuleto.aleatorio(15), false);
         }
     }
+
+    public static Mision generarBosque(int nivelHeroe, Dificultad dif) {
+        int niv = nivelHeroe + dif.getNivelExtra();
+        int oro = (35 + niv * 12) * (dif.ordinal() + 1);
+        int xp = (45 + niv * 20) * (dif.ordinal() + 1);
+        Item premio = Rng.prob(55) ? null : Amuleto.aleatorio(10 + dif.ordinal() * 8);
+        Mision mision = switch (Rng.entre(0, 2)) {
+            case 0 -> new MisionCaza("Las sogas vacías",
+                    "Abatir a las criaturas que anidan bajo los antiguos patíbulos.", dif,
+                    3 + dif.ordinal(), oro, xp, premio);
+            case 1 -> new MisionExploracion("El sendero que regresa",
+                    "Cartografiar los caminos que cambian cuando nadie los mira.", dif, oro, xp, premio);
+            default -> new MisionReliquia("La medalla del ahorcado",
+                    "Recuperar una medalla entre las raíces y devolverla a la entrada.", dif, oro, xp, premio);
+        };
+        return mision.enRegion(Region.BOSQUE_DE_LOS_AHORCADOS);
+    }
 }

@@ -1,6 +1,7 @@
 package leyendasolvidadas.interfaz.consola;
 
 import leyendasolvidadas.dominio.azar.*;
+import leyendasolvidadas.dominio.campana.*;
 import leyendasolvidadas.aplicacion.*;
 import leyendasolvidadas.dominio.combate.*;
 import leyendasolvidadas.dominio.compania.*;
@@ -234,11 +235,14 @@ public class Aldea {
         }
         UI.limpiar();
         UI.seccion("TABLON DE ENCARGOS");
-        boolean finalDisponible = estado.getExpedicionesGanadas() >= 4 && !estado.isCampanaGanada();
+        boolean finalDisponible = estado.getProgresoCampana().getCapitulo() == CapituloCampana.ULTIMA_PROCESION
+                && !estado.isCampanaGanada();
         Mision[] ofertas = new Mision[3];
         Dificultad[] difs = {Dificultad.FACIL, Dificultad.MEDIA, Dificultad.DIFICIL};
         for (int i = 0; i < 3; i++) {
-            ofertas[i] = GestorMisiones.generar(estado.getCompania().nivelMedio(), difs[i]);
+            ofertas[i] = estado.getProgresoCampana().estaDesbloqueada(Region.BOSQUE_DE_LOS_AHORCADOS)
+                    ? GestorMisiones.generarBosque(estado.getCompania().nivelMedio(), difs[i])
+                    : GestorMisiones.generar(estado.getCompania().nivelMedio(), difs[i]);
             System.out.printf("  %d. [%s] %-24s %s%n", i + 1,
                     UI.pintar(difs[i].getTitulo(), difs[i] == Dificultad.FACIL ? UI.VERDE
                             : difs[i] == Dificultad.MEDIA ? UI.AMARILLO : UI.ROJO),
