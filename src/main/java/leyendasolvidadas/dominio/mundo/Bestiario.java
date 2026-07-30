@@ -178,4 +178,12 @@ public final class Bestiario {
         j.anadirMovimientoFase2(new MovimientoEnemigo("Ultima Vela", 0.8, TipoEfecto.QUEMADURA, 100, 3, 5 + nivelZona, 8, 2, F(1,2,3), false, false));
         return j;
     }
+    public static Jefe crearReiAforcados(int nivelZona) {
+        Jefe j = new Jefe("O Rei dos Aforcados", nivelZona + 1,
+                "Cada raíz de este bosque ha bebido de un inocente.");
+        j.anadirMovimiento(new MovimientoEnemigo("Soga del Verdugo", 1.1, TipoEfecto.MARCADO, 65, 2, 0, 5, 3, F(1,2,3), false, false));
+        j.anadirMovimiento(new MovimientoEnemigo("Raíces Hambrientas", 0.8, TipoEfecto.SANGRADO, 70, 3, 3 + nivelZona, 3, 3, F(1,2,3), false, false));
+        j.anadirMovimientoFase2(new MovimientoEnemigo("Todos Pendemos Juntos", 1.45, null, 0, 0, 0, 9, 4, F(1,2,3), false, false));
+        return j;
+    }
 }

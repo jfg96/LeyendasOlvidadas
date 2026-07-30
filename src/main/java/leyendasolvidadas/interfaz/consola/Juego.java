@@ -124,6 +124,7 @@ public class Juego {
                 }
                 if (mision instanceof MisionJefe && ((MisionJefe) mision).esFinal())
                     estado.setCampanaGanada(true);
+                if (mision.getNombre().equals("El rey de las sogas")) cerrarCapituloUno();
                 break;
             }
             case ABANDONO:
@@ -146,6 +147,18 @@ public class Juego {
             }
         }
         UI.pausa();
+    }
+
+    private void cerrarCapituloUno() {
+        UI.seccion("INÉS, LA DESMEMORIADA");
+        UI.log("Al caer el rey, una joven peregrina sale de entre las raíces. No recuerda su nombre,");
+        UI.log("pero reconoce el símbolo y oye a los Sin Rostro caminar hacia las Brañas.");
+        System.out.println("  1. Protegerla bajo la custodia de la compañía.");
+        System.out.println("  2. Interrogarla antes de llevarla a Valdesombra.");
+        System.out.println("  3. Confiarla a Padre Tomé y observar su reacción.");
+        ServicioCapituloUno.ActitudInes actitud = ServicioCapituloUno.ActitudInes.values()[UI.leerOpcion(1, 3) - 1];
+        new ServicioCapituloUno().completarBosque(estado, actitud);
+        UI.log(UI.pintar("CAPÍTULO I COMPLETADO — Brañas Hundidas y Camino de los Difuntos desbloqueados.", UI.AMARILLO));
     }
 
     private void pantallaFinal() {

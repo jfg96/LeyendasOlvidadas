@@ -109,6 +109,8 @@ que morir devuelve al personaje a la aldea con la mitad de su oro.
 
 Durante el capítulo I, los encargos conducen al Bosque de los Ahorcados, donde
 la visibilidad consume más antorcha y aparecen criaturas propias de la región.
+Investigar sus sogas conduce hasta Inés y O Rei dos Aforcados; las decisiones
+del desenlace abren los caminos del capítulo II.
 
 El protagonista debe participar en todas las expediciones junto a dos
 acompañantes. El oro y la mochila de 24 espacios pertenecen a toda la compañía;

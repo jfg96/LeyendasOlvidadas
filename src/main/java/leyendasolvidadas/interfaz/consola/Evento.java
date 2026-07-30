@@ -28,6 +28,28 @@ public final class Evento {
         }
     }
 
+    public static void curioBosque(Personaje h, Expedicion exp) {
+        if (Rng.prob(50)) {
+            UI.seccion("UNA VOZ ENTRE LOS ÁRBOLES");
+            UI.log("Desde la niebla, alguien imita la voz de un compañero y pide que os separéis.");
+            System.out.println("  1. Responder a la voz   2. Atar al grupo con una cuerda y seguir");
+            if (UI.leerOpcion(1, 2) == 1) {
+                h.sufrirEstres(14);
+                UI.log(UI.pintar("La voz responde con tu propio nombre (+14 estrés).", UI.ROJO));
+            } else {
+                h.aliviarEstres(5); UI.log(UI.pintar("Nadie abandona la formación (-5 estrés).", UI.VERDE));
+            }
+        } else {
+            UI.seccion("LAS SOGAS SIN CUERPO");
+            UI.log("Docenas de sogas vacías oscilan aunque no sopla viento.");
+            System.out.println("  1. Cortarlas   2. Pasar por debajo sin tocarlas");
+            if (UI.leerOpcion(1, 2) == 1) {
+                h.getInventario().ganarOro(25); h.sufrirEstres(8);
+                UI.log(UI.pintar("Dentro de un nudo hallas 25 reales y un diente humano.", UI.AMARILLO));
+            } else UI.log("Las sogas giran para seguiros con sus nudos.");
+        }
+    }
+
     private static void altar(Personaje h) {
         UI.seccion("UN ALTAR OLVIDADO");
         UI.log("Una talla de la Virgen cubierta de polvo. Las velas llevan anos apagadas.");

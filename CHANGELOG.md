@@ -6,6 +6,14 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Cierre completo del capítulo I: tras investigar tres veces el Bosque aparece
+  Inés y se habilita la expedición culminante **El rey de las sogas**.
+- Jefe regional **O Rei dos Aforcados**, con marca, sangrado, raíces y segunda
+  fase, más una decisión final sobre proteger, interrogar o confiar Inés a Tomé.
+- Eventos exclusivos del Bosque con voces imitadas y sogas sin cadáver, cada
+  uno con elecciones de riesgo, estrés, conciencia y recompensa.
+- Avance efectivo a `CAMINOS_DE_ANIMAS` tras derrotar al jefe, conservando la
+  decisión sobre Inés y desbloqueando Brañas Hundidas y Camino de los Difuntos.
 - Primer ciclo regional del **Bosque de los Ahorcados**, con tres encargos
   propios: Las sogas vacías, El sendero que regresa y La medalla del ahorcado.
 - Enemigos regionales Ahorcado Verde y Corvo de Carne, junto a lobos y

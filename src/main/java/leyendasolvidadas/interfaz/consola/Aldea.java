@@ -237,6 +237,8 @@ public class Aldea {
         UI.seccion("TABLON DE ENCARGOS");
         boolean finalDisponible = estado.getProgresoCampana().getCapitulo() == CapituloCampana.ULTIMA_PROCESION
                 && !estado.isCampanaGanada();
+        boolean cierreBosque = estado.getProgresoCampana().haDecidido("cap1.simbolo_peregrinos_descubierto")
+                && !estado.getProgresoCampana().haDecidido("cap1.rei_derrotado");
         Mision[] ofertas = new Mision[3];
         Dificultad[] difs = {Dificultad.FACIL, Dificultad.MEDIA, Dificultad.DIFICIL};
         for (int i = 0; i < 3; i++) {
@@ -252,12 +254,18 @@ public class Aldea {
         }
         if (finalDisponible)
             System.out.println(UI.pintar("  4. ✝ LA ULTIMA PROCESION — La Santa Compania te espera. Fin de la campana.", UI.MAGENTA));
+        else if (cierreBosque)
+            System.out.println(UI.pintar("  4. ☠ EL REY DE LAS SOGAS — Inés conoce el camino hasta el árbol de los condenados.", UI.MAGENTA));
         System.out.println("  0. Volver a la plaza");
-        int max = finalDisponible ? 4 : 3;
+        int max = finalDisponible || cierreBosque ? 4 : 3;
         int op = UI.leerOpcion(0, max);
         if (op == 0) return null;
-        Mision elegida = (op == 4)
+        Mision elegida = (op == 4 && finalDisponible)
                 ? new MisionJefe(Dificultad.DIFICIL, 500, 1000, Amuleto.aleatorio(30), true)
+                : (op == 4)
+                ? new MisionJefe("El rey de las sogas", "Seguir a Inés y abatir a O Rei dos Aforcados.",
+                    Dificultad.MEDIA, 220, 300, Amuleto.aleatorio(20), false)
+                    .enRegion(Region.BOSQUE_DE_LOS_AHORCADOS)
                 : ofertas[op - 1];
         if (!UI.confirmar("¿Partir hacia '" + elegida.getNombre() + "'?")) return null;
         return new Expedicion(estado.getCompania(), elegida, elegida.getDificultad(),

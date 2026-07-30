@@ -41,6 +41,11 @@ class IdentidadMercenariosTest {
         assertEquals(2, servicio.registrarVictoria(estado, Region.BOSQUE_DE_LOS_AHORCADOS));
         assertEquals(3, servicio.registrarVictoria(estado, Region.BOSQUE_DE_LOS_AHORCADOS));
         assertTrue(estado.getProgresoCampana().haDecidido("cap1.simbolo_peregrinos_descubierto"));
+        servicio.completarBosque(estado, ServicioCapituloUno.ActitudInes.PROTEGER);
+        assertEquals(CapituloCampana.CAMINOS_DE_ANIMAS, estado.getProgresoCampana().getCapitulo());
+        assertTrue(estado.getProgresoCampana().estaDesbloqueada(Region.BRANAS_HUNDIDAS));
+        assertTrue(estado.getProgresoCampana().estaDesbloqueada(Region.CAMINO_DE_LOS_DIFUNTOS));
+        assertTrue(estado.getProgresoCampana().haDecidido("cap1.ines.proteger"));
     }
 
     @Test

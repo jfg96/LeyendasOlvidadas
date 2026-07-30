@@ -324,7 +324,8 @@ public class Expedicion implements ContextoCombate {
             }
             case CURIO: {
                 h.resolver();
-                Evento.curioAleatorio(protagonista, this);
+                if (region == Region.BOSQUE_DE_LOS_AHORCADOS) Evento.curioBosque(protagonista, this);
+                else Evento.curioAleatorio(protagonista, this);
                 if (companiaDerrotada()) return Resultado.MUERTE;
                 UI.pausa();
                 break;
@@ -345,6 +346,8 @@ public class Expedicion implements ContextoCombate {
             h.resolver();
             Jefe jefe = ((MisionJefe) m).esFinal()
                     ? Bestiario.crearJefeFinal(nivelZona)
+                    : region == Region.BOSQUE_DE_LOS_AHORCADOS && m.getNombre().equals("El rey de las sogas")
+                    ? Bestiario.crearReiAforcados(nivelZona)
                     : Bestiario.crearJefe(nivelZona, victoriasPrevias);
             System.out.println(UI.pintar("\n  Has llegado a la guarida. Algo enorme respira en la oscuridad...", UI.MAGENTA));
             UI.pausa();

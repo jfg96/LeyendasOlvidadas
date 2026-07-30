@@ -6,6 +6,7 @@ import leyendasolvidadas.dominio.mundo.Region;
 /** Primera presentación y decisión del capítulo Las campanas de Valdesombra. */
 public final class ServicioCapituloUno {
     public enum Actitud { CONFIAR, DESCONFIAR, PRESIONAR }
+    public enum ActitudInes { PROTEGER, INTERROGAR, CONFIAR_EN_TOME }
     private static final String PRESENTADO = "cap1.padre_tome_presentado";
 
     public boolean requierePresentacion(EstadoJuego estado) {
@@ -32,5 +33,15 @@ public final class ServicioCapituloUno {
         }
         if (victorias == 3) estado.getProgresoCampana().registrarDecision("cap1.simbolo_peregrinos_descubierto");
         return victorias;
+    }
+
+    public void completarBosque(EstadoJuego estado, ActitudInes actitud) {
+        if (estado.getProgresoCampana().getCapitulo() != CapituloCampana.CAMPANAS_DE_VALDESOMBRA
+                || !estado.getProgresoCampana().haDecidido("cap1.simbolo_peregrinos_descubierto"))
+            throw new IllegalStateException("El desenlace del Bosque todavía no está disponible");
+        estado.getProgresoCampana().registrarDecision("cap1.rei_derrotado");
+        estado.getProgresoCampana().registrarDecision("cap1.ines." + actitud.name().toLowerCase());
+        estado.getProgresoCampana().registrarDecision("cap1.ines_en_valdesombra");
+        estado.getProgresoCampana().avanzarA(CapituloCampana.CAMINOS_DE_ANIMAS);
     }
 }
