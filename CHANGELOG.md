@@ -22,6 +22,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 - Expediciones adaptadas a grupos de tres: el estrés ambiental afecta a toda
   la formación, las trampas escogen una víctima, los campamentos recuperan al
   grupo y no se permite partir con plazas vacías.
+- Migración de guardados de héroe único: crea la compañía, garantiza el capital
+  mínimo para dos contratos y genera candidatos si son necesarios.
 - Opción **Cargar partida** en el menú de la aldea, con confirmación antes de
   descartar el progreso actual y mensajes específicos cuando no existe un
   guardado o no se puede recuperar.
@@ -39,6 +41,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 - Recompensas, experiencia de misión, recuperación y penalizaciones de derrota
   aplicadas a la compañía completa; los grupos enemigos ahora contienen dos o
   tres criaturas para compensar la nueva economía de acciones.
+- Mochila compartida ampliada de 14 a 24 espacios; al despedir un aventurero,
+  su equipo vuelve al almacén de la compañía.
 - Menú de creación de personaje ampliado de 3 a 9 opciones (`Juego`).
 - Renombradas las 3 clases originales por nombres de folclore ibérico:
   Guerrero → **Alabardero**, Mago → **Animero**, Pícaro → **Bandolero**

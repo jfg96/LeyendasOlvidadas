@@ -2,7 +2,7 @@ import java.util.List;
 
 /** Pruebas sin dependencias de las invariantes del modelo de compania. */
 public class CompaniaTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Personaje protagonista = new Animero("Fundador");
         Personaje meiga = new Meiga("Iria");
         Personaje fraile = new Fraile("Bieito");
@@ -29,6 +29,16 @@ public class CompaniaTest {
 
         Habilidad ensalmo = new Meiga("Leria").getHabilidades().get(1);
         comprobar(ensalmo.sobreAliado, "El ensalmo debe poder dirigirse a otro aliado");
+
+        EstadoJuego antiguo = new EstadoJuego();
+        Personaje legado = new Animero("Legado");
+        legado.getInventario().ganarOro(40);
+        antiguo.setJugador(legado);
+        var campoCompania = EstadoJuego.class.getDeclaredField("compania");
+        campoCompania.setAccessible(true);
+        campoCompania.set(antiguo, null);
+        comprobar(antiguo.getCompania().getInventario().getOro() == 130,
+                "Un guardado antiguo debe recibir capital suficiente para fundar la compania");
     }
 
     private static void comprobar(boolean condicion, String mensaje) {

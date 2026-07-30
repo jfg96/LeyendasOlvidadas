@@ -18,7 +18,9 @@ public final class GuardarCargar {
 
     public static EstadoJuego cargar() {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(FICHERO))) {
-            return (EstadoJuego) in.readObject();
+            EstadoJuego estado = (EstadoJuego) in.readObject();
+            estado.prepararTrasCarga();
+            return estado;
         } catch (IOException | ClassNotFoundException e) {
             UI.log(UI.pintar("No se pudo cargar la partida: " + e.getMessage(), UI.ROJO));
             return null;

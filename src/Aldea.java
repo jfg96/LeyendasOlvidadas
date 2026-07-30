@@ -160,10 +160,18 @@ public class Aldea {
         if (estado.getCompania().esProtagonista(elegido)) {
             UI.log(UI.pintar("El protagonista no puede abandonar su propia leyenda.", UI.ROJO));
         } else if (UI.confirmar("¿Despedir a " + elegido.getNombre() + "?")) {
+            devolverEquipo(elegido);
             estado.getCompania().despedir(elegido);
             UI.log(UI.pintar(elegido.getNombre() + " abandona Valdesombra.", UI.TENUE));
         }
         UI.pausa();
+    }
+
+    private void devolverEquipo(Personaje personaje) {
+        Inventario almacen = estado.getCompania().getInventario();
+        if (personaje.getArma() != null && almacen.anadir(personaje.getArma())) personaje.setArma(null);
+        if (personaje.getArmadura() != null && almacen.anadir(personaje.getArmadura())) personaje.setArmadura(null);
+        if (personaje.getAmuleto() != null && almacen.anadir(personaje.getAmuleto())) personaje.setAmuleto(null);
     }
 
     private Personaje elegirMiembro(String titulo) {

@@ -4,7 +4,7 @@ import java.util.List;
 
 /** Mochila del heroe: objetos y oro. */
 public class Inventario implements Serializable {
-    public static final int CAPACIDAD = 14;
+    public static final int CAPACIDAD = 24;
     private final List<Item> items = new ArrayList<>();
     private int oro = 0;
 

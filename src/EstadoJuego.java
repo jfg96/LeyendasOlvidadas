@@ -16,7 +16,12 @@ public class EstadoJuego implements Serializable {
     private List<Personaje> candidatos = new ArrayList<>();
 
     public Compania getCompania() {
-        if (compania == null && jugador != null) compania = new Compania(jugador);
+        if (compania == null && jugador != null) {
+            compania = new Compania(jugador);
+            int capitalMinimo = 130;
+            if (compania.getInventario().getOro() < capitalMinimo)
+                compania.getInventario().ganarOro(capitalMinimo - compania.getInventario().getOro());
+        }
         return compania;
     }
     public Personaje getJugador() { return getCompania().getProtagonista(); }
@@ -56,5 +61,12 @@ public class EstadoJuego implements Serializable {
 
     public static int costeContratacion(Personaje candidato) {
         return 35 + candidato.getNivel() * 30;
+    }
+
+    /** Completa campos incorporados en versiones posteriores al cargar. */
+    public void prepararTrasCarga() {
+        Compania actual = getCompania();
+        if (actual.getPlantilla().size() < Compania.MAX_FORMACION && getCandidatos().isEmpty())
+            renovarContratacion();
     }
 }
