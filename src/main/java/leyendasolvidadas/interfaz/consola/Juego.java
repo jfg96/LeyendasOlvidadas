@@ -82,6 +82,7 @@ public class Juego {
         while (true) {
             new CapituloDosConsola(repositorioPartidas).presentarSiPendiente(estado);
             new CapituloTresConsola(repositorioPartidas).presentarSiPendiente(estado);
+            new CapituloCuatroConsola(repositorioPartidas).presentarSiPendiente(estado);
             Expedicion exp = aldea.bucle();
             estado = aldea.getEstado();
             if (exp == null) {
@@ -130,6 +131,12 @@ public class Juego {
                 int progresoTres = new ServicioCapituloTres().registrarVictoria(estado, mision.getRegion());
                 if (progresoTres > 0) UI.log(UI.pintar("Pruebas recuperadas en " + mision.getRegion().getNombre()
                         + " (" + progresoTres + "/2).", UI.CIAN));
+                if (estado.getProgresoCampana().getCapitulo()
+                        == leyendasolvidadas.dominio.campana.CapituloCampana.LIBRO_DE_LOS_NOMBRES) {
+                    int nombres = new ServicioCapituloCuatro().registrarHallazgo(estado, mision.getRegion());
+                    if (nombres > 0) UI.log(UI.pintar("Testimonios del Libro reconstruidos ("
+                            + nombres + "/3).", UI.CIAN));
+                }
                 if (mision instanceof MisionJefe && ((MisionJefe) mision).esFinal())
                     estado.setCampanaGanada(true);
                 if (mision.getNombre().equals("El rey de las sogas")) cerrarCapituloUno();
@@ -147,6 +154,8 @@ public class Juego {
                 if (new ServicioCapituloTres().puedeCerrar(estado)
                         && estado.getProgresoCampana().getCapitulo() == leyendasolvidadas.dominio.campana.CapituloCampana.DEUDA_DE_LOS_VIVOS)
                     new CapituloTresConsola(repositorioPartidas).cerrar(estado);
+                if (mision.getNombre().equals("La vigilia de los ciento doce"))
+                    new CapituloCuatroConsola(repositorioPartidas).cerrar(estado);
                 break;
             }
             case ABANDONO:

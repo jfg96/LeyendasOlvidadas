@@ -88,4 +88,21 @@ public class GestorMisiones {
         };
         return m.enRegion(region);
     }
+
+    /** Encargos de investigación que reconstruyen los tres testimonios del Libro. */
+    public static Mision generarLibroNombres(Region region, int nivel, Dificultad dif) {
+        int n = nivel + dif.getNivelExtra();
+        int oro = (45 + n * 14) * (dif.ordinal() + 1);
+        int xp = (60 + n * 24) * (dif.ordinal() + 1);
+        Mision mision = switch (region) {
+            case BOSQUE_DE_LOS_AHORCADOS -> new MisionReliquia("Las tablillas del patíbulo",
+                    "Recuperar las marcas con las que el verdugo contó a los peregrinos.", dif, oro, xp, null);
+            case CAMINO_DE_LOS_DIFUNTOS -> new MisionExploracion("La letanía de los ausentes",
+                    "Seguir las voces y transcribir los nombres que aún recuerda el Camino.", dif, oro, xp, null);
+            case PAZO_DE_SOUTOMAIOR -> new MisionReliquia("El árbol de la culpa",
+                    "Robar la genealogía que vincula a las familias con la matanza.", dif, oro, xp, null);
+            default -> throw new IllegalArgumentException("Región ajena al Libro de los Nombres: " + region);
+        };
+        return mision.enRegion(region);
+    }
 }

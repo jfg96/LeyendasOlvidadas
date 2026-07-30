@@ -6,6 +6,18 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
 ## [Sin publicar]
 
 ### Añadido
+- Capítulo IV completo, **El libro de los nombres**, con apertura del Libro,
+  elección de custodio y una investigación que regresa con propósito al Bosque,
+  el Camino de los Difuntos y el Pazo de Soutomaior.
+- Tres encargos narrativos para reconstruir los testimonios de los patíbulos,
+  los peregrinos y las familias responsables, sin duplicar progreso al repetir
+  expediciones.
+- Expedición culminante **La vigilia de los ciento doce**, decisión sobre la
+  justicia debida a los descendientes y revelación alternativa del nombre 113.
+- Elección persistente de preparación para el rito final, avance a
+  `ULTIMA_PROCESION` y desbloqueo del Hospital del Camino Viejo.
+- Pruebas del arco completo del capítulo IV y de su bloqueo mientras falten
+  fragmentos del Libro.
 - Capítulo III completo, **La deuda de los vivos**, con Don Gonzalo, Minas de
   San Lourenzo, Pazo de Soutomaior, O Capataz y el Custodio de la Cripta.
 - Estado persistente de seis edificios de Valdesombra, daños visibles durante

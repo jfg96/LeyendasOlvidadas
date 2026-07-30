@@ -261,10 +261,14 @@ public class Aldea {
                 ? new Region[]{Region.BRANAS_HUNDIDAS, Region.CAMINO_DE_LOS_DIFUNTOS, Region.BRANAS_HUNDIDAS}
                 : estado.getProgresoCampana().getCapitulo() == CapituloCampana.DEUDA_DE_LOS_VIVOS
                 ? new Region[]{Region.MINAS_DE_SAN_LOURENZO, Region.PAZO_DE_SOUTOMAIOR, Region.MINAS_DE_SAN_LOURENZO}
+                : estado.getProgresoCampana().getCapitulo() == CapituloCampana.LIBRO_DE_LOS_NOMBRES
+                ? new Region[]{Region.BOSQUE_DE_LOS_AHORCADOS, Region.CAMINO_DE_LOS_DIFUNTOS, Region.PAZO_DE_SOUTOMAIOR}
                 : new Region[]{Region.BOSQUE_DE_LOS_AHORCADOS, Region.BOSQUE_DE_LOS_AHORCADOS, Region.BOSQUE_DE_LOS_AHORCADOS};
         Dificultad[] difs = {Dificultad.FACIL, Dificultad.MEDIA, Dificultad.DIFICIL};
         for (int i = 0; i < 3; i++) {
-            ofertas[i] = estado.getProgresoCampana().estaDesbloqueada(regiones[i])
+            ofertas[i] = estado.getProgresoCampana().getCapitulo() == CapituloCampana.LIBRO_DE_LOS_NOMBRES
+                    ? GestorMisiones.generarLibroNombres(regiones[i], estado.getCompania().nivelMedio(), difs[i])
+                    : estado.getProgresoCampana().estaDesbloqueada(regiones[i])
                     ? GestorMisiones.generarRegional(regiones[i], estado.getCompania().nivelMedio(), difs[i])
                     : GestorMisiones.generar(estado.getCompania().nivelMedio(), difs[i]);
             System.out.printf("  %d. [%s] %-24s %s%n", i + 1,
@@ -297,6 +301,10 @@ public class Aldea {
                 Dificultad.MEDIA, 320, 440, Amuleto.aleatorio(25), false).enRegion(Region.MINAS_DE_SAN_LOURENZO));
         if (jefePazo) especiales.add(new MisionJefe("La cripta de los Soutomaior", "Entrar en la cripta donde se oculta la Falange.",
                 Dificultad.DIFICIL, 360, 500, Amuleto.aleatorio(28), false).enRegion(Region.PAZO_DE_SOUTOMAIOR));
+        boolean ritualNombres = new ServicioCapituloCuatro().puedeCelebrarRitual(estado);
+        if (ritualNombres) especiales.add(new MisionReliquia("La vigilia de los ciento doce",
+                "Llevar el Libro reconstruido hasta el osario y devolver los nombres a sus muertos.",
+                Dificultad.DIFICIL, 420, 650, Amuleto.aleatorio(30)).enRegion(Region.CAMINO_DE_LOS_DIFUNTOS));
         for (int i = 0; i < especiales.size(); i++)
             System.out.println(UI.pintar("  " + (i + 4) + ". ☠ " + especiales.get(i).getNombre().toUpperCase()
                     + " — " + especiales.get(i).getDescripcion(), UI.MAGENTA));
