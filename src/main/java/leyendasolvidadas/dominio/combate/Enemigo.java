@@ -7,17 +7,14 @@ import leyendasolvidadas.dominio.objetos.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Enemigo generico: criatura del folclore con un repertorio de movimientos
- * elegidos por una IA de pesos segun la fila que ocupa.
- */
+/** Enemigo con movimientos ponderados según su posición. */
 public class Enemigo extends Personaje {
     private final double danioBase;
     private final int xpRecompensa;
     private final int oroMin, oroMax;
     private final boolean elite;
     private final List<MovimientoEnemigo> movimientos = new ArrayList<>();
-    private int filaPreferida; // 1 = vanguardia, 3 = retaguardia
+    private int filaPreferida;
     private transient MovimientoEnemigo intencion;
 
     public Enemigo(String nombre, int nivel, boolean elite) {

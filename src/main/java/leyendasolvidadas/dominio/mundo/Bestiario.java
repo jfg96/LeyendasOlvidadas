@@ -8,10 +8,7 @@ import leyendasolvidadas.dominio.misiones.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Fabrica de criaturas del folclore iberico. Construye grupos de combate
- * y jefes segun el nivel de la zona.
- */
+/** Crea los enemigos y jefes de cada región. */
 public final class Bestiario {
     private Bestiario() {}
 
@@ -29,7 +26,6 @@ public final class Bestiario {
         return "Criatura de la niebla. Sus intenciones revelan la mejor forma de responder.";
     }
 
-    // ---------- Criaturas comunes ----------
     private static Enemigo duende(int niv) {
         Enemigo e = new Enemigo("Duende Burlon", niv, false);
         e.anadirMovimiento(MovimientoEnemigo.golpe("Pedrada", 1.0, 3));
@@ -123,7 +119,6 @@ public final class Bestiario {
         e.anadirMovimiento(new MovimientoEnemigo("Nombre Borrado", 0.7, TipoEfecto.MARCADO, 65, 2, 0, 9, 3, F(1,2,3), false, false));
         e.setFilaPreferida(3); return e;
     }
-    // ---------- Elites ----------
     private static Enemigo lobisome(int niv) {
         Enemigo e = new Enemigo("Lobisome", niv, true);
         e.anadirMovimiento(new MovimientoEnemigo("Desgarro Salvaje", 1.1, TipoEfecto.SANGRADO, 70, 3, 3 + niv, 0, 3, F(1,2), false, false));
@@ -154,7 +149,7 @@ public final class Bestiario {
             if (Rng.prob(probElite) && !hayElite(grupo)) grupo.add(eliteAleatorio(niv + 1));
             else grupo.add(comunAleatorio(niv));
         }
-        // La retaguardia prefiere ir detras: ordenar por fila preferida.
+        // Ordenar evita que los enemigos de retaguardia ocupen la primera fila.
         grupo.sort((a, b) -> Integer.compare(a.getFilaPreferida(), b.getFilaPreferida()));
         return grupo;
     }

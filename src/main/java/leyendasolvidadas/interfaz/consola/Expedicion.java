@@ -18,13 +18,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Una expedicion a un paraje maldito: mapa procedural de habitaciones,
- * gestion de la antorcha (luz) y bucle de exploracion.
- */
+/** Gestiona el mapa, la luz y la exploración de una expedición. */
 public class Expedicion implements ContextoCombate {
 
-    /** Resultado de la expedicion. */
+    /** Posibles resultados de una expedición. */
     public enum Resultado { EXITO, ABANDONO, MUERTE }
 
     private final List<Personaje> heroes;
@@ -63,7 +60,6 @@ public class Expedicion implements ContextoCombate {
     private List<Personaje> heroesVivos() { return heroes.stream().filter(Personaje::estaVivo).toList(); }
     private boolean companiaDerrotada() { return heroesVivos().isEmpty(); }
 
-    // ------------------------------------------------------------------- luz
     public int getLuz() { return luz; }
     public void subirLuz(int n) { luz = Math.min(100, luz + n); }
     private void bajarLuz(int n) { luz = Math.max(0, luz - n); }
@@ -74,15 +70,14 @@ public class Expedicion implements ContextoCombate {
                 : UI.pintar("TINIEBLAS", UI.ROJO);
         return luz + " (" + estado + ")";
     }
-    /** La oscuridad multiplica el botin. */
+    /** Devuelve el multiplicador de botín correspondiente a la luz actual. */
     public double getMultBotin() { return luz >= 75 ? 1.0 : luz >= 40 ? 1.1 : luz >= 15 ? 1.3 : 1.6; }
-    /** La oscuridad mejora la rareza del botin. */
+    /** Devuelve la mejora de rareza correspondiente a la luz actual. */
     public int getBonusRareza() { return luz >= 75 ? 0 : luz >= 40 ? 4 : luz >= 15 ? 10 : 18; }
     private int probEmboscada() { return luz >= 75 ? 4 : luz >= 40 ? 10 : luz >= 15 ? 18 : 30; }
     private int estresPorPaso() { return luz >= 75 ? 0 : luz >= 40 ? 1 : luz >= 15 ? 2 : 4; }
 
-    // ------------------------------------------------------------------ mapa
-    /** Genera el mapa como un paseo aleatorio conexo sobre una cuadricula. */
+    /** Genera un mapa conexo mediante un paseo aleatorio. */
     private void generarMapa(int numHabitaciones) {
         Map<Long, Habitacion> porPos = new HashMap<>();
         entrada = new Habitacion(0, 0, TipoHabitacion.ENTRADA);
@@ -109,9 +104,9 @@ public class Expedicion implements ContextoCombate {
             origen.conectar(letras[d], destino);
             destino.conectar(letras[d == 0 ? 1 : d == 1 ? 0 : d == 2 ? 3 : 2], origen);
             x = nx; y = ny;
-            if (Rng.prob(30)) { x = 0; y = 0; } // volver a ramificar desde la entrada
+            if (Rng.prob(30)) { x = 0; y = 0; }
         }
-        // La habitacion mas lejana (BFS) pasa a ser el OBJETIVO si la mision lo requiere.
+        // El objetivo se coloca lejos de la entrada para evitar expediciones triviales.
         Habitacion lejana = masLejana();
         if (gestor.getMision().requiereObjetivo()) {
             reemplazar(lejana, new Habitacion(lejana.getX(), lejana.getY(), TipoHabitacion.OBJETIVO));
@@ -183,8 +178,7 @@ public class Expedicion implements ContextoCombate {
         }
     }
 
-    // ------------------------------------------------------------ exploracion
-    /** Bucle principal de la expedicion. */
+    /** Ejecuta la exploración hasta regresar o perder el grupo. */
     public Resultado explorar() {
         while (true) {
             UI.limpiar();
@@ -261,7 +255,6 @@ public class Expedicion implements ContextoCombate {
         if (op == 0) return null;
         Habitacion destino = actual.getConexiones().get(salidas.get(op - 1));
 
-        // ---- travesia del pasillo ----
         int segmentos = Rng.entre(2, 3);
         for (int s = 1; s <= segmentos; s++) {
             bajarLuz(region == Region.MINAS_DE_SAN_LOURENZO ? 10
@@ -286,7 +279,7 @@ public class Expedicion implements ContextoCombate {
                 Combate.Resultado res = nuevoCombate(crearGrupoRegional())
                         .ejecutar(Rng.prob(probEmboscada()));
                 if (res == Combate.Resultado.DERROTA) return Resultado.MUERTE;
-                if (res == Combate.Resultado.HUIDA) return null; // vuelve a la sala anterior
+                if (res == Combate.Resultado.HUIDA) return null;
             } else if (r <= 32) {
                 Evento.trampa(Rng.elegir(heroesVivos()));
                 if (companiaDerrotada()) return Resultado.MUERTE;
@@ -312,7 +305,7 @@ public class Expedicion implements ContextoCombate {
         };
     }
 
-    /** Resuelve la llegada a una habitacion. */
+    /** Resuelve el contenido de una habitación al entrar. */
     private Resultado entrar(Habitacion h, boolean esInicio) {
         boolean primeraVez = !h.estaVisitada();
         h.visitar();
@@ -363,7 +356,7 @@ public class Expedicion implements ContextoCombate {
                 if (r != null) return r;
                 break;
             }
-            default: // VACIA, CAMPAMENTO, ENTRADA: nada automatico
+            default:
         }
         return null;
     }

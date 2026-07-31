@@ -6,9 +6,7 @@ import leyendasolvidadas.dominio.objetos.*;
 import leyendasolvidadas.dominio.mundo.*;
 
 
-/**
- * Coordina la mision activa de la expedicion y reenvia los eventos del mundo.
- */
+/** Mantiene la misión activa y actualiza su progreso. */
 public class GestorMisiones {
     private Mision misionActual;
 
@@ -33,7 +31,13 @@ public class GestorMisiones {
                     ? ", " + misionActual.getItemRecompensa().getNombre() : "");
     }
 
-    /** Genera una mision aleatoria acorde al nivel del heroe. */
+    /**
+     * Genera una misión adecuada al nivel y la dificultad.
+     *
+     * @param nivelHeroe nivel del protagonista
+     * @param dif dificultad elegida
+     * @return una nueva misión
+     */
     public static Mision generar(int nivelHeroe, Dificultad dif) {
         int niv = nivelHeroe + dif.getNivelExtra();
         int oro = (30 + niv * 12) * (dif.ordinal() + 1);

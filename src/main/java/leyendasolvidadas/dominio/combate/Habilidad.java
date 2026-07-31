@@ -5,23 +5,23 @@ import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
 
 
-/** Habilidad de combate de un heroe. Es un contenedor de datos: la resolucion la hace Combate. */
+/** Datos necesarios para resolver una habilidad de combate. */
 public class Habilidad {
     final String nombre, desc;
-    final int coste;            // coste de recurso
-    final int cooldown;         // turnos de enfriamiento
+    final int coste;
+    final int cooldown;
     int cdActual = 0;
-    final double mult;          // multiplicador de dano (0 = no ofensiva)
-    final int[] filas;          // filas enemigas alcanzables
-    final boolean aoe;          // golpea todas las filas alcanzables
-    final TipoEfecto efecto;    // efecto aplicado (o null)
+    final double mult;
+    final int[] filas;
+    final boolean aoe;
+    final TipoEfecto efecto;
     final int probEfecto, durEfecto;
     final double potEfecto;
-    final boolean sobreSi;      // el efecto se aplica al propio heroe
-    boolean sobreAliado;        // permite escoger un integrante de la formacion
-    final int critBonus;        // bonus de critico de esta habilidad
-    final double robo;          // fraccion del dano que se roba como vida
-    final int estresPropio;     // estres que se inflige (+) o alivia (-) el heroe
+    final boolean sobreSi;
+    boolean sobreAliado;
+    final int critBonus;
+    final double robo;
+    final int estresPropio;
 
     public Habilidad(String nombre, String desc, int coste, int cooldown, double mult, int[] filas,
                      boolean aoe, TipoEfecto efecto, int probEfecto, int durEfecto, double potEfecto,

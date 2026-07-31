@@ -6,10 +6,7 @@ import leyendasolvidadas.dominio.objetos.*;
 
 import java.util.List;
 
-/**
- * Bandolero: forajido de la Sierra. Rapido, letal y escurridizo;
- * gasta Energia y castiga a los enemigos marcados.
- */
+/** Héroe rápido centrado en críticos y sangrado. */
 public class Bandolero extends Personaje {
     private final List<Habilidad> habilidades;
 

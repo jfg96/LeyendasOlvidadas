@@ -10,14 +10,11 @@ import leyendasolvidadas.dominio.mundo.*;
 import leyendasolvidadas.infraestructura.*;
 import leyendasolvidadas.interfaz.consola.*;
 
-/**
- * Curiosidades: hallazgos interactivos de las expediciones. Cada uno plantea
- * una eleccion con riesgo y recompensa, al estilo de los "curios".
- */
+/** Resuelve los hallazgos aleatorios de una expedición. */
 public final class Evento {
     private Evento() {}
 
-    /** Lanza una curiosidad aleatoria sobre el heroe. */
+    /** Elige y resuelve un hallazgo al azar. */
     public static void curioAleatorio(Personaje h, Expedicion exp) {
         switch (Rng.entre(0, 4)) {
             case 0: altar(h); break;
@@ -159,7 +156,7 @@ public final class Evento {
         }
     }
 
-    /** Trampa de pasillo: se intenta esquivar, si no castiga cuerpo y mente. */
+    /** Resuelve una trampa de pasillo. */
     public static void trampa(Personaje h) {
         UI.log(UI.pintar("¡CLAC! Un cepo oculto salta bajo tus pies...", UI.ROJO));
         if (Rng.prob(h.esquivaActual() + 25)) {
@@ -173,7 +170,7 @@ public final class Evento {
         }
     }
 
-    /** Cofre de pasillo o de sala del tesoro. Los mimicos existen. */
+    /** Abre un cofre y resuelve su posible contenido. */
     public static java.util.List<Enemigo> cofre(Personaje h, Expedicion exp, boolean grande) {
         UI.seccion(grande ? "UN ARCON FERRADO" : "UN COFRE POLVORIENTO");
         if (!grande && Rng.prob(12)) {

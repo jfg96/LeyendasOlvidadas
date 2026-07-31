@@ -192,6 +192,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/).
   la curación para el futuro sistema de compañía.
 
 ### Cambiado
+- Revisados los comentarios del código para usar Javadoc breve y atribución a
+  jfg96.
 - Menú principal de Valdesombra reorganizado por aventura, servicios, archivo y
   sistema, mostrando además el capítulo actual de la campaña.
 - Exploración ahora mantiene visibles las acciones no disponibles y explica por

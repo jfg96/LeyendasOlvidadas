@@ -5,18 +5,18 @@ import leyendasolvidadas.dominio.compania.*;
 import leyendasolvidadas.dominio.objetos.*;
 
 
-/** Ataque o accion que puede realizar un enemigo, con peso para la IA. */
+/** Datos de un movimiento disponible para un enemigo. */
 public class MovimientoEnemigo {
     final String nombre;
-    final double mult;          // multiplicador de dano (0 = no dana)
-    final TipoEfecto efecto;    // efecto que puede aplicar (o null)
+    final double mult;
+    final TipoEfecto efecto;
     final int probEfecto, durEfecto;
     final double potEfecto;
-    final int estres;           // estres que inflige al heroe
-    final int peso;             // peso para la eleccion aleatoria
-    final int[] filasUso;       // filas desde las que es usable
-    final boolean seCura;       // el enemigo se cura en lugar de atacar
-    final boolean sobreSi;      // aplica el efecto sobre si mismo (buff)
+    final int estres;
+    final int peso;
+    final int[] filasUso;
+    final boolean seCura;
+    final boolean sobreSi;
 
     public MovimientoEnemigo(String nombre, double mult, TipoEfecto efecto, int probEfecto,
                              int durEfecto, double potEfecto, int estres, int peso,

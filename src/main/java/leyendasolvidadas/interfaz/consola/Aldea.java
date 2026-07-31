@@ -14,10 +14,7 @@ import leyendasolvidadas.interfaz.consola.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * La aldea: refugio entre expediciones. Tablon de misiones, ermita,
- * taberna, herreria y gestion del equipo.
- */
+/** Gestiona las acciones disponibles en Valdesombra. */
 public class Aldea {
     private EstadoJuego estado;
     private final RepositorioPartidas repositorioPartidas;
@@ -31,7 +28,9 @@ public class Aldea {
     public EstadoJuego getEstado() { return estado; }
 
     /**
-     * Bucle de la aldea. @return la expedicion elegida, o null si el jugador sale del juego.
+     * Muestra la aldea hasta que el jugador parte o sale.
+     *
+     * @return la expedición elegida, o {@code null} si termina la partida
      */
     public Expedicion bucle() {
         while (true) {
@@ -316,7 +315,6 @@ public class Aldea {
         UI.pausa();
     }
 
-    // ---------------------------------------------------------------- tablon
     private Expedicion tablon() {
         Personaje h = estado.getJugador();
         if (!estado.getCompania().estaCompleta()) {
@@ -395,7 +393,6 @@ public class Aldea {
                 estado.getExpedicionesGanadas(), estado.getRegistroCampana());
     }
 
-    // ---------------------------------------------------------------- ermita
     private void ermita(Personaje h) {
         UI.limpiar();
         UI.seccion("LA ERMITA DEL SANTO OLVIDADO");
@@ -424,7 +421,6 @@ public class Aldea {
         UI.pausa();
     }
 
-    // --------------------------------------------------------------- taberna
     private void taberna(Personaje h) {
         UI.limpiar();
         UI.seccion("TABERNA \"EL CANDIL TORCIDO\"");
@@ -468,7 +464,6 @@ public class Aldea {
         UI.pausa();
     }
 
-    // -------------------------------------------------------------- herreria
     private void herreria(Personaje h) {
         while (true) {
             UI.limpiar();

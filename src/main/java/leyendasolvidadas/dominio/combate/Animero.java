@@ -6,10 +6,7 @@ import leyendasolvidadas.dominio.objetos.*;
 
 import java.util.List;
 
-/**
- * Animero: el que llama a las animas en la noche con su campanilla. Fragil
- * pero devastador; canaliza Mana y puede robar la esencia de los muertos.
- */
+/** Héroe capaz de atacar a distancia y robar vida. */
 public class Animero extends Personaje {
     private final List<Habilidad> habilidades;
 

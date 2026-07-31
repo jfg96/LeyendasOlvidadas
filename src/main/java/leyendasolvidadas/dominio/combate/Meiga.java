@@ -6,11 +6,7 @@ import leyendasolvidadas.dominio.objetos.*;
 
 import java.util.List;
 
-/**
- * Meiga: la Curandera de la aldea. Fragil en ataque pero se sostiene sola
- * con ensalmos que regeneran la vida y calman la mente; drena la esencia
- * de sus enemigos. Canaliza la Fe. En grupo, la columna vertebral del soporte.
- */
+/** Heroína de apoyo especializada en curación y veneno. */
 public class Meiga extends Personaje {
     private final List<Habilidad> habilidades;
 

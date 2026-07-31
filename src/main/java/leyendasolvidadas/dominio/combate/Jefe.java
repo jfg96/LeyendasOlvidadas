@@ -8,10 +8,7 @@ import leyendasolvidadas.dominio.eventos.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Jefe: enemigo mayor con dos fases. Al caer a media vida se enfurece,
- * limpia sus males y desbloquea movimientos nuevos.
- */
+/** Enemigo con una segunda fase al alcanzar la mitad de vida. */
 public class Jefe extends Enemigo {
     private boolean faseDos = false;
     private final List<MovimientoEnemigo> movimientosFase2 = new ArrayList<>();
@@ -20,15 +17,18 @@ public class Jefe extends Enemigo {
     public Jefe(String nombre, int nivel, String gritoFase2) {
         super(nombre, nivel, true);
         this.gritoFase2 = gritoFase2;
-        // Un jefe combate solo contra tres heroes: necesita aguantar la
-        // economia de acciones del grupo sin limitarse a ser una esponja.
+        // Compensa la ventaja de acciones del grupo de héroes.
         setVidaMaxBase(getVidaMaxBase() * 3);
         setVida(getVidaMax());
     }
     public void anadirMovimientoFase2(MovimientoEnemigo m) { movimientosFase2.add(m); }
     public boolean enFaseDos() { return faseDos; }
 
-    /** Comprueba el cambio de fase. @return true si acaba de entrar en fase 2. */
+    /**
+     * Activa la segunda fase cuando corresponde.
+     *
+     * @return {@code true} si la fase se ha activado en esta llamada
+     */
     public boolean comprobarFase() {
         if (!faseDos && getVida() <= getVidaMax() * 0.5) {
             faseDos = true;
@@ -41,7 +41,6 @@ public class Jefe extends Enemigo {
     }
     @Override public double multFase() { return faseDos ? 1.3 : 1.0; }
     @Override public Item soltarBotin(Personaje jugador, double multBotin, int bonusRareza) {
-        // Los jefes siempre sueltan una reliquia notable.
         return Rng.prob(50) ? Arma.aleatoria(getNivel(), 25) : Amuleto.aleatorio(25);
     }
 }

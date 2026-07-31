@@ -65,7 +65,6 @@ public class CompaniaTest {
             accion.run();
             throw new AssertionError(mensaje);
         } catch (IllegalArgumentException esperada) {
-            // Resultado esperado.
         }
     }
 }

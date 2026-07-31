@@ -13,10 +13,7 @@ import leyendasolvidadas.dominio.eventos.*;
 
 import java.util.Scanner;
 
-/**
- * Utilidades de interfaz de terminal: colores ANSI, barras, cajas y lectura de entrada.
- * Si la terminal no soporta ANSI, ejecutar con el argumento --sin-color.
- */
+/** Utilidades de presentación y entrada para la terminal. */
 public final class UI {
     public static boolean color = true;
     public static boolean limpiarPantalla = true;
@@ -76,7 +73,7 @@ public final class UI {
     }
     public static void aviso(String texto) { log(pintar("! " + texto, AMARILLO)); }
 
-    /** Barra de progreso coloreada, p.ej. Vida ██████░░░░ 60/100 */
+    /** Dibuja una barra de progreso con su valor actual. */
     public static String barra(String etiqueta, double valor, double max, String col) {
         int ancho = 14;
         int llenos = (max <= 0) ? 0 : (int) Math.round(ancho * Math.max(0, valor) / max);
@@ -105,7 +102,13 @@ public final class UI {
         SC.nextLine();
     }
 
-    /** Lee un entero entre min y max, repitiendo hasta que sea valido. */
+    /**
+     * Lee una opción dentro del intervalo indicado.
+     *
+     * @param min valor mínimo aceptado
+     * @param max valor máximo aceptado
+     * @return la opción introducida
+     */
     public static int leerOpcion(int min, int max) {
         while (true) {
             System.out.print(pintar("  » ", AMARILLO));

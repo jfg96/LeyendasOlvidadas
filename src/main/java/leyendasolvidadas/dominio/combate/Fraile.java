@@ -6,11 +6,7 @@ import leyendasolvidadas.dominio.objetos.*;
 
 import java.util.List;
 
-/**
- * Fraile: el exorcista errante, azote de animas y de la Santa Compania.
- * Sacerdote resistente que aturde con el Verbo, quema con fuego sagrado y
- * se ampara tras la fe, sereno donde otros enloquecen. Su recurso: el Fervor.
- */
+/** Héroe resistente con habilidades de protección y control. */
 public class Fraile extends Personaje {
     private final List<Habilidad> habilidades;
 

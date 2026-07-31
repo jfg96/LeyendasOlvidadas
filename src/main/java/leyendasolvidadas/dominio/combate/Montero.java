@@ -6,11 +6,7 @@ import leyendasolvidadas.dominio.objetos.*;
 
 import java.util.List;
 
-/**
- * Montero: el Ballestero de las brañas. Artilleria de retaguardia; castiga
- * las filas lejanas, remata con tiros certeros y traba a la vanguardia con
- * lazos. Fragil de cerca: vive de mantener la distancia y el Pulso firme.
- */
+/** Héroe de retaguardia especializado en ataques a distancia. */
 public class Montero extends Personaje {
     private final List<Habilidad> habilidades;
 

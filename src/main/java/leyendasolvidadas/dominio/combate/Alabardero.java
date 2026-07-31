@@ -6,10 +6,7 @@ import leyendasolvidadas.dominio.objetos.*;
 
 import java.util.List;
 
-/**
- * Alabardero: veterano de la Vieja Guardia. Mucha vida y defensa;
- * usa Aguante para sus tecnicas y protege su cordura tras el escudo.
- */
+/** Héroe de vanguardia especializado en defensa. */
 public class Alabardero extends Personaje {
     private final List<Habilidad> habilidades;
 

@@ -6,11 +6,7 @@ import leyendasolvidadas.dominio.objetos.*;
 
 import java.util.List;
 
-/**
- * Gaitero: el Juglar de las romerias. Sostiene la moral con coplas y
- * aturuxos: se envalentona, ahuyenta el horror y debilita a la horda con
- * la muneira. Su Aliento es el recurso. En grupo, el maestro del temple.
- */
+/** Héroe de apoyo que recupera y refuerza al grupo. */
 public class Gaitero extends Personaje {
     private final List<Habilidad> habilidades;
 

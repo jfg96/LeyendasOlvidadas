@@ -6,11 +6,7 @@ import leyendasolvidadas.dominio.objetos.*;
 
 import java.util.List;
 
-/**
- * Zahori: el Vidente que lee malos presagios. Controlador de campo, no
- * pega fuerte pero debilita, aturde y marca a la horda entera para que
- * caiga ante los demas. Fragil como el Animero; su recurso es el Presagio.
- */
+/** Héroe de control que debilita, aturde y marca enemigos. */
 public class Zahori extends Personaje {
     private final List<Habilidad> habilidades;
 

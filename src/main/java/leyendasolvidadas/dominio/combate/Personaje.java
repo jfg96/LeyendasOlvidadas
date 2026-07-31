@@ -11,24 +11,22 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Clase base abstracta de toda entidad viva: heroes y enemigos.
- * Gestiona vida, recurso, cordura, equipo, efectos de estado y experiencia.
+ * Clase base de los héroes y enemigos.
  *
- * @author Javier Fernandez Gavino
- * @version 3.0 (Leyendas Olvidadas: La Compania)
+ * @author jfg96
  */
 public abstract class Personaje {
     private String nombre;
     private int nivel;
     private double vida, vidaMax;
     private int defensa;
-    private int esquiva;    // %
-    private int critico;    // %
+    private int esquiva;
+    private int critico;
     private int velocidad;
     private double recurso, recursoMax;
     private int regenRecurso;
-    private int cordura;    // 0-100, solo relevante en heroes
-    private String aflixion; // null | "VIRTUD" | "PARANOIA" | "DESESPERACION"
+    private int cordura;
+    private String aflixion;
     private int experiencia;
     private final Inventario inventario = new Inventario();
     private Arma arma; private Armadura armadura; private Amuleto amuleto;
@@ -52,7 +50,6 @@ public abstract class Personaje {
         this.cordura = 0; this.experiencia = 0;
     }
 
-    // --- Getters / setters con validacion ---
     public String getNombre() { return nombre; }
     public void setNombre(String n) { nombre = n; }
     public int getNivel() { return nivel; }
@@ -116,7 +113,6 @@ public abstract class Personaje {
         this.heridas.clear(); this.heridas.addAll(heridas.stream().distinct().limit(2).toList()); setVida(vida);
     }
 
-    // --- Estadisticas derivadas ---
     private int bonusAmuleto(Amuleto.Don don) {
         return (amuleto != null && amuleto.getDon() == don) ? amuleto.getPotencia() : 0;
     }
@@ -142,7 +138,6 @@ public abstract class Personaje {
         return m;
     }
 
-    // --- Combate ---
     /** Dano de ataque base del personaje, incluyendo su arma. */
     public abstract double ataqueBase();
     /** Nombre del recurso de clase (Aguante, Mana, Energia...). */
@@ -170,7 +165,6 @@ public abstract class Personaje {
         setVida(vida + cantidad);
     }
 
-    // --- Efectos de estado ---
     public void aplicarEfecto(TipoEfecto tipo, int duracion, double potencia) {
         for (EfectoEstado e : efectos) {
             if (e.getTipo() == tipo) { e.refrescar(duracion); return; }
@@ -209,7 +203,6 @@ public abstract class Personaje {
         return sb.toString();
     }
 
-    // --- Cordura (solo heroes) ---
     /** Aumenta el estres; al llegar a 100 se resuelve una Prueba de Determinacion. */
     public void sufrirEstres(int cantidad) {
         int reduccion = bonusAmuleto(Amuleto.Don.TEMPLE);
@@ -267,7 +260,6 @@ public abstract class Personaje {
             habilidades.get(i).setCooldownActual(cooldowns.get(i));
     }
 
-    // --- Experiencia ---
     public int xpNecesaria() { return nivel * 100; }
     public void ganarExperiencia(int cantidad) {
         experiencia += cantidad;

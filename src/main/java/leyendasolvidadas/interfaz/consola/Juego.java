@@ -11,11 +11,9 @@ import leyendasolvidadas.infraestructura.*;
 import leyendasolvidadas.interfaz.consola.*;
 
 /**
- * Controlador principal (singleton): titulo, creacion del heroe y bucle
- * aldea <-> expedicion hasta romper la maldicion de la Santa Compania.
+ * Coordina el inicio de la partida y el bucle principal del juego.
  *
- * @author Carlos Fernandez Gavino
- * @version 3.0 (Leyendas Olvidadas: La Compania)
+ * @author jfg96
  */
 public class Juego {
     private final RepositorioPartidas repositorioPartidas;
@@ -69,8 +67,7 @@ public class Juego {
         String nombre = UI.leerTexto("¿Tu nombre, forastero?");
         Personaje p = FabricaHeroes.crear(clase, nombre);
         p.setPersonalidadMecanica(RasgoMecanico.TEMPLE_DE_HIERRO, DefectoMecanico.DESCONFIANZA);
-        // Capital suficiente para fundar una compania de tres y conservar
-        // margen para provisiones o curacion durante la primera semana.
+        // Permite contratar dos compañeros y comprar provisiones al comenzar.
         p.getInventario().ganarOro(180);
         p.getInventario().anadir(Pocion.vida());
         p.getInventario().anadir(Pocion.antorcha());
@@ -99,7 +96,6 @@ public class Juego {
             resolverVuelta(r, mision);
             if (estado.isCampanaGanada() && mision instanceof MisionJefe && ((MisionJefe) mision).esFinal()) {
                 new CapituloCincoConsola(repositorioPartidas).mostrarEpilogo(estado);
-                // La partida continua en modo libre si el jugador quiere.
             }
         }
     }

@@ -7,10 +7,7 @@ import leyendasolvidadas.dominio.mundo.*;
 import leyendasolvidadas.dominio.eventos.*;
 
 
-/**
- * Clase base de las misiones de expedicion. Las subclases reaccionan a los
- * eventos del mundo mediante los metodos notificar*.
- */
+/** Clase base de las misiones de expedición. */
 public abstract class Mision {
     private final String nombre, descripcion;
     private final Dificultad dificultad;
@@ -48,7 +45,7 @@ public abstract class Mision {
     /** Indica si esta mision necesita habitacion OBJETIVO en el mapa. */
     public boolean requiereObjetivo() { return false; }
 
-    // Ganchos de eventos (por defecto no hacen nada)
+    // Las subclases sobrescriben únicamente los eventos que necesitan.
     public void notificarMuerte(Enemigo e) {}
     public void notificarVisita(int visitadas, int totales) {}
     public void notificarObjetivo() {}

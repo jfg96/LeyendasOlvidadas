@@ -6,11 +6,7 @@ import leyendasolvidadas.dominio.objetos.*;
 
 import java.util.List;
 
-/**
- * Lobishome: el maldito que se torna bestia en las noches de niebla.
- * Bruiser de vanguardia: desangra a sus presas, drena su vida al morder y
- * se enfurece con la Furia acumulada. Mucha vida, poca guardia: mata o cae.
- */
+/** Héroe de vanguardia centrado en sangrado y robo de vida. */
 public class Lobishome extends Personaje {
     private final List<Habilidad> habilidades;
 

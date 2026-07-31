@@ -10,6 +10,12 @@
     <name>Leyendas Olvidadas</name>
     <description>RPG de terror folclórico para terminal</description>
 
+    <developers>
+        <developer>
+            <name>jfg96</name>
+        </developer>
+    </developers>
+
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

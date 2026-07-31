@@ -10,10 +10,7 @@ import leyendasolvidadas.dominio.mundo.*;
 import leyendasolvidadas.infraestructura.*;
 import leyendasolvidadas.interfaz.consola.*;
 
-/**
- * Punto de entrada de Leyendas Olvidadas: La Compania.
- * Uso: java Main [--sin-color] [--sin-limpiar]
- */
+/** Punto de entrada de la aplicación. */
 public class Main {
     public static void main(String[] args) {
         leyendasolvidadas.dominio.eventos.BusEventos.conectar(UI::mostrarEvento);
