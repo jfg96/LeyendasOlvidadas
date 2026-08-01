@@ -1,88 +1,57 @@
 # Leyendas Olvidadas: La Compañía
 
-> La niebla ha devorado los caminos. Las campanas doblan solas.  
-> Alguien tiene que llevar la vela... y devolverla.
+RPG de terror folclórico para terminal desarrollado en Java. El jugador dirige
+una compañía de aventureros, prepara expediciones, combate criaturas del
+folclore ibérico y toma decisiones persistentes a lo largo de una campaña de
+cinco capítulos.
 
-**Leyendas Olvidadas** es un RPG de terror folclórico para terminal, escrito en
-Java puro e inspirado en la tensión, el desgaste y las decisiones de riesgo y
-recompensa de *Darkest Dungeon*. La aventura transcurre alrededor de
-Valdesombra, una aldea asediada por criaturas del folclore ibérico: ánimas,
-meigas, trasgos, lobisomes, cuélebres y la temida Santa Compaña.
+## Estado
 
-Elige una leyenda, acepta encargos, adéntrate en parajes generados de forma
-procedural y regresa con vida. La oscuridad ofrece mejores recompensas, pero
-también enemigos más peligrosos, emboscadas y una mente cada vez más cerca de
-quebrarse.
+El proyecto se encuentra en desarrollo. La campaña principal es jugable desde
+el prólogo hasta cinco epílogos, e incluye el ciclo completo de aldea,
+contratación, preparación, expedición, combate, progresión y guardado.
 
-## Características
+Versión actual: `3.1.0-SNAPSHOT`.
 
-- **Compañía de tres héroes.** Crea a tu protagonista, contrata aventureros en
-  Valdesombra y prepara una formación con habilidades complementarias.
-- **Aventureros con identidad.** Los candidatos tienen origen, personalidad,
-  rasgos, defectos, motivaciones y una voz propia antes de ser contratados. Sus
-  virtudes y debilidades modifican estadísticas, estrés, recuperación y coste.
-- **Compañeros que recuerdan.** La lealtad y las relaciones cambian al vencer,
-  retirarse o caer juntos; las derrotas pueden dejar secuelas persistentes que
-  requieren tratamiento en Valdesombra.
-- **Historias personales.** Cinco mercenarios únicos pueden aparecer durante la
-  campaña. Sus cadenas de misiones terminan en lealtad permanente, cicatrices,
-  abandono o sacrificio y pueden abrir el desenlace más difícil.
-- **Una campaña que deja memoria.** El diario conserva expediciones y decisiones,
-  mientras el bestiario revela las criaturas ya encontradas.
-- **Combate legible.** Los enemigos anuncian su siguiente intención y permiten
-  decidir cuándo atacar, protegerse o controlar una amenaza.
-- **Valdesombra evoluciona.** Sus seis edificios pueden alcanzar nivel tres y
-  ofrecen mejoras de curación, equipo, experiencia, contratos o serenidad.
-- **Combate por turnos, filas e iniciativa.** Cada integrante actúa según su
-  velocidad y cada habilidad alcanza objetivos concretos, aliados o enemigos.
-- **Nueve clases jugables.** Cada una dispone de atributos, recurso y cuatro
-  habilidades propias.
-- **Expediciones procedurales.** Explora mapas conectados con niebla de guerra,
-  salas especiales, pasillos, trampas, cofres, mímicos y campamentos.
-- **Luz y oscuridad.** La antorcha se consume al avanzar. Una luz baja aumenta
-  el estrés, las emboscadas y la fuerza enemiga, pero mejora el botín.
-- **Cordura y aflicciones.** Al alcanzar el límite de estrés, el personaje
-  afronta una prueba de determinación: puede hallar una virtud o sucumbir a la
-  paranoia y la desesperación.
-- **Estados alterados.** Sangrado, veneno, quemadura, regeneración, aturdimiento,
-  protección, marca y otros efectos cambian el curso del combate.
-- **Equipo y botín.** Armas, armaduras, amuletos y consumibles aparecen en
-  cuatro rarezas: común, rara, épica y legendaria.
-- **Aldea como centro de operaciones.** Contrata y organiza la compañía, visita
-  la ermita, la taberna y la herrería, acepta encargos o guarda la partida.
-- **Campaña por capítulos.** El prólogo y las decisiones persistentes abren
-  regiones y conducen progresivamente hacia la última procesión.
-- **Prólogo narrativo.** La llegada a Valdesombra, la desaparición de una niña
-  y el primer encuentro con un Sin Rostro introducen el misterio y el combate.
+## Funcionalidades
+
+- Compañía con una plantilla máxima de seis personajes y una formación activa
+  de tres.
+- Nueve clases jugables con atributos, recursos y habilidades propios.
+- Combate por turnos con iniciativa, filas, selección de objetivos, estados e
+  intenciones enemigas visibles.
+- Expediciones procedurales con niebla de guerra, trampas, cofres, campamentos,
+  eventos y encuentros regionales.
+- Sistemas de antorcha, estrés, cordura, aflicciones, equipo y botín.
+- Campaña de cinco capítulos con regiones, decisiones y epílogos persistentes.
+- Mercenarios con trasfondo, rasgos, defectos, lealtad, afinidad y heridas.
+- Cinco mercenarios únicos con cadenas de misiones personales.
+- Aldea con contratación, formación, servicios y seis edificios mejorables.
+- Diario de campaña y bestiario desbloqueable.
+- Guardado binario versionado con migración desde LOSV v1 hasta v6.
+- Suite de pruebas JUnit 5 y simulador reproducible de equilibrio.
 
 ## Clases jugables
 
-| Clase | Estilo | Recurso |
+| Clase | Función principal | Recurso |
 | --- | --- | --- |
-| **Alabardero** | Vanguardia resistente, defensa y control | Aguante |
-| **Animero** | Daño sobrenatural, quemadura y robo de vida | Maná |
-| **Bandolero** | Críticos, esquiva, sangrado y marcas | Energía |
-| **Meiga** | Regeneración, veneno y autosuficiencia | Fe |
-| **Montero** | Ataques a distancia, remates y trampas | Pulso |
-| **Gaitero** | Fortaleza, recuperación y control de la moral | Aliento |
-| **Lobishome** | Vanguardia agresiva, sangrado y drenaje | Furia |
-| **Zahorí** | Debilitación, aturdimiento y control de campo | Presagio |
-| **Fraile** | Resistencia, fuego sagrado y protección | Fervor |
+| Alabardero | Defensa y control de vanguardia | Aguante |
+| Animero | Daño sobrenatural y robo de vida | Maná |
+| Bandolero | Críticos, esquiva y sangrado | Energía |
+| Meiga | Regeneración y veneno | Fe |
+| Montero | Ataques a distancia y trampas | Pulso |
+| Gaitero | Apoyo y control de la moral | Aliento |
+| Lobishome | Daño de vanguardia y drenaje | Furia |
+| Zahorí | Debilitación y control de campo | Presagio |
+| Fraile | Protección, aturdimiento y fuego | Fervor |
 
 ## Requisitos
 
-- **JDK 17 o posterior**.
-- **Apache Maven 3.8.6 o posterior**.
-- Una terminal compatible con UTF-8.
+- JDK 17 o posterior.
+- Apache Maven 3.8.6 o posterior.
+- Terminal compatible con UTF-8.
 
-Puedes comprobar la versión instalada con:
-
-```bash
-java -version
-mvn -version
-```
-
-## Compilar y jugar
+## Compilación y ejecución
 
 Desde la raíz del proyecto:
 
@@ -91,20 +60,18 @@ mvn clean package
 java -jar target/leyendas-olvidadas-3.1.0-SNAPSHOT.jar
 ```
 
-Si la terminal no representa correctamente los colores ANSI:
+Opciones disponibles:
+
+- `--sin-color`: desactiva los colores ANSI.
+- `--sin-limpiar`: conserva el historial de salida entre pantallas.
+
+Ejemplo:
 
 ```bash
-java -jar target/leyendas-olvidadas-3.1.0-SNAPSHOT.jar --sin-color
+java -jar target/leyendas-olvidadas-3.1.0-SNAPSHOT.jar --sin-color --sin-limpiar
 ```
 
-Para conservar todo el historial de salida sin limpiar la terminal entre menús:
-
-```bash
-java -jar target/leyendas-olvidadas-3.1.0-SNAPSHOT.jar --sin-limpiar
-```
-
-En Windows se recomienda usar Windows Terminal y activar UTF-8 antes de
-ejecutar el juego:
+En Windows puede ser necesario activar UTF-8 antes de ejecutar el juego:
 
 ```powershell
 chcp 65001
@@ -112,115 +79,68 @@ mvn clean package
 java -jar target\leyendas-olvidadas-3.1.0-SNAPSHOT.jar
 ```
 
-## Cómo se juega
+## Funcionamiento general
 
-La partida alterna entre dos espacios:
+La partida alterna entre la aldea y las expediciones:
 
-1. **Valdesombra:** crea y conserva a tu protagonista, contrata hasta completar
-   una plantilla de seis, escoge tres miembros activos, compra o forja equipo,
-   acepta una misión y guarda el progreso.
-2. **La expedición:** explora el mapa, administra la antorcha y los objetos,
-   supera encuentros y cumple el objetivo antes de regresar a la entrada.
+1. En Valdesombra se gestiona la plantilla, la formación, el equipo, los
+   servicios, los edificios y los encargos.
+2. En una expedición se explora un mapa, se administra la antorcha y el
+   inventario, se resuelven encuentros y se completa o abandona la misión.
+3. Al regresar se aplican recompensas, experiencia, relaciones, heridas y
+   progreso de campaña.
 
-Los encargos pueden exigir cazar criaturas, cartografiar una zona, recuperar
-una reliquia o derrotar a un jefe. Abandonar permite conservar la vida, mientras
-que morir devuelve al personaje a la aldea con la mitad de su oro.
+El protagonista debe participar en todas las expediciones. El oro y la mochila
+de 24 espacios pertenecen a la compañía; cada integrante conserva su nivel,
+estado mental, desarrollo y equipo.
 
-Durante el capítulo I, los encargos conducen al Bosque de los Ahorcados, donde
-la visibilidad consume más antorcha y aparecen criaturas propias de la región.
-Investigar sus sogas conduce hasta Inés y O Rei dos Aforcados; las decisiones
-del desenlace abren los caminos del capítulo II.
-
-En el capítulo II, la compañía debe recorrer tanto las Brañas Hundidas como el
-Camino de los Difuntos. Cada región tiene encargos, riesgos, criaturas, eventos
-y jefe propios; ambas mitades del Libro de los Nombres son necesarias para
-descubrir qué ocurrió con los ciento trece peregrinos.
-
-El capítulo III abre las Minas y el Pazo, introduce a Don Gonzalo y permite que
-la procesión dañe edificios de Valdesombra. Los servicios afectados permanecen
-inutilizables hasta que la compañía financia su reparación.
-
-El capítulo IV reconstruye los ciento trece nombres a partir de testimonios
-dispersos y obliga a decidir qué verdad merece conservarse. En el capítulo V,
-las decisiones, alianzas y preparativos acumulados determinan qué desenlaces
-están disponibles tras atravesar el Hospital y enfrentar a la Santa Compaña.
-
-El protagonista debe participar en todas las expediciones junto a dos
-acompañantes. El oro y la mochila de 24 espacios pertenecen a toda la compañía;
-cada integrante conserva su nivel, cordura, habilidades y equipo.
-
-Todos los menús se controlan introduciendo la opción numérica indicada. Durante
-el combate, cada héroe puede usar una habilidad, abrir la mochila compartida,
-recuperar el aliento o intentar una huida conjunta.
-
-El orden de combate se calcula automáticamente por iniciativa. El rótulo
-**AHORA ACTÚA** identifica al personaje controlado en ese momento; no es
-necesario seleccionarlo. Cada habilidad indica su alcance y, cuando corresponde,
-el juego abre después una selección separada de objetivo.
+Los menús se controlan mediante opciones numéricas. Durante el combate, el
+indicador `AHORA ACTÚA` identifica al personaje activo y cada habilidad muestra
+su alcance antes de seleccionar el objetivo.
 
 ## Guardado
 
-La partida se guarda desde la aldea en `partida.sav`, dentro del directorio
-desde el que se haya iniciado el juego. El prólogo también crea puntos de
-guardado automáticos entre escenas. Al arrancar, el menú principal permite
-continuar esa partida o comenzar una nueva.
+La partida se guarda en `partida.sav`, dentro del directorio desde el que se
+inicia el juego. Puede guardarse manualmente desde la aldea y el prólogo crea
+puntos de guardado automáticos entre escenas.
 
-El archivo utiliza el formato binario versionado LOSV v7, independiente de los
-nombres de las clases Java. La versión actual puede migrar partidas LOSV v1–v6;
-las partidas experimentales creadas con la antigua serialización nativa no son
+El formato actual es LOSV v7 y puede migrar partidas LOSV v1-v6. Los archivos
+experimentales creados con la antigua serialización nativa de Java no son
 compatibles.
 
-## Estructura del proyecto
+## Estructura
 
 ```text
-LeyendasOlvidadas/
-├── src/
-│   ├── main/java/leyendasolvidadas/
-│   │   ├── aplicacion/          # Casos de uso y flujo de partida
-│   │   ├── dominio/
-│   │   │   ├── azar/            # Azar reproducible
-│   │   │   ├── campana/         # Capítulos y decisiones persistentes
-│   │   │   ├── combate/         # Personajes, habilidades y combate
-│   │   │   ├── compania/        # Plantilla, formación e inventario
-│   │   │   ├── eventos/         # Mensajes semánticos de dominio
-│   │   │   ├── misiones/        # Encargos y progreso
-│   │   │   ├── mundo/           # Expediciones, salas y bestiario
-│   │   │   └── objetos/         # Equipo, consumibles y rarezas
-│   │   ├── infraestructura/     # Persistencia LOSV
-│   │   └── interfaz/consola/    # Entrada, salida y punto de arranque
-│   └── test/java/leyendasolvidadas/pruebas/
-├── pom.xml
-├── CHANGELOG.md
-└── README.md
+src/
+├── main/java/leyendasolvidadas/
+│   ├── aplicacion/          Casos de uso y coordinación
+│   ├── dominio/             Reglas y modelos del juego
+│   │   ├── azar/
+│   │   ├── campana/
+│   │   ├── combate/
+│   │   ├── compania/
+│   │   ├── eventos/
+│   │   ├── misiones/
+│   │   ├── mundo/
+│   │   └── objetos/
+│   ├── infraestructura/     Persistencia LOSV
+│   └── interfaz/consola/    Interfaz y punto de entrada
+└── test/java/leyendasolvidadas/pruebas/
 ```
 
-El código emplea una jerarquía común para personajes, fábricas para enemigos
-y misiones, enumeraciones para estados y tipos, y un generador de azar
-centralizado. Maven administra la compilación reproducible, el empaquetado y
-las pruebas JUnit 5 con la estructura estándar de directorios.
+Las reglas internas no dependen de la terminal. Los límites entre dominio,
+aplicación, infraestructura e interfaz están descritos en
+[`ARCHITECTURE.md`](ARCHITECTURE.md).
 
-Las decisiones y reglas internas no dependen de la terminal. Consulta
-[`ARCHITECTURE.md`](ARCHITECTURE.md) para conocer los límites entre dominio,
-aplicación, infraestructura e interfaces, y cómo añadir una futura versión JavaFX.
+## Pruebas
 
-## Estado del proyecto
-
-El juego es funcional y se encuentra en desarrollo. Incluye el bucle completo
-de aldea, contratación, expedición y combate por compañías, además de una
-campaña jugable desde el prólogo hasta cinco epílogos condicionados por las
-decisiones. Consulta [`CHANGELOG.md`](CHANGELOG.md) para ver las incorporaciones
-más recientes.
-
-## Pruebas y equilibrio
-
-La suite automatizada usa JUnit 5. Desde la raíz del proyecto:
+Para ejecutar la suite automatizada:
 
 ```bash
 mvn test
 ```
 
-El simulador de equilibrio, más costoso que la suite habitual, se ejecuta de
-forma explícita:
+Para ejecutar el simulador de equilibrio:
 
 ```bash
 mvn test-compile exec:java \
@@ -228,7 +148,12 @@ mvn test-compile exec:java \
   -Dexec.classpathScope=test
 ```
 
-El simulador ejecuta miles de expediciones reproducibles con composiciones,
-niveles, dificultades y jefes distintos. Además de presentar tasas de victoria,
-rondas y desgaste, falla si alguno de esos escenarios sale de las franjas de
-equilibrio definidas para el proyecto.
+El simulador evalúa composiciones, niveles, dificultades y jefes mediante
+expediciones reproducibles y comprueba que los resultados permanezcan dentro
+de las franjas definidas.
+
+## Documentación
+
+- [`ARCHITECTURE.md`](ARCHITECTURE.md): organización y reglas de dependencia.
+- [`CHANGELOG.md`](CHANGELOG.md): evolución funcional y técnica.
+- [`PROJECT_STATUS.md`](PROJECT_STATUS.md): estado de continuidad del desarrollo.
