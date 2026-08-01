@@ -25,8 +25,14 @@ public final class CodecPartida {
     private CodecPartida() {}
 
     public static void escribir(DataOutputStream out, EstadoJuego estado) throws IOException {
+        escribirVersion(out, estado, VERSION);
+    }
+
+    /** Escribe una versión histórica para generar fixtures de compatibilidad. */
+    public static void escribirVersion(DataOutputStream out, EstadoJuego estado, int version) throws IOException {
+        if (version < 1 || version > VERSION) throw new IOException("Versión LOSV no soportada: " + version);
         out.writeInt(MAGIC);
-        out.writeInt(VERSION);
+        out.writeInt(version);
         out.writeInt(estado.getSemana());
         out.writeInt(estado.getExpedicionesGanadas());
         out.writeBoolean(estado.isCampanaGanada());
@@ -34,12 +40,14 @@ public final class CodecPartida {
         escribirItems(out, estado.getOfertasHerreria());
         out.writeInt(estado.getCandidatos().size());
         for (Personaje candidato : estado.getCandidatos()) escribirHeroe(out, candidato);
-        escribirProgresoCampana(out, estado.getProgresoCampana());
-        escribirTrasfondos(out, estado.getCompania(), estado.getCandidatos());
-        escribirEstadoAldea(out, estado.getEstadoAldea());
-        escribirDesarrollo(out, estado.getCompania(), estado.getCandidatos());
-        escribirRelaciones(out, estado.getCompania());
-        escribirRegistro(out, estado.getRegistroCampana());
+        if (version >= 2) escribirProgresoCampana(out, estado.getProgresoCampana());
+        if (version >= 3) escribirTrasfondos(out, estado.getCompania(), estado.getCandidatos());
+        if (version >= 4) escribirEstadoAldea(out, estado.getEstadoAldea());
+        if (version >= 5) {
+            escribirDesarrollo(out, estado.getCompania(), estado.getCandidatos(), version);
+            escribirRelaciones(out, estado.getCompania());
+        }
+        if (version >= 7) escribirRegistro(out, estado.getRegistroCampana());
     }
 
     public static EstadoJuego leer(DataInputStream in) throws IOException {
@@ -246,18 +254,19 @@ public final class CodecPartida {
     }
 
     private static void escribirDesarrollo(DataOutputStream out, Compania compania,
-                                             List<Personaje> candidatos) throws IOException {
+                                             List<Personaje> candidatos, int version) throws IOException {
         out.writeInt(compania.getPlantilla().size() + candidatos.size());
-        for (Personaje heroe : compania.getPlantilla()) escribirDesarrolloHeroe(out, heroe);
-        for (Personaje candidato : candidatos) escribirDesarrolloHeroe(out, candidato);
+        for (Personaje heroe : compania.getPlantilla()) escribirDesarrolloHeroe(out, heroe, version);
+        for (Personaje candidato : candidatos) escribirDesarrolloHeroe(out, candidato, version);
     }
 
-    private static void escribirDesarrolloHeroe(DataOutputStream out, Personaje heroe) throws IOException {
+    private static void escribirDesarrolloHeroe(DataOutputStream out, Personaje heroe, int version) throws IOException {
         escribirNullable(out, heroe.getRasgoMecanico() == null ? null : heroe.getRasgoMecanico().name());
         escribirNullable(out, heroe.getDefectoMecanico() == null ? null : heroe.getDefectoMecanico().name());
         out.writeInt(heroe.getLealtad()); out.writeInt(heroe.getHeridas().size());
         for (HeridaPersistente herida : heroe.getHeridas()) out.writeUTF(herida.name());
-        escribirNullable(out, heroe.getIdentidadUnica() == null ? null : heroe.getIdentidadUnica().name());
+        if (version >= 6)
+            escribirNullable(out, heroe.getIdentidadUnica() == null ? null : heroe.getIdentidadUnica().name());
     }
 
     private static void leerDesarrollo(DataInputStream in, Compania compania,

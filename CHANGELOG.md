@@ -81,6 +81,8 @@ documentación mantenida durante el desarrollo.
 
 ### Persistencia
 
+- Incorporación de escritura histórica controlada y pruebas completas de
+  migración con especímenes LOSV v1-v6.
 - Incorporación de guardado seguro mediante archivo temporal y sustitución
   atómica cuando el sistema de archivos lo permite.
 - Incorporación de una copia de seguridad automática y recuperación desde ella
