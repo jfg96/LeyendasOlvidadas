@@ -108,7 +108,7 @@ documentación mantenida durante el desarrollo.
 - Incorporación de pruebas de arquitectura, campaña, compañía, combate,
   persistencia y servicios de aplicación.
 - Incorporación de una prueba integral desde el prólogo hasta el epílogo.
-- Revisión de documentación técnica y comentarios Javadoc.
+- Revisión de documentación técnica, ortografía y comentarios Javadoc.
 
 ## 3.0 — Versión inicial
 

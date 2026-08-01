@@ -66,7 +66,7 @@ public class EstadoJuego {
     }
     public void restaurarRegistroCampana(RegistroCampana registro) { this.registroCampana = registro; }
 
-    /** Renueva el genero de la herreria (se llama cada semana). */
+    /** Renueva el género de la herreria (se llama cada semana). */
     public void renovarHerreria() {
         ofertasHerreria.clear();
         int niv = getCompania().nivelMedio();
