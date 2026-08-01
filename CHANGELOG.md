@@ -61,6 +61,8 @@ documentación mantenida durante el desarrollo.
 
 - Extracción de luz, desgaste, emboscadas y riesgos regionales a un modelo
   independiente con una fuente de azar inyectable y pruebas deterministas.
+- Extracción de la selección de encuentros y del descanso en campamento, con
+  pruebas del ciclo de caza, exploración, reliquia, jefes y recuperación.
 - Extracción de la generación procedural a un modelo de mapa independiente de
   consola, con pruebas de tamaño, conectividad, enlaces y posición del objetivo.
 - Adaptación del combate a formaciones de tres héroes.

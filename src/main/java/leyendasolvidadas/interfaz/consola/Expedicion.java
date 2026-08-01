@@ -35,6 +35,8 @@ public class Expedicion implements ContextoCombate {
     private final Habitacion entrada;
     private final CondicionesExpedicion condiciones;
     private final RegistroCampana registro;
+    private final FuenteAzar azar;
+    private final PreparadorEncuentros encuentros = new PreparadorEncuentros();
 
     public Expedicion(Compania compania, Mision mision, Dificultad dificultad, int victoriasPrevias) {
         this(compania, mision, dificultad, victoriasPrevias, null);
@@ -54,6 +56,7 @@ public class Expedicion implements ContextoCombate {
         this.victoriasPrevias = victoriasPrevias;
         this.region = mision.getRegion();
         this.registro = registro;
+        this.azar = azar;
         this.nivelZona = (int) Math.round(heroes.stream().mapToInt(Personaje::getNivel)
                 .average().orElse(1)) + dificultad.getNivelExtra();
         this.condiciones = new CondicionesExpedicion(region, nivelZona, azar);
@@ -289,15 +292,7 @@ public class Expedicion implements ContextoCombate {
         Mision m = gestor.getMision();
         if (m instanceof MisionJefe) {
             h.resolver();
-            Jefe jefe = switch (m.getId()) {
-                case ULTIMA_PROCESION -> Bestiario.crearJefeFinal(nivelZona);
-                case REY_SOGAS -> Bestiario.crearReiAforcados(nivelZona);
-                case SUDARIOS_ALDARA -> Bestiario.crearLavandeiraMaior(nivelZona);
-                case PUERTAS_HOSPITAL -> Bestiario.crearHospitalario(nivelZona);
-                case CAMPANA_CAPATAZ -> Bestiario.crearCapataz(nivelZona);
-                case CRIPTA_SOUTOMAIOR -> Bestiario.crearCustodioCripta(nivelZona);
-                default -> Bestiario.crearJefe(nivelZona, victoriasPrevias);
-            };
+            Jefe jefe = encuentros.crearJefe(m, nivelZona, victoriasPrevias);
             System.out.println(UI.pintar("\n  Has llegado a la guarida. Algo enorme respira en la oscuridad...", UI.MAGENTA));
             UI.pausa();
             Combate.Resultado res = nuevoCombate(List.of(jefe)).ejecutar(false);
@@ -322,16 +317,9 @@ public class Expedicion implements ContextoCombate {
         UI.limpiar();
         UI.seccion("CAMPAMENTO");
         UI.log("Enciendes una fogata al abrigo de las piedras. El mundo, por un rato, calla.");
-        for (Personaje heroe : heroes) {
-            if (!heroe.estaVivo()) heroe.setVida(heroe.getVidaMax() * 0.15);
-            heroe.curar(heroe.getVidaMax() * 0.35);
-            heroe.setRecurso(heroe.getRecursoMax());
-            heroe.aliviarEstres(25);
-            heroe.limpiarEfectosNegativos();
-        }
-        subirLuz(30);
+        boolean emboscada = Campamento.descansar(heroes, this, azar);
         UI.log(UI.pintar("+35% vida, recurso al maximo, -25 estres, males purgados, +30 luz.", UI.VERDE));
-        if (Rng.prob(20)) {
+        if (emboscada) {
             UI.log(UI.pintar("...pero unos pasos te despiertan de madrugada.", UI.ROJO));
             UI.pausa();
             nuevoCombate(crearGrupoRegional()).ejecutar(true);
@@ -348,8 +336,7 @@ public class Expedicion implements ContextoCombate {
     }
 
     private List<Enemigo> crearGrupoRegional() {
-        return region == null ? Bestiario.crearGrupo(nivelZona, dificultad)
-                : Bestiario.crearGrupo(region, nivelZona, dificultad);
+        return encuentros.crearGrupo(region, nivelZona, dificultad);
     }
 
     private Personaje elegirHeroeVivo(String titulo) {
