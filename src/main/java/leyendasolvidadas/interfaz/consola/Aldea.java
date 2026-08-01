@@ -316,79 +316,8 @@ public class Aldea {
     }
 
     private Expedicion tablon() {
-        Personaje h = estado.getJugador();
-        if (!estado.getCompania().estaCompleta()) {
-            UI.log(UI.pintar("Necesitas una formacion de tres antes de partir.", UI.ROJO));
-            UI.log("Contrata acompanantes y prepara el grupo desde Gestionar compania.");
-            UI.pausa();
-            return null;
-        }
-        UI.limpiar();
-        UI.seccion("TABLON DE ENCARGOS");
-        boolean finalDisponible = estado.getProgresoCampana().getCapitulo() == CapituloCampana.ULTIMA_PROCESION
-                && !estado.isCampanaGanada();
-        boolean cierreBosque = estado.getProgresoCampana().haDecidido("cap1.simbolo_peregrinos_descubierto")
-                && !estado.getProgresoCampana().haDecidido("cap1.rei_derrotado");
-        Mision[] ofertas = new Mision[3];
-        Region[] regiones = estado.getProgresoCampana().getCapitulo() == CapituloCampana.CAMINOS_DE_ANIMAS
-                ? new Region[]{Region.BRANAS_HUNDIDAS, Region.CAMINO_DE_LOS_DIFUNTOS, Region.BRANAS_HUNDIDAS}
-                : estado.getProgresoCampana().getCapitulo() == CapituloCampana.DEUDA_DE_LOS_VIVOS
-                ? new Region[]{Region.MINAS_DE_SAN_LOURENZO, Region.PAZO_DE_SOUTOMAIOR, Region.MINAS_DE_SAN_LOURENZO}
-                : estado.getProgresoCampana().getCapitulo() == CapituloCampana.LIBRO_DE_LOS_NOMBRES
-                ? new Region[]{Region.BOSQUE_DE_LOS_AHORCADOS, Region.CAMINO_DE_LOS_DIFUNTOS, Region.PAZO_DE_SOUTOMAIOR}
-                : new Region[]{Region.BOSQUE_DE_LOS_AHORCADOS, Region.BOSQUE_DE_LOS_AHORCADOS, Region.BOSQUE_DE_LOS_AHORCADOS};
-        Dificultad[] difs = {Dificultad.FACIL, Dificultad.MEDIA, Dificultad.DIFICIL};
-        for (int i = 0; i < 3; i++) {
-            ofertas[i] = estado.getProgresoCampana().getCapitulo() == CapituloCampana.LIBRO_DE_LOS_NOMBRES
-                    ? GestorMisiones.generarLibroNombres(regiones[i], estado.getCompania().nivelMedio(), difs[i])
-                    : estado.getProgresoCampana().estaDesbloqueada(regiones[i])
-                    ? GestorMisiones.generarRegional(regiones[i], estado.getCompania().nivelMedio(), difs[i])
-                    : GestorMisiones.generar(estado.getCompania().nivelMedio(), difs[i]);
-            System.out.printf("  %d. [%s] %-24s %s%n", i + 1,
-                    UI.pintar(difs[i].getTitulo(), difs[i] == Dificultad.FACIL ? UI.VERDE
-                            : difs[i] == Dificultad.MEDIA ? UI.AMARILLO : UI.ROJO),
-                    ofertas[i].getNombre(),
-                    UI.pintar(ofertas[i].getOroRecompensa() + " reales, " + ofertas[i].getXpRecompensa() + " XP", UI.TENUE));
-            UI.log(UI.pintar("   " + ofertas[i].getDescripcion(), UI.TENUE));
-        }
-        List<Mision> especiales = new ArrayList<>();
-        if (finalDisponible) especiales.add(new MisionJefe(Dificultad.DIFICIL, 500, 1000,
-                Amuleto.aleatorio(30), true).enRegion(Region.HOSPITAL_DEL_CAMINO_VIEJO));
-        else if (cierreBosque) especiales.add(new MisionJefe(MisionId.REY_SOGAS, "El rey de las sogas",
-                "Seguir a Inés y abatir a O Rei dos Aforcados.", Dificultad.MEDIA, 220, 300,
-                Amuleto.aleatorio(20), false).enRegion(Region.BOSQUE_DE_LOS_AHORCADOS));
-        boolean jefeBranas = estado.getProgresoCampana().haDecidido("cap2.branas.jefe_disponible")
-                && !estado.getProgresoCampana().haDecidido("cap2.lavandeira_derrotada");
-        boolean jefeCamino = estado.getProgresoCampana().haDecidido("cap2.camino.jefe_disponible")
-                && !estado.getProgresoCampana().haDecidido("cap2.hospitalario_derrotado");
-        if (jefeBranas) especiales.add(new MisionJefe(MisionId.SUDARIOS_ALDARA, "Los sudarios de Aldara",
-                "Derrotar a A Lavandeira Maior y recuperar las páginas sumergidas.", Dificultad.MEDIA,
-                260, 340, Amuleto.aleatorio(22), false).enRegion(Region.BRANAS_HUNDIDAS));
-        if (jefeCamino) especiales.add(new MisionJefe(MisionId.PUERTAS_HOSPITAL, "Las puertas del hospital",
-                "Vencer al Hospitalario que cerró las puertas durante el incendio.", Dificultad.DIFICIL,
-                300, 400, Amuleto.aleatorio(25), false).enRegion(Region.CAMINO_DE_LOS_DIFUNTOS));
-        boolean jefeMinas = estado.getProgresoCampana().haDecidido("cap3.minas.jefe_disponible")
-                && !estado.getProgresoCampana().haDecidido("cap3.capataz_derrotado");
-        boolean jefePazo = estado.getProgresoCampana().haDecidido("cap3.pazo.jefe_disponible")
-                && !estado.getProgresoCampana().haDecidido("cap3.cripta_soutomaior_abierta");
-        if (jefeMinas) especiales.add(new MisionJefe(MisionId.CAMPANA_CAPATAZ, "La campana del capataz", "Romper las cadenas de O Capataz.",
-                Dificultad.MEDIA, 320, 440, Amuleto.aleatorio(25), false).enRegion(Region.MINAS_DE_SAN_LOURENZO));
-        if (jefePazo) especiales.add(new MisionJefe(MisionId.CRIPTA_SOUTOMAIOR, "La cripta de los Soutomaior", "Entrar en la cripta donde se oculta la Falange.",
-                Dificultad.DIFICIL, 360, 500, Amuleto.aleatorio(28), false).enRegion(Region.PAZO_DE_SOUTOMAIOR));
-        boolean ritualNombres = new ServicioCapituloCuatro().puedeCelebrarRitual(estado);
-        if (ritualNombres) especiales.add(new MisionReliquia(MisionId.VIGILIA_CIENTO_DOCE, "La vigilia de los ciento doce",
-                "Llevar el Libro reconstruido hasta el osario y devolver los nombres a sus muertos.",
-                Dificultad.DIFICIL, 420, 650, Amuleto.aleatorio(30)).enRegion(Region.CAMINO_DE_LOS_DIFUNTOS));
-        especiales.addAll(new ServicioMisionesPersonales().disponibles(estado));
-        for (int i = 0; i < especiales.size(); i++)
-            System.out.println(UI.pintar("  " + (i + 4) + ". ☠ " + especiales.get(i).getNombre().toUpperCase()
-                    + " — " + especiales.get(i).getDescripcion(), UI.MAGENTA));
-        System.out.println("  0. Volver a la plaza");
-        int max = 3 + especiales.size();
-        int op = UI.leerOpcion(0, max);
-        if (op == 0) return null;
-        Mision elegida = op > 3 ? especiales.get(op - 4) : ofertas[op - 1];
-        if (!UI.confirmar("¿Partir hacia '" + elegida.getNombre() + "'?")) return null;
+        Mision elegida = new TablonMisionesConsola().elegir(estado);
+        if (elegida == null) return null;
         return new Expedicion(estado.getCompania(), elegida, elegida.getDificultad(),
                 estado.getExpedicionesGanadas(), estado.getRegistroCampana());
     }

@@ -49,6 +49,8 @@ documentación mantenida durante el desarrollo.
 
 ### Aldea, economía y progresión
 
+- Separación del tablón de encargos en un servicio de aplicación y un
+  controlador de consola específicos, con pruebas de disponibilidad narrativa.
 - Conversión del oro y el inventario en recursos compartidos por la compañía.
 - Ampliación de la mochila compartida de 14 a 24 espacios.
 - Ajuste del capital inicial para permitir formar el primer grupo.
