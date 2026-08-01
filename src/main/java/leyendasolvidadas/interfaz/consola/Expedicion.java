@@ -33,7 +33,7 @@ public class Expedicion implements ContextoCombate {
     private final List<Habitacion> habitaciones;
     private Habitacion actual;
     private final Habitacion entrada;
-    private int luz = 100;
+    private final CondicionesExpedicion condiciones;
     private final RegistroCampana registro;
 
     public Expedicion(Compania compania, Mision mision, Dificultad dificultad, int victoriasPrevias) {
@@ -42,6 +42,11 @@ public class Expedicion implements ContextoCombate {
 
     public Expedicion(Compania compania, Mision mision, Dificultad dificultad, int victoriasPrevias,
                       RegistroCampana registro) {
+        this(compania, mision, dificultad, victoriasPrevias, registro, FuenteAzar.global());
+    }
+
+    public Expedicion(Compania compania, Mision mision, Dificultad dificultad, int victoriasPrevias,
+                      RegistroCampana registro, FuenteAzar azar) {
         this.heroes = new ArrayList<>(compania.getFormacionActiva());
         this.protagonista = compania.getProtagonista();
         this.inventario = compania.getInventario();
@@ -51,6 +56,7 @@ public class Expedicion implements ContextoCombate {
         this.registro = registro;
         this.nivelZona = (int) Math.round(heroes.stream().mapToInt(Personaje::getNivel)
                 .average().orElse(1)) + dificultad.getNivelExtra();
+        this.condiciones = new CondicionesExpedicion(region, nivelZona, azar);
         gestor.asignar(mision);
         MapaExpedicion mapa = new MapaExpedicion(7 + dificultad.ordinal() * 2, mision.requiereObjetivo());
         this.habitaciones = mapa.getHabitaciones();
@@ -62,10 +68,10 @@ public class Expedicion implements ContextoCombate {
     private List<Personaje> heroesVivos() { return heroes.stream().filter(Personaje::estaVivo).toList(); }
     private boolean companiaDerrotada() { return heroesVivos().isEmpty(); }
 
-    public int getLuz() { return luz; }
-    public void subirLuz(int n) { luz = Math.min(100, luz + n); }
-    private void bajarLuz(int n) { luz = Math.max(0, luz - n); }
+    public int getLuz() { return condiciones.getLuz(); }
+    public void subirLuz(int n) { condiciones.subirLuz(n); }
     public String luzTexto() {
+        int luz = getLuz();
         String estado = luz >= 75 ? UI.pintar("Radiante", UI.AMARILLO)
                 : luz >= 40 ? "Tenue"
                 : luz >= 15 ? UI.pintar("Penumbra", UI.MAGENTA)
@@ -73,11 +79,9 @@ public class Expedicion implements ContextoCombate {
         return luz + " (" + estado + ")";
     }
     /** Devuelve el multiplicador de botín correspondiente a la luz actual. */
-    public double getMultBotin() { return luz >= 75 ? 1.0 : luz >= 40 ? 1.1 : luz >= 15 ? 1.3 : 1.6; }
+    public double getMultBotin() { return condiciones.getMultBotin(); }
     /** Devuelve la mejora de rareza correspondiente a la luz actual. */
-    public int getBonusRareza() { return luz >= 75 ? 0 : luz >= 40 ? 4 : luz >= 15 ? 10 : 18; }
-    private int probEmboscada() { return luz >= 75 ? 4 : luz >= 40 ? 10 : luz >= 15 ? 18 : 30; }
-    private int estresPorPaso() { return luz >= 75 ? 0 : luz >= 40 ? 1 : luz >= 15 ? 2 : 4; }
+    public int getBonusRareza() { return condiciones.getBonusRareza(); }
 
     private long clave(int x, int y) { return ((long) x << 32) ^ (y & 0xffffffffL); }
 
@@ -185,29 +189,19 @@ public class Expedicion implements ContextoCombate {
         if (op == 0) return null;
         Habitacion destino = actual.getConexiones().get(salidas.get(op - 1));
 
-        int segmentos = Rng.entre(2, 3);
+        int segmentos = condiciones.numeroSegmentos();
         for (int s = 1; s <= segmentos; s++) {
-            bajarLuz(region == Region.MINAS_DE_SAN_LOURENZO ? 10
-                    : region == Region.BOSQUE_DE_LOS_AHORCADOS ? 7 : 5);
-            int estres = estresPorPaso();
-            if (estres > 0) for (Personaje heroe : heroesVivos()) heroe.sufrirEstresAmbiental(estres, region);
-            if (region == Region.CAMINO_DE_LOS_DIFUNTOS)
-                for (Personaje heroe : heroesVivos()) heroe.sufrirEstresAmbiental(2, region);
-            if (region == Region.BRANAS_HUNDIDAS && Rng.prob(8)) {
-                Personaje victima = Rng.elegir(heroesVivos());
-                victima.aplicarEfecto(TipoEfecto.VENENO, 2, 2 + nivelZona / 2.0);
-                UI.log(UI.pintar("El barro infecta las heridas de " + victima.getNombre() + ".", UI.ROJO));
-            }
-            if (region == Region.MINAS_DE_SAN_LOURENZO && Rng.prob(7)) {
+            CondicionesExpedicion.Paso paso = condiciones.avanzarSegmento(heroesVivos());
+            if (paso.infectado() != null)
+                UI.log(UI.pintar("El barro infecta las heridas de " + paso.infectado().getNombre() + ".", UI.ROJO));
+            if (paso.derrumbe())
                 UI.log(UI.pintar("Un derrumbe sacude la galería.", UI.ROJO));
-                for (Personaje heroe : heroesVivos()) heroe.recibirDanio(5 + nivelZona, true);
-            }
             System.out.println();
-            UI.log(UI.pintar("Avanzas por el corredor (" + s + "/" + segmentos + ")... Luz " + luz + ".", UI.TENUE));
-            int r = Rng.entre(1, 100);
+            UI.log(UI.pintar("Avanzas por el corredor (" + s + "/" + segmentos + ")... Luz " + getLuz() + ".", UI.TENUE));
+            int r = condiciones.tirarEventoPasillo();
             if (r <= 22) {
                 Combate.Resultado res = nuevoCombate(crearGrupoRegional())
-                        .ejecutar(Rng.prob(probEmboscada()));
+                        .ejecutar(condiciones.hayEmboscada());
                 if (res == Combate.Resultado.DERROTA) return Resultado.MUERTE;
                 if (res == Combate.Resultado.HUIDA) return null;
             } else if (r <= 32) {
@@ -254,8 +248,8 @@ public class Expedicion implements ContextoCombate {
         switch (h.getTipo()) {
             case COMBATE: {
                 h.resolver();
-                Combate.Resultado res = nuevoCombate(crearGrupoRegional())
-                        .ejecutar(Rng.prob(probEmboscada()));
+            Combate.Resultado res = nuevoCombate(crearGrupoRegional())
+                        .ejecutar(condiciones.hayEmboscada());
                 if (res == Combate.Resultado.DERROTA) return Resultado.MUERTE;
                 break;
             }
