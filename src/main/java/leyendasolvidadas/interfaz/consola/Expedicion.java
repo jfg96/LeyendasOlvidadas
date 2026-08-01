@@ -365,15 +365,15 @@ public class Expedicion implements ContextoCombate {
         Mision m = gestor.getMision();
         if (m instanceof MisionJefe) {
             h.resolver();
-            Jefe jefe = ((MisionJefe) m).esFinal()
-                    ? Bestiario.crearJefeFinal(nivelZona)
-                    : region == Region.BOSQUE_DE_LOS_AHORCADOS && m.getNombre().equals("El rey de las sogas")
-                    ? Bestiario.crearReiAforcados(nivelZona)
-                    : m.getNombre().equals("Los sudarios de Aldara") ? Bestiario.crearLavandeiraMaior(nivelZona)
-                    : m.getNombre().equals("Las puertas del hospital") ? Bestiario.crearHospitalario(nivelZona)
-                    : m.getNombre().equals("La campana del capataz") ? Bestiario.crearCapataz(nivelZona)
-                    : m.getNombre().equals("La cripta de los Soutomaior") ? Bestiario.crearCustodioCripta(nivelZona)
-                    : Bestiario.crearJefe(nivelZona, victoriasPrevias);
+            Jefe jefe = switch (m.getId()) {
+                case ULTIMA_PROCESION -> Bestiario.crearJefeFinal(nivelZona);
+                case REY_SOGAS -> Bestiario.crearReiAforcados(nivelZona);
+                case SUDARIOS_ALDARA -> Bestiario.crearLavandeiraMaior(nivelZona);
+                case PUERTAS_HOSPITAL -> Bestiario.crearHospitalario(nivelZona);
+                case CAMPANA_CAPATAZ -> Bestiario.crearCapataz(nivelZona);
+                case CRIPTA_SOUTOMAIOR -> Bestiario.crearCustodioCripta(nivelZona);
+                default -> Bestiario.crearJefe(nivelZona, victoriasPrevias);
+            };
             System.out.println(UI.pintar("\n  Has llegado a la guarida. Algo enorme respira en la oscuridad...", UI.MAGENTA));
             UI.pausa();
             Combate.Resultado res = nuevoCombate(List.of(jefe)).ejecutar(false);

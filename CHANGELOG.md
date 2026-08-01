@@ -21,6 +21,8 @@ documentación mantenida durante el desarrollo.
 
 ### Campaña y contenido
 
+- Sustitución de las comparaciones por título por identificadores estables de
+  misión para proteger el progreso narrativo frente a cambios de redacción.
 - Incorporación de un prólogo jugable, persistente y reanudable.
 - Incorporación de cinco capítulos completos y una fase final.
 - Incorporación de seis regiones con contenido, riesgos y enemigos propios.

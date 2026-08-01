@@ -11,12 +11,14 @@ public class MisionJefe extends Mision {
     private boolean jefeMuerto = false;
 
     public MisionJefe(Dificultad dif, int oro, int xp, Item item, boolean esFinal) {
-        this(esFinal ? "La Ultima Procesion" : "Cabeza de la Bestia",
+        this(esFinal ? MisionId.ULTIMA_PROCESION : MisionId.CABEZA_BESTIA,
+              esFinal ? "La Ultima Procesion" : "Cabeza de la Bestia",
               esFinal ? "Enfrentarse a la Santa Compania y romper la maldicion."
                       : "Abatir al senor del paraje en su guarida.", dif, oro, xp, item, esFinal);
     }
-    public MisionJefe(String nombre, String descripcion, Dificultad dif, int oro, int xp, Item item, boolean esFinal) {
-        super(nombre, descripcion, dif, oro, xp, item);
+    public MisionJefe(MisionId id, String nombre, String descripcion, Dificultad dif,
+                      int oro, int xp, Item item, boolean esFinal) {
+        super(id, nombre, descripcion, dif, oro, xp, item);
         this.esFinal = esFinal;
     }
     public boolean esFinal() { return esFinal; }

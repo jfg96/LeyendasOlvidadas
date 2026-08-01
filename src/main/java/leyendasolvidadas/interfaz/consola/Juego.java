@@ -145,22 +145,22 @@ public class Juego {
                 if (mision instanceof MisionPersonal personal
                         && new ServicioMisionesPersonales().registrarVictoria(estado, personal))
                     new MisionesPersonalesConsola(repositorioPartidas).resolver(estado, personal.getMercenario());
-                if (mision.getNombre().equals("El rey de las sogas")) cerrarCapituloUno();
-                if (mision.getNombre().equals("Los sudarios de Aldara"))
+                if (mision.getId() == MisionId.REY_SOGAS) cerrarCapituloUno();
+                if (mision.getId() == MisionId.SUDARIOS_ALDARA)
                     new ServicioCapituloDos().registrarJefe(estado, Region.BRANAS_HUNDIDAS);
-                if (mision.getNombre().equals("Las puertas del hospital"))
+                if (mision.getId() == MisionId.PUERTAS_HOSPITAL)
                     new ServicioCapituloDos().registrarJefe(estado, Region.CAMINO_DE_LOS_DIFUNTOS);
                 if (new ServicioCapituloDos().puedeCerrar(estado)
                         && estado.getProgresoCampana().getCapitulo() == leyendasolvidadas.dominio.campana.CapituloCampana.CAMINOS_DE_ANIMAS)
                     new CapituloDosConsola(repositorioPartidas).cerrar(estado);
-                if (mision.getNombre().equals("La campana del capataz"))
+                if (mision.getId() == MisionId.CAMPANA_CAPATAZ)
                     new ServicioCapituloTres().registrarJefe(estado, Region.MINAS_DE_SAN_LOURENZO);
-                if (mision.getNombre().equals("La cripta de los Soutomaior"))
+                if (mision.getId() == MisionId.CRIPTA_SOUTOMAIOR)
                     new ServicioCapituloTres().registrarJefe(estado, Region.PAZO_DE_SOUTOMAIOR);
                 if (new ServicioCapituloTres().puedeCerrar(estado)
                         && estado.getProgresoCampana().getCapitulo() == leyendasolvidadas.dominio.campana.CapituloCampana.DEUDA_DE_LOS_VIVOS)
                     new CapituloTresConsola(repositorioPartidas).cerrar(estado);
-                if (mision.getNombre().equals("La vigilia de los ciento doce"))
+                if (mision.getId() == MisionId.VIGILIA_CIENTO_DOCE)
                     new CapituloCuatroConsola(repositorioPartidas).cerrar(estado);
                 break;
             }

@@ -12,10 +12,12 @@ public class MisionReliquia extends Mision {
     private boolean entregada = false;
 
     public MisionReliquia(Dificultad dif, int oro, int xp, Item item) {
-        this("La Reliquia Perdida", "Recuperar la reliquia robada y regresar a la entrada.", dif, oro, xp, item);
+        this(MisionId.RELIQUIA_PERDIDA, "La Reliquia Perdida",
+                "Recuperar la reliquia robada y regresar a la entrada.", dif, oro, xp, item);
     }
-    public MisionReliquia(String nombre, String descripcion, Dificultad dif, int oro, int xp, Item item) {
-        super(nombre, descripcion, dif, oro, xp, item);
+    public MisionReliquia(MisionId id, String nombre, String descripcion, Dificultad dif,
+                          int oro, int xp, Item item) {
+        super(id, nombre, descripcion, dif, oro, xp, item);
     }
     @Override public boolean requiereObjetivo() { return true; }
     @Override public void notificarObjetivo() {

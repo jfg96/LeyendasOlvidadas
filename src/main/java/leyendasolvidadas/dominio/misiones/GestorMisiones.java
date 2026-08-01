@@ -60,12 +60,12 @@ public class GestorMisiones {
         int xp = (45 + niv * 20) * (dif.ordinal() + 1);
         Item premio = Rng.prob(55) ? null : Amuleto.aleatorio(10 + dif.ordinal() * 8);
         Mision mision = switch (Rng.entre(0, 2)) {
-            case 0 -> new MisionCaza("Las sogas vacías",
+            case 0 -> new MisionCaza(MisionId.SOGAS_VACIAS, "Las sogas vacías",
                     "Abatir a las criaturas que anidan bajo los antiguos patíbulos.", dif,
                     3 + dif.ordinal(), oro, xp, premio);
-            case 1 -> new MisionExploracion("El sendero que regresa",
+            case 1 -> new MisionExploracion(MisionId.SENDERO_QUE_REGRESA, "El sendero que regresa",
                     "Cartografiar los caminos que cambian cuando nadie los mira.", dif, oro, xp, premio);
-            default -> new MisionReliquia("La medalla del ahorcado",
+            default -> new MisionReliquia(MisionId.MEDALLA_AHORCADO, "La medalla del ahorcado",
                     "Recuperar una medalla entre las raíces y devolverla a la entrada.", dif, oro, xp, premio);
         };
         return mision.enRegion(Region.BOSQUE_DE_LOS_AHORCADOS);
@@ -77,17 +77,17 @@ public class GestorMisiones {
         int oro = (40 + n * 13) * (dif.ordinal() + 1), xp = (50 + n * 22) * (dif.ordinal() + 1);
         Mision m = switch (region) {
             case BRANAS_HUNDIDAS -> Rng.prob(50)
-                    ? new MisionCaza("Los que respiran barro", "Abatir a las criaturas surgidas de la ciénaga.", dif, 3 + dif.ordinal(), oro, xp, null)
-                    : new MisionExploracion("La tumba vacía de Aldara", "Cartografiar las islas que aparecen bajo la niebla amarilla.", dif, oro, xp, null);
+                    ? new MisionCaza(MisionId.RESPIRAN_BARRO, "Los que respiran barro", "Abatir a las criaturas surgidas de la ciénaga.", dif, 3 + dif.ordinal(), oro, xp, null)
+                    : new MisionExploracion(MisionId.TUMBA_ALDARA, "La tumba vacía de Aldara", "Cartografiar las islas que aparecen bajo la niebla amarilla.", dif, oro, xp, null);
             case CAMINO_DE_LOS_DIFUNTOS -> Rng.prob(50)
-                    ? new MisionCaza("Campanas sin campanero", "Silenciar a los muertos que recorren el Camino Viejo.", dif, 3 + dif.ordinal(), oro, xp, null)
-                    : new MisionReliquia("Una página sin nombres", "Recuperar una hoja arrancada del registro parroquial.", dif, oro, xp, null);
+                    ? new MisionCaza(MisionId.CAMPANAS_SIN_CAMPANERO, "Campanas sin campanero", "Silenciar a los muertos que recorren el Camino Viejo.", dif, 3 + dif.ordinal(), oro, xp, null)
+                    : new MisionReliquia(MisionId.PAGINA_SIN_NOMBRES, "Una página sin nombres", "Recuperar una hoja arrancada del registro parroquial.", dif, oro, xp, null);
             case MINAS_DE_SAN_LOURENZO -> Rng.prob(50)
-                    ? new MisionCaza("Hierro para los muertos", "Eliminar a los mineros que siguen picando tras su muerte.", dif, 3 + dif.ordinal(), oro, xp, null)
-                    : new MisionExploracion("Galerías bajo el Pazo", "Encontrar el santuario enterrado bajo la explotación.", dif, oro, xp, null);
+                    ? new MisionCaza(MisionId.HIERRO_PARA_MUERTOS, "Hierro para los muertos", "Eliminar a los mineros que siguen picando tras su muerte.", dif, 3 + dif.ordinal(), oro, xp, null)
+                    : new MisionExploracion(MisionId.GALERIAS_BAJO_PAZO, "Galerías bajo el Pazo", "Encontrar el santuario enterrado bajo la explotación.", dif, oro, xp, null);
             case PAZO_DE_SOUTOMAIOR -> Rng.prob(50)
-                    ? new MisionCaza("Los criados sin nombre", "Abrirse paso entre los guardianes de la casa Soutomaior.", dif, 3 + dif.ordinal(), oro, xp, null)
-                    : new MisionReliquia("El inventario de los culpables", "Robar el registro del saqueo de los peregrinos.", dif, oro, xp, null);
+                    ? new MisionCaza(MisionId.CRIADOS_SIN_NOMBRE, "Los criados sin nombre", "Abrirse paso entre los guardianes de la casa Soutomaior.", dif, 3 + dif.ordinal(), oro, xp, null)
+                    : new MisionReliquia(MisionId.INVENTARIO_CULPABLES, "El inventario de los culpables", "Robar el registro del saqueo de los peregrinos.", dif, oro, xp, null);
             default -> generar(nivel, dif);
         };
         return m.enRegion(region);
@@ -99,11 +99,11 @@ public class GestorMisiones {
         int oro = (45 + n * 14) * (dif.ordinal() + 1);
         int xp = (60 + n * 24) * (dif.ordinal() + 1);
         Mision mision = switch (region) {
-            case BOSQUE_DE_LOS_AHORCADOS -> new MisionReliquia("Las tablillas del patíbulo",
+            case BOSQUE_DE_LOS_AHORCADOS -> new MisionReliquia(MisionId.TABLILLAS_PATIBULO, "Las tablillas del patíbulo",
                     "Recuperar las marcas con las que el verdugo contó a los peregrinos.", dif, oro, xp, null);
-            case CAMINO_DE_LOS_DIFUNTOS -> new MisionExploracion("La letanía de los ausentes",
+            case CAMINO_DE_LOS_DIFUNTOS -> new MisionExploracion(MisionId.LETANIA_AUSENTES, "La letanía de los ausentes",
                     "Seguir las voces y transcribir los nombres que aún recuerda el Camino.", dif, oro, xp, null);
-            case PAZO_DE_SOUTOMAIOR -> new MisionReliquia("El árbol de la culpa",
+            case PAZO_DE_SOUTOMAIOR -> new MisionReliquia(MisionId.ARBOL_CULPA, "El árbol de la culpa",
                     "Robar la genealogía que vincula a las familias con la matanza.", dif, oro, xp, null);
             default -> throw new IllegalArgumentException("Región ajena al Libro de los Nombres: " + region);
         };

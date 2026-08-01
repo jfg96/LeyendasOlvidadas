@@ -10,7 +10,7 @@ public final class MisionPersonal extends MisionReliquia {
 
     public MisionPersonal(MercenarioUnico mercenario, int etapa, String nombre, String descripcion,
                           Dificultad dificultad, int oro, int xp) {
-        super(nombre, descripcion, dificultad, oro, xp, null);
+        super(MisionId.MISION_PERSONAL, nombre, descripcion, dificultad, oro, xp, null);
         this.mercenario = mercenario; this.etapa = etapa;
     }
     public MercenarioUnico getMercenario() { return mercenario; }

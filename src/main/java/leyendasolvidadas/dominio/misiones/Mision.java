@@ -9,6 +9,7 @@ import leyendasolvidadas.dominio.eventos.*;
 
 /** Clase base de las misiones de expedición. */
 public abstract class Mision {
+    private final MisionId id;
     private final String nombre, descripcion;
     private final Dificultad dificultad;
     private final int oroRecompensa, xpRecompensa;
@@ -16,12 +17,15 @@ public abstract class Mision {
     private EstadoMision estado = EstadoMision.EN_CURSO;
     private Region region;
 
-    public Mision(String nombre, String descripcion, Dificultad dificultad,
+    public Mision(MisionId id, String nombre, String descripcion, Dificultad dificultad,
                   int oroRecompensa, int xpRecompensa, Item itemRecompensa) {
+        if (id == null) throw new IllegalArgumentException("El identificador de misión es obligatorio");
+        this.id = id;
         this.nombre = nombre; this.descripcion = descripcion; this.dificultad = dificultad;
         this.oroRecompensa = oroRecompensa; this.xpRecompensa = xpRecompensa;
         this.itemRecompensa = itemRecompensa;
     }
+    public MisionId getId() { return id; }
     public String getNombre() { return nombre; }
     public String getDescripcion() { return descripcion; }
     public Dificultad getDificultad() { return dificultad; }
