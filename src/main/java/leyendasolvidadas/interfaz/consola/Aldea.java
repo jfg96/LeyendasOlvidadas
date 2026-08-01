@@ -319,7 +319,7 @@ public class Aldea {
         Mision elegida = new TablonMisionesConsola().elegir(estado);
         if (elegida == null) return null;
         return new Expedicion(estado.getCompania(), elegida, elegida.getDificultad(),
-                estado.getExpedicionesGanadas(), estado.getRegistroCampana());
+                estado.getExpedicionesGanadas(), estado.getRegistroCampana(), estado.getAzar());
     }
 
     private void ermita(Personaje h) {

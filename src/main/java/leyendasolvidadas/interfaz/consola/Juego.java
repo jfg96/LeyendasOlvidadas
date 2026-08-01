@@ -18,16 +18,24 @@ import leyendasolvidadas.interfaz.consola.*;
 public class Juego {
     private final RepositorioPartidas repositorioPartidas;
     private final leyendasolvidadas.dominio.eventos.PublicadorEventos eventos;
+    private final FuenteAzar azar;
     private EstadoJuego estado;
 
     public Juego(RepositorioPartidas repositorioPartidas) {
-        this(repositorioPartidas, leyendasolvidadas.dominio.eventos.PublicadorEventos.silencioso());
+        this(repositorioPartidas, leyendasolvidadas.dominio.eventos.PublicadorEventos.silencioso(),
+                FuenteAzar.global());
     }
 
     public Juego(RepositorioPartidas repositorioPartidas,
                  leyendasolvidadas.dominio.eventos.PublicadorEventos eventos) {
+        this(repositorioPartidas, eventos, FuenteAzar.global());
+    }
+
+    public Juego(RepositorioPartidas repositorioPartidas,
+                 leyendasolvidadas.dominio.eventos.PublicadorEventos eventos, FuenteAzar azar) {
         this.repositorioPartidas = repositorioPartidas;
         this.eventos = eventos;
+        this.azar = azar;
     }
 
     public void iniciarJuego() {
@@ -50,11 +58,13 @@ public class Juego {
         if (estado == null) {
             estado = new EstadoJuego();
             estado.configurarEventos(eventos);
+            estado.configurarAzar(azar);
             estado.setJugador(crearPersonaje());
             estado.renovarHerreria();
             estado.renovarContratacion();
         }
         estado.configurarEventos(eventos);
+        estado.configurarAzar(azar);
         UI.pausa();
         new PrologoConsola(repositorioPartidas).jugar(estado);
         new CapituloUnoConsola(repositorioPartidas).presentarSiPendiente(estado);

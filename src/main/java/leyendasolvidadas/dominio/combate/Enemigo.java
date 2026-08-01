@@ -28,7 +28,7 @@ public class Enemigo extends Personaje {
     }
     public boolean esElite() { return elite; }
     public int getXpRecompensa() { return xpRecompensa; }
-    public int getOro() { return Rng.entre(oroMin, oroMax) * (elite ? 2 : 1); }
+    public int getOro() { return getAzar().entre(oroMin, oroMax) * (elite ? 2 : 1); }
     public double getDanioBase() { return danioBase; }
     public void anadirMovimiento(MovimientoEnemigo m) { movimientos.add(m); }
     public void setFilaPreferida(int f) { filaPreferida = f; }
@@ -45,7 +45,7 @@ public class Enemigo extends Personaje {
             if (m.usableDesde(fila)) { usables.add(m); total += m.peso; }
         }
         if (usables.isEmpty()) return MovimientoEnemigo.golpe("Zarpazo desesperado", 0.8, 1);
-        int tirada = Rng.entre(1, total);
+        int tirada = getAzar().entre(1, total);
         for (MovimientoEnemigo m : usables) {
             tirada -= m.peso;
             if (tirada <= 0) return m;
@@ -67,8 +67,8 @@ public class Enemigo extends Personaje {
     public Item soltarBotin(Personaje jugador, double multBotin, int bonusRareza) {
         double prob = (elite ? 0.65 : 0.30) * multBotin;
         if (Math.random() >= prob) return null;
-        int tirada = Rng.entre(1, 100);
-        if (tirada <= 30) return jugador instanceof Animero && Rng.prob(50)
+        int tirada = getAzar().entre(1, 100);
+        if (tirada <= 30) return jugador instanceof Animero && getAzar().probabilidad(50)
                 ? Pocion.tonico() : Pocion.vida();
         if (tirada <= 45) return Pocion.antorcha();
         if (tirada <= 55) return Pocion.laudano();

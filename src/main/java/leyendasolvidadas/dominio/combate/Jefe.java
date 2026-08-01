@@ -41,6 +41,6 @@ public class Jefe extends Enemigo {
     }
     @Override public double multFase() { return faseDos ? 1.3 : 1.0; }
     @Override public Item soltarBotin(Personaje jugador, double multBotin, int bonusRareza) {
-        return Rng.prob(50) ? Arma.aleatoria(getNivel(), 25) : Amuleto.aleatorio(25);
+        return getAzar().probabilidad(50) ? Arma.aleatoria(getNivel(), 25) : Amuleto.aleatorio(25);
     }
 }

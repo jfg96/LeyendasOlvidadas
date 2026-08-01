@@ -102,6 +102,8 @@ documentación mantenida durante el desarrollo.
 
 - Incorporación de fuentes de azar aisladas e inyectables, con semillas locales
   para evitar interferencias entre mapas y pruebas.
+- Propagación de la fuente de azar de cada partida a personajes, enemigos,
+  combate y expediciones.
 - Sustitución del receptor global de eventos por publicadores inyectables desde
   el punto de entrada, con aislamiento entre partidas y pruebas.
 - Extracción de las recompensas, penalizaciones, convivencia y progreso tras

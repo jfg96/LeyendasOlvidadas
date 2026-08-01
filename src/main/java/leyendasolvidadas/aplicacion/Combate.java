@@ -25,6 +25,7 @@ public class Combate {
     private final Inventario inventario;
     private final VistaCombate vista;
     private final PublicadorEventos eventos;
+    private final FuenteAzar azar;
     private int ronda = 1;
 
     /** Constructor de compatibilidad para encuentros de un solo heroe. */
@@ -44,8 +45,11 @@ public class Combate {
         this.inventario = inventario;
         this.vista = vista;
         this.eventos = heroes.get(0).getEventos();
+        this.azar = heroes.get(0).getAzar();
         this.heroes.forEach(personaje -> personaje.configurarEventos(eventos));
         this.enemigos.forEach(personaje -> personaje.configurarEventos(eventos));
+        this.heroes.forEach(personaje -> personaje.configurarAzar(azar));
+        this.enemigos.forEach(personaje -> personaje.configurarAzar(azar));
     }
 
     private int luz() { return exp != null ? exp.getLuz() : 60; }
@@ -69,7 +73,7 @@ public class Combate {
             Map<Personaje, Integer> iniciativa = new HashMap<>();
             List<Personaje> orden = new ArrayList<>(heroesVivos());
             orden.addAll(enemigos.stream().filter(Personaje::estaVivo).toList());
-            for (Personaje p : orden) iniciativa.put(p, p.getVelocidad() + Rng.entre(0, 4));
+            for (Personaje p : orden) iniciativa.put(p, p.getVelocidad() + azar.entre(0, 4));
             orden.sort(Comparator.comparingInt((Personaje p) -> iniciativa.get(p)).reversed());
 
             for (Personaje actor : orden) {
@@ -113,12 +117,12 @@ public class Combate {
         heroe.setRecurso(heroe.getRecurso() + heroe.getRegenRecurso());
         for (Habilidad h : heroe.getHabilidades()) if (h.getCooldownActual() > 0) h.reducirCooldown();
 
-        if ("PARANOIA".equals(heroe.getAflixion()) && Rng.prob(20)) {
+        if ("PARANOIA".equals(heroe.getAflixion()) && azar.probabilidad(20)) {
             eventos.publicar(heroe.getNombre() + " se paraliza por la paranoia.", TipoMensaje.HORROR);
             vista.pausa();
             return null;
         }
-        if ("DESESPERACION".equals(heroe.getAflixion()) && Rng.prob(15)) {
+        if ("DESESPERACION".equals(heroe.getAflixion()) && azar.probabilidad(15)) {
             heroe.recibirDanio(4, true);
             heroe.sufrirEstres(4);
             eventos.publicar(heroe.getNombre() + " se hace dano presa de la desesperacion.", TipoMensaje.HORROR);
@@ -150,7 +154,7 @@ public class Combate {
             } else {
                 int prob = Math.min(90, 35 + heroesVivos().stream()
                         .mapToInt(Personaje::getVelocidad).sum() * 3);
-                if (Rng.prob(prob)) {
+                if (azar.probabilidad(prob)) {
                     for (Personaje miembro : heroesVivos()) miembro.sufrirEstres(8);
                     eventos.publicar("La compania escapa entre las sombras.", TipoMensaje.HORROR);
                     vista.pausa();
@@ -204,12 +208,12 @@ public class Combate {
     }
 
     private void golpear(Personaje heroe, Habilidad h, Enemigo enemigo) {
-        if (Rng.prob(enemigo.esquivaActual())) {
+        if (azar.probabilidad(enemigo.esquivaActual())) {
             eventos.publicar(enemigo.getNombre() + " esquiva el golpe.");
             return;
         }
-        boolean critico = Rng.prob(heroe.criticoActual() + h.getBonusCritico());
-        double danio = heroe.ataqueBase() * h.getMultiplicador() * heroe.modDanioSaliente() * Rng.variacion();
+        boolean critico = azar.probabilidad(heroe.criticoActual() + h.getBonusCritico());
+        double danio = heroe.ataqueBase() * h.getMultiplicador() * heroe.modDanioSaliente() * azar.variacion();
         if (critico) danio *= 1.6;
         if (h.getMultiplicador() > 0) {
             double real = enemigo.recibirDanio(danio, false);
@@ -218,7 +222,7 @@ public class Combate {
             if (critico) heroe.aliviarEstres(3);
             if (h.getRoboVida() > 0) heroe.curar(real * h.getRoboVida());
         }
-        if (h.getEfecto() != null && enemigo.estaVivo() && Rng.prob(h.getProbabilidadEfecto())) {
+        if (h.getEfecto() != null && enemigo.estaVivo() && azar.probabilidad(h.getProbabilidadEfecto())) {
             double potencia = h.getEfecto() == TipoEfecto.QUEMADURA || h.getEfecto() == TipoEfecto.SANGRADO
                     ? 3 + heroe.getNivel() : h.getPotenciaEfecto();
             enemigo.aplicarEfecto(h.getEfecto(), h.getDuracionEfecto(), potencia);
@@ -231,7 +235,7 @@ public class Combate {
         if (vivos.isEmpty()) return;
         int fila = enemigos.indexOf(enemigo) + 1;
         MovimientoEnemigo movimiento = enemigo.consumirIntencion(fila);
-        Personaje objetivo = Rng.elegir(vivos);
+        Personaje objetivo = azar.elegir(vivos);
 
         if (movimiento.seCura()) {
             enemigo.curar(enemigo.getVidaMax() * 0.15);
@@ -246,15 +250,15 @@ public class Combate {
         }
         eventos.publicar(enemigo.getNombre() + " usa " + movimiento.getNombre()
                 + " contra " + objetivo.getNombre() + ".", TipoMensaje.PELIGRO);
-        if (movimiento.getMultiplicador() > 0 && !Rng.prob(objetivo.esquivaActual())) {
-            boolean critico = Rng.prob(8 + (luz() < 15 ? 7 : 0));
+        if (movimiento.getMultiplicador() > 0 && !azar.probabilidad(objetivo.esquivaActual())) {
+            boolean critico = azar.probabilidad(8 + (luz() < 15 ? 7 : 0));
             double danio = enemigo.getDanioBase() * movimiento.getMultiplicador() * enemigo.multFase()
-                    * multDanioEnemigo() * enemigo.modDanioSaliente() * Rng.variacion();
+                    * multDanioEnemigo() * enemigo.modDanioSaliente() * azar.variacion();
             if (critico) danio *= 1.6;
             double real = objetivo.recibirDanio(danio, false);
             eventos.publicar(objetivo.getNombre() + " sufre " + (int) real + " de dano.", TipoMensaje.PELIGRO);
             if (critico) objetivo.sufrirEstres(8);
-            if (movimiento.getEfecto() != null && Rng.prob(movimiento.getProbabilidadEfecto()))
+            if (movimiento.getEfecto() != null && azar.probabilidad(movimiento.getProbabilidadEfecto()))
                 objetivo.aplicarEfecto(movimiento.getEfecto(), movimiento.getDuracionEfecto(), movimiento.getPotenciaEfecto());
         }
         aplicarTerror(movimiento, objetivo);

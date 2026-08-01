@@ -39,6 +39,7 @@ public abstract class Personaje {
     private final List<HeridaPersistente> heridas = new ArrayList<>();
     private MercenarioUnico identidadUnica;
     private transient PublicadorEventos eventos = PublicadorEventos.silencioso();
+    private transient FuenteAzar azar = FuenteAzar.global();
 
     public Personaje(String nombre, int nivel, double vidaMax, int defensa,
                      int esquiva, int critico, int velocidad, double recursoMax, int regenRecurso) {
@@ -79,6 +80,10 @@ public abstract class Personaje {
     public int getExperiencia() { return experiencia; }
     public Inventario getInventario() { return inventario; }
     public PublicadorEventos getEventos() { return eventos; }
+    public FuenteAzar getAzar() { return azar; }
+    public void configurarAzar(FuenteAzar azar) {
+        this.azar = azar == null ? FuenteAzar.global() : azar;
+    }
     public void configurarEventos(PublicadorEventos eventos) {
         this.eventos = eventos == null ? PublicadorEventos.silencioso() : eventos;
         inventario.configurarEventos(this.eventos);
@@ -229,11 +234,11 @@ public abstract class Personaje {
     }
     private void pruebaDeterminacion() {
         eventos.publicar("Tu mente se resquebraja... PRUEBA DE DETERMINACION", TipoMensaje.HORROR);
-        if (Rng.prob(25)) {
+        if (azar.probabilidad(25)) {
             aflixion = "VIRTUD";
             cordura = 45;
             eventos.publicar("¡" + nombre.toUpperCase() + " SE CRECE ANTE EL HORROR! (Virtuoso: +critico, +esquiva)", TipoMensaje.RECOMPENSA);
-        } else if (Rng.prob(50)) {
+        } else if (azar.probabilidad(50)) {
             aflixion = "PARANOIA";
             eventos.publicar(nombre + " sucumbe a la PARANOIA: a veces dudara y perdera el turno.", TipoMensaje.HORROR);
         } else {

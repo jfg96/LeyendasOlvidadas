@@ -6,6 +6,7 @@ import java.util.List;
 public interface FuenteAzar {
     int entre(int minimo, int maximo);
     boolean probabilidad(int porcentaje);
+    default double variacion() { return 0.9 + entre(0, 10_000) / 50_000.0; }
 
     default <T> T elegir(List<T> opciones) {
         return opciones.get(entre(0, opciones.size() - 1));

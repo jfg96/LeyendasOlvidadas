@@ -27,8 +27,16 @@ public class EstadoJuego {
     private EstadoAldea estadoAldea = new EstadoAldea();
     private RegistroCampana registroCampana = new RegistroCampana();
     private transient PublicadorEventos eventos = PublicadorEventos.silencioso();
+    private transient FuenteAzar azar = FuenteAzar.global();
 
     public PublicadorEventos getEventos() { return eventos; }
+    public FuenteAzar getAzar() { return azar; }
+    public void configurarAzar(FuenteAzar azar) {
+        this.azar = azar == null ? FuenteAzar.global() : azar;
+        if (compania != null) compania.getPlantilla().forEach(p -> p.configurarAzar(this.azar));
+        if (jugador != null) jugador.configurarAzar(this.azar);
+        if (candidatos != null) candidatos.forEach(p -> p.configurarAzar(this.azar));
+    }
     public void configurarEventos(PublicadorEventos eventos) {
         this.eventos = eventos == null ? PublicadorEventos.silencioso() : eventos;
         if (compania != null) compania.getPlantilla().forEach(p -> p.configurarEventos(this.eventos));
@@ -49,6 +57,7 @@ public class EstadoJuego {
     public void setJugador(Personaje j) {
         jugador = j;
         j.configurarEventos(eventos);
+        j.configurarAzar(azar);
         compania = new Compania(j);
     }
     public int getSemana() { return semana; }
@@ -101,11 +110,13 @@ public class EstadoJuego {
             MercenarioUnico unico = disponibles.get((semana - 1) % disponibles.size());
             Personaje candidato = FabricaHeroes.crearUnico(unico); candidato.prepararNivelInicial(nivelBase);
             candidato.configurarEventos(eventos);
+            candidato.configurarAzar(azar);
             getCandidatos().add(candidato);
         }
         while (getCandidatos().size() < 3) {
             Personaje candidato = FabricaHeroes.candidatoAleatorio(nivelBase + (Rng.prob(25) ? 1 : 0));
             candidato.configurarEventos(eventos);
+            candidato.configurarAzar(azar);
             getCandidatos().add(candidato);
         }
     }
@@ -133,6 +144,7 @@ public class EstadoJuego {
         this.candidatos = new ArrayList<>(candidatos);
         this.progresoCampana = progresoCampana;
         configurarEventos(eventos);
+        configurarAzar(azar);
     }
 
     /** Completa campos incorporados en versiones posteriores al cargar. */
