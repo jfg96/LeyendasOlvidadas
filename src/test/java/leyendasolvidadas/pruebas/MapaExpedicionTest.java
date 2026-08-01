@@ -1,6 +1,6 @@
 package leyendasolvidadas.pruebas;
 
-import leyendasolvidadas.dominio.azar.Rng;
+import leyendasolvidadas.dominio.azar.AzarJava;
 import leyendasolvidadas.dominio.mundo.Habitacion;
 import leyendasolvidadas.dominio.mundo.MapaExpedicion;
 import leyendasolvidadas.dominio.mundo.TipoHabitacion;
@@ -15,9 +15,8 @@ class MapaExpedicionTest {
     @Test
     void generaElTamanoSolicitadoConCoordenadasUnicas() {
         for (int semilla = 0; semilla < 50; semilla++) {
-            Rng.semilla(semilla);
             int tamano = 7 + semilla % 3 * 2;
-            MapaExpedicion mapa = new MapaExpedicion(tamano, false);
+            MapaExpedicion mapa = new MapaExpedicion(tamano, false, new AzarJava(semilla));
 
             assertEquals(tamano, mapa.getHabitaciones().size());
             assertEquals(tamano, mapa.getHabitaciones().stream()
@@ -30,8 +29,7 @@ class MapaExpedicionTest {
 
     @Test
     void todasLasSalasSonAccesiblesYLasConexionesSonReciprocas() {
-        Rng.semilla(731);
-        MapaExpedicion mapa = new MapaExpedicion(11, false);
+        MapaExpedicion mapa = new MapaExpedicion(11, false, new AzarJava(731));
         Set<Habitacion> accesibles = Collections.newSetFromMap(new IdentityHashMap<>());
         Deque<Habitacion> pendientes = new ArrayDeque<>();
         accesibles.add(mapa.getEntrada());
@@ -52,8 +50,7 @@ class MapaExpedicionTest {
     @Test
     void situaUnUnicoObjetivoALaMaximaDistancia() {
         for (int semilla = 0; semilla < 30; semilla++) {
-            Rng.semilla(semilla);
-            MapaExpedicion mapa = new MapaExpedicion(9, true);
+            MapaExpedicion mapa = new MapaExpedicion(9, true, new AzarJava(semilla));
             List<Habitacion> objetivos = mapa.getHabitaciones().stream()
                     .filter(h -> h.getTipo() == TipoHabitacion.OBJETIVO).toList();
             Map<Habitacion, Integer> distancias = distanciasDesde(mapa.getEntrada());

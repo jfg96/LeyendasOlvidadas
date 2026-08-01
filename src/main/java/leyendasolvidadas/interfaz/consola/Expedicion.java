@@ -61,7 +61,8 @@ public class Expedicion implements ContextoCombate {
                 .average().orElse(1)) + dificultad.getNivelExtra();
         this.condiciones = new CondicionesExpedicion(region, nivelZona, azar);
         gestor.asignar(mision);
-        MapaExpedicion mapa = new MapaExpedicion(7 + dificultad.ordinal() * 2, mision.requiereObjetivo());
+        MapaExpedicion mapa = new MapaExpedicion(7 + dificultad.ordinal() * 2,
+                mision.requiereObjetivo(), azar);
         this.habitaciones = mapa.getHabitaciones();
         this.entrada = mapa.getEntrada();
         this.actual = entrada;

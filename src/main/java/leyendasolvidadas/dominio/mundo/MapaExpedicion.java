@@ -1,6 +1,6 @@
 package leyendasolvidadas.dominio.mundo;
 
-import leyendasolvidadas.dominio.azar.Rng;
+import leyendasolvidadas.dominio.azar.FuenteAzar;
 
 import java.util.*;
 
@@ -8,11 +8,17 @@ import java.util.*;
 public final class MapaExpedicion {
     private final List<Habitacion> habitaciones = new ArrayList<>();
     private final Habitacion entrada;
+    private final FuenteAzar azar;
 
     public MapaExpedicion(int numeroHabitaciones, boolean requiereObjetivo) {
+        this(numeroHabitaciones, requiereObjetivo, FuenteAzar.global());
+    }
+
+    public MapaExpedicion(int numeroHabitaciones, boolean requiereObjetivo, FuenteAzar azar) {
         if (numeroHabitaciones < 2)
             throw new IllegalArgumentException("Una expedición necesita al menos dos habitaciones");
 
+        this.azar = Objects.requireNonNull(azar, "La fuente de azar es obligatoria");
         Map<Long, Habitacion> porPosicion = new HashMap<>();
         entrada = new Habitacion(0, 0, TipoHabitacion.ENTRADA);
         habitaciones.add(entrada);
@@ -36,7 +42,7 @@ public final class MapaExpedicion {
         boolean hayCampamento = false;
         while (habitaciones.size() < numeroHabitaciones && intentos < 500) {
             intentos++;
-            int direccion = Rng.entre(0, 3);
+            int direccion = azar.entre(0, 3);
             int nuevoX = x + direcciones[direccion][0];
             int nuevoY = y + direcciones[direccion][1];
             Habitacion origen = porPosicion.get(clave(x, y));
@@ -52,7 +58,7 @@ public final class MapaExpedicion {
             destino.conectar(letras[opuesta(direccion)], origen);
             x = nuevoX;
             y = nuevoY;
-            if (Rng.prob(30)) {
+            if (azar.probabilidad(30)) {
                 x = 0;
                 y = 0;
             }
@@ -62,8 +68,8 @@ public final class MapaExpedicion {
     }
 
     private TipoHabitacion sortearTipo(boolean forzarCampamento) {
-        if (forzarCampamento && Rng.prob(35)) return TipoHabitacion.CAMPAMENTO;
-        int valor = Rng.entre(1, 100);
+        if (forzarCampamento && azar.probabilidad(35)) return TipoHabitacion.CAMPAMENTO;
+        int valor = azar.entre(1, 100);
         if (valor <= 45) return TipoHabitacion.COMBATE;
         if (valor <= 63) return TipoHabitacion.CURIO;
         if (valor <= 78) return TipoHabitacion.TESORO;
