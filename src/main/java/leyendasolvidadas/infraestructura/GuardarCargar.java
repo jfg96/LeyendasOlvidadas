@@ -21,14 +21,19 @@ public final class GuardarCargar implements RepositorioPartidas {
     private final Path fichero;
     private final Path temporal;
     private final Path respaldo;
+    private final PublicadorEventos eventos;
 
-    public GuardarCargar() { this(FICHERO_PREDETERMINADO); }
+    public GuardarCargar() { this(FICHERO_PREDETERMINADO, PublicadorEventos.silencioso()); }
+    public GuardarCargar(PublicadorEventos eventos) { this(FICHERO_PREDETERMINADO, eventos); }
 
-    public GuardarCargar(Path fichero) {
+    public GuardarCargar(Path fichero) { this(fichero, PublicadorEventos.silencioso()); }
+
+    public GuardarCargar(Path fichero, PublicadorEventos eventos) {
         if (fichero == null) throw new IllegalArgumentException("La ruta de guardado es obligatoria");
         this.fichero = fichero.toAbsolutePath().normalize();
         this.temporal = rutaAuxiliar(this.fichero, ".tmp");
         this.respaldo = rutaAuxiliar(this.fichero, ".bak");
+        this.eventos = eventos == null ? PublicadorEventos.silencioso() : eventos;
     }
 
     @Override public boolean existePartida() {
@@ -44,11 +49,11 @@ public final class GuardarCargar implements RepositorioPartidas {
                 Files.copy(fichero, respaldo, StandardCopyOption.REPLACE_EXISTING,
                         StandardCopyOption.COPY_ATTRIBUTES);
             reemplazarPrincipal();
-            BusEventos.publicar("Partida guardada en '" + fichero.getFileName() + "'.", TipoMensaje.EXITO);
+            eventos.publicar("Partida guardada en '" + fichero.getFileName() + "'.", TipoMensaje.EXITO);
             return true;
         } catch (IOException e) {
             eliminarTemporal();
-            BusEventos.publicar("No se pudo guardar: " + e.getMessage(), TipoMensaje.PELIGRO);
+            eventos.publicar("No se pudo guardar: " + e.getMessage(), TipoMensaje.PELIGRO);
             return false;
         }
     }
@@ -57,15 +62,15 @@ public final class GuardarCargar implements RepositorioPartidas {
         IOException falloPrincipal = null;
         if (Files.isRegularFile(fichero)) {
             try {
-                return leer(fichero);
+                return configurar(leer(fichero));
             } catch (IOException e) {
                 falloPrincipal = e;
             }
         }
         if (Files.isRegularFile(respaldo)) {
             try {
-                EstadoJuego recuperado = leer(respaldo);
-                BusEventos.publicar("La partida principal estaba dañada; se cargó la copia de seguridad.",
+                EstadoJuego recuperado = configurar(leer(respaldo));
+                eventos.publicar("La partida principal estaba dañada; se cargó la copia de seguridad.",
                         TipoMensaje.PROGRESO);
                 return recuperado;
             } catch (IOException e) {
@@ -74,7 +79,7 @@ public final class GuardarCargar implements RepositorioPartidas {
             }
         }
         String detalle = falloPrincipal == null ? "no existe ningún archivo de guardado" : falloPrincipal.getMessage();
-        BusEventos.publicar("No se pudo cargar la partida LOSV: " + detalle, TipoMensaje.PELIGRO);
+        eventos.publicar("No se pudo cargar la partida LOSV: " + detalle, TipoMensaje.PELIGRO);
         return null;
     }
 
@@ -100,6 +105,11 @@ public final class GuardarCargar implements RepositorioPartidas {
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(Files.newInputStream(ruta)))) {
             return CodecPartida.leer(in);
         }
+    }
+
+    private EstadoJuego configurar(EstadoJuego estado) {
+        estado.configurarEventos(eventos);
+        return estado;
     }
 
     private static Path rutaAuxiliar(Path principal, String sufijo) {

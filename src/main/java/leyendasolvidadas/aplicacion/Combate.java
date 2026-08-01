@@ -24,6 +24,7 @@ public class Combate {
     private final GestorMisiones gestor;
     private final Inventario inventario;
     private final VistaCombate vista;
+    private final PublicadorEventos eventos;
     private int ronda = 1;
 
     /** Constructor de compatibilidad para encuentros de un solo heroe. */
@@ -42,6 +43,9 @@ public class Combate {
         this.gestor = gestor;
         this.inventario = inventario;
         this.vista = vista;
+        this.eventos = heroes.get(0).getEventos();
+        this.heroes.forEach(personaje -> personaje.configurarEventos(eventos));
+        this.enemigos.forEach(personaje -> personaje.configurarEventos(eventos));
     }
 
     private int luz() { return exp != null ? exp.getLuz() : 60; }
@@ -53,7 +57,7 @@ public class Combate {
         vista.mostrarInicio(emboscada, List.copyOf(enemigos));
 
         if (emboscada) {
-            BusEventos.publicar("\u00a1La oscuridad les da el primer golpe!", TipoMensaje.PELIGRO);
+            eventos.publicar("\u00a1La oscuridad les da el primer golpe!", TipoMensaje.PELIGRO);
             for (Personaje h : heroesVivos()) h.sufrirEstres(6);
             for (Enemigo e : new ArrayList<>(enemigos)) if (e.estaVivo()) turnoEnemigo(e);
             if (heroesVivos().isEmpty()) return derrota();
@@ -81,7 +85,7 @@ public class Combate {
                     continue;
                 }
                 if (aturdido) {
-                    BusEventos.publicar(actor.getNombre() + " esta aturdido y pierde el turno.", TipoMensaje.PROGRESO);
+                    eventos.publicar(actor.getNombre() + " esta aturdido y pierde el turno.", TipoMensaje.PROGRESO);
                     continue;
                 }
 
@@ -90,7 +94,7 @@ public class Combate {
                     turnoEnemigo(enemigo);
                     if (enemigo instanceof Jefe jefe && jefe.enFaseDos()
                             && enemigo.estaVivo() && !heroesVivos().isEmpty()) {
-                        BusEventos.publicar(jefe.getNombre() + " encadena otra accion en su frenesí.", TipoMensaje.HORROR);
+                        eventos.publicar(jefe.getNombre() + " encadena otra accion en su frenesí.", TipoMensaje.HORROR);
                         turnoEnemigo(enemigo);
                     }
                 } else {
@@ -110,14 +114,14 @@ public class Combate {
         for (Habilidad h : heroe.getHabilidades()) if (h.getCooldownActual() > 0) h.reducirCooldown();
 
         if ("PARANOIA".equals(heroe.getAflixion()) && Rng.prob(20)) {
-            BusEventos.publicar(heroe.getNombre() + " se paraliza por la paranoia.", TipoMensaje.HORROR);
+            eventos.publicar(heroe.getNombre() + " se paraliza por la paranoia.", TipoMensaje.HORROR);
             vista.pausa();
             return null;
         }
         if ("DESESPERACION".equals(heroe.getAflixion()) && Rng.prob(15)) {
             heroe.recibirDanio(4, true);
             heroe.sufrirEstres(4);
-            BusEventos.publicar(heroe.getNombre() + " se hace dano presa de la desesperacion.", TipoMensaje.HORROR);
+            eventos.publicar(heroe.getNombre() + " se hace dano presa de la desesperacion.", TipoMensaje.HORROR);
             vista.pausa();
             return null;
         }
@@ -130,7 +134,7 @@ public class Combate {
             if (op <= 4) {
                 Habilidad h = habilidades.get(op - 1);
                 if (!h.disponible(heroe)) {
-                    BusEventos.publicar("Aun no puedes usar esa tecnica.", TipoMensaje.PELIGRO);
+                    eventos.publicar("Aun no puedes usar esa tecnica.", TipoMensaje.PELIGRO);
                     continue;
                 }
                 if (usarHabilidad(heroe, h)) { vista.pausa(); return null; }
@@ -140,7 +144,7 @@ public class Combate {
                 heroe.setRecurso(heroe.getRecurso() + heroe.getRecursoMax() * 0.4);
                 heroe.curar(heroe.getVidaMax() * 0.10);
                 heroe.aliviarEstres(4);
-                BusEventos.publicar(heroe.getNombre() + " recupera el aliento.", TipoMensaje.EXITO);
+                eventos.publicar(heroe.getNombre() + " recupera el aliento.", TipoMensaje.EXITO);
                 vista.pausa();
                 return null;
             } else {
@@ -148,11 +152,11 @@ public class Combate {
                         .mapToInt(Personaje::getVelocidad).sum() * 3);
                 if (Rng.prob(prob)) {
                     for (Personaje miembro : heroesVivos()) miembro.sufrirEstres(8);
-                    BusEventos.publicar("La compania escapa entre las sombras.", TipoMensaje.HORROR);
+                    eventos.publicar("La compania escapa entre las sombras.", TipoMensaje.HORROR);
                     vista.pausa();
                     return Resultado.HUIDA;
                 }
-                BusEventos.publicar("\u00a1Les cortan la retirada!", TipoMensaje.PELIGRO);
+                eventos.publicar("\u00a1Les cortan la retirada!", TipoMensaje.PELIGRO);
                 vista.pausa();
                 return null;
             }
@@ -169,20 +173,20 @@ public class Combate {
             Personaje objetivo = h.esSobreAliado() ? vista.elegirAliado(heroesVivos()) : heroe;
             if (objetivo == null) { devolverCoste(heroe, h); return false; }
             objetivo.aplicarEfecto(h.getEfecto(), h.getDuracionEfecto(), h.getPotenciaEfecto());
-            BusEventos.publicar(heroe.getNombre() + " usa " + h.getNombre() + " sobre "
+            eventos.publicar(heroe.getNombre() + " usa " + h.getNombre() + " sobre "
                     + objetivo.getNombre() + ".", TipoMensaje.PROGRESO);
             return true;
         }
 
         List<Enemigo> objetivos = objetivosValidos(h);
         if (objetivos.isEmpty()) {
-            BusEventos.publicar("Ningun enemigo esta al alcance.", TipoMensaje.PELIGRO);
+            eventos.publicar("Ningun enemigo esta al alcance.", TipoMensaje.PELIGRO);
             devolverCoste(heroe, h);
             return false;
         }
         List<Enemigo> golpeados = h.esArea() ? objetivos
                 : List.of(vista.elegirEnemigo(objetivos, List.copyOf(enemigos)));
-        BusEventos.publicar(heroe.getNombre() + " usa " + h.getNombre() + ".", TipoMensaje.PROGRESO);
+        eventos.publicar(heroe.getNombre() + " usa " + h.getNombre() + ".", TipoMensaje.PROGRESO);
         for (Enemigo e : new ArrayList<>(golpeados)) golpear(heroe, h, e);
         return true;
     }
@@ -201,7 +205,7 @@ public class Combate {
 
     private void golpear(Personaje heroe, Habilidad h, Enemigo enemigo) {
         if (Rng.prob(enemigo.esquivaActual())) {
-            BusEventos.publicar(enemigo.getNombre() + " esquiva el golpe.");
+            eventos.publicar(enemigo.getNombre() + " esquiva el golpe.");
             return;
         }
         boolean critico = Rng.prob(heroe.criticoActual() + h.getBonusCritico());
@@ -209,7 +213,7 @@ public class Combate {
         if (critico) danio *= 1.6;
         if (h.getMultiplicador() > 0) {
             double real = enemigo.recibirDanio(danio, false);
-            BusEventos.publicar((critico ? "\u00a1CRITICO! " : "") + enemigo.getNombre()
+            eventos.publicar((critico ? "\u00a1CRITICO! " : "") + enemigo.getNombre()
                     + " sufre " + (int) real + " de dano.", critico ? TipoMensaje.RECOMPENSA : TipoMensaje.PELIGRO);
             if (critico) heroe.aliviarEstres(3);
             if (h.getRoboVida() > 0) heroe.curar(real * h.getRoboVida());
@@ -231,16 +235,16 @@ public class Combate {
 
         if (movimiento.seCura()) {
             enemigo.curar(enemigo.getVidaMax() * 0.15);
-            BusEventos.publicar(enemigo.getNombre() + " usa " + movimiento.getNombre() + " y se cura.", TipoMensaje.EXITO);
+            eventos.publicar(enemigo.getNombre() + " usa " + movimiento.getNombre() + " y se cura.", TipoMensaje.EXITO);
             return;
         }
         if (movimiento.esSobreSi()) {
             enemigo.aplicarEfecto(movimiento.getEfecto(), movimiento.getDuracionEfecto(), movimiento.getPotenciaEfecto());
-            BusEventos.publicar(enemigo.getNombre() + " usa " + movimiento.getNombre() + ".", TipoMensaje.PELIGRO);
+            eventos.publicar(enemigo.getNombre() + " usa " + movimiento.getNombre() + ".", TipoMensaje.PELIGRO);
             aplicarTerror(movimiento, objetivo);
             return;
         }
-        BusEventos.publicar(enemigo.getNombre() + " usa " + movimiento.getNombre()
+        eventos.publicar(enemigo.getNombre() + " usa " + movimiento.getNombre()
                 + " contra " + objetivo.getNombre() + ".", TipoMensaje.PELIGRO);
         if (movimiento.getMultiplicador() > 0 && !Rng.prob(objetivo.esquivaActual())) {
             boolean critico = Rng.prob(8 + (luz() < 15 ? 7 : 0));
@@ -248,7 +252,7 @@ public class Combate {
                     * multDanioEnemigo() * enemigo.modDanioSaliente() * Rng.variacion();
             if (critico) danio *= 1.6;
             double real = objetivo.recibirDanio(danio, false);
-            BusEventos.publicar(objetivo.getNombre() + " sufre " + (int) real + " de dano.", TipoMensaje.PELIGRO);
+            eventos.publicar(objetivo.getNombre() + " sufre " + (int) real + " de dano.", TipoMensaje.PELIGRO);
             if (critico) objetivo.sufrirEstres(8);
             if (movimiento.getEfecto() != null && Rng.prob(movimiento.getProbabilidadEfecto()))
                 objetivo.aplicarEfecto(movimiento.getEfecto(), movimiento.getDuracionEfecto(), movimiento.getPotenciaEfecto());
@@ -260,12 +264,12 @@ public class Combate {
         if (movimiento.getEstres() <= 0) return;
         int total = movimiento.getEstres() + estresExtra();
         objetivo.sufrirEstres(total);
-        BusEventos.publicar(objetivo.getNombre() + " sufre +" + total + " estres.", TipoMensaje.HORROR);
+        eventos.publicar(objetivo.getNombre() + " sufre +" + total + " estres.", TipoMensaje.HORROR);
     }
 
     private void procesarMuerte(Enemigo enemigo) {
         if (!enemigos.remove(enemigo)) return;
-        BusEventos.publicar("\u2620 " + enemigo.getNombre() + " cae abatido.", TipoMensaje.EXITO);
+        eventos.publicar("\u2620 " + enemigo.getNombre() + " cae abatido.", TipoMensaje.EXITO);
         int oro = enemigo.getOro();
         inventario.ganarOro(oro);
         for (Personaje heroe : heroes) heroe.ganarExperiencia(enemigo.getXpRecompensa());
@@ -277,14 +281,14 @@ public class Combate {
     }
 
     private Resultado victoria() {
-        BusEventos.publicar("VICTORIA", TipoMensaje.RECOMPENSA);
+        eventos.publicar("VICTORIA", TipoMensaje.RECOMPENSA);
         for (Personaje heroe : heroesVivos()) heroe.aliviarEstres(5);
         vista.pausa();
         return Resultado.VICTORIA;
     }
 
     private Resultado derrota() {
-        BusEventos.publicar("La compania cae derrotada. La oscuridad reclama sus nombres...", TipoMensaje.PELIGRO);
+        eventos.publicar("La compania cae derrotada. La oscuridad reclama sus nombres...", TipoMensaje.PELIGRO);
         vista.pausa();
         return Resultado.DERROTA;
     }

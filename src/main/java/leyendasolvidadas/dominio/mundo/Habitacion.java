@@ -18,6 +18,7 @@ public class Habitacion {
     private boolean conocida = false; // aparece en el mapa como "?"
     private boolean resuelta = false; // su contenido ya se ha gastado
     private final Map<Character, Habitacion> conexiones = new LinkedHashMap<>();
+    private transient PublicadorEventos eventos = PublicadorEventos.silencioso();
 
     public Habitacion(int x, int y, TipoHabitacion tipo) {
         this.x = x; this.y = y; this.tipo = tipo;
@@ -26,6 +27,10 @@ public class Habitacion {
                 : azar < 5 ? TipoSala.BENDICION : TipoSala.NORMAL;
     }
     public int getX() { return x; }
+    public Habitacion configurarEventos(PublicadorEventos eventos) {
+        this.eventos = eventos == null ? PublicadorEventos.silencioso() : eventos;
+        return this;
+    }
     public int getY() { return y; }
     public TipoHabitacion getTipo() { return tipo; }
     public boolean estaVisitada() { return visitada; }
@@ -42,17 +47,17 @@ public class Habitacion {
         switch (ambiente) {
             case ESCARCHA:
                 p.setRecurso(p.getRecurso() - 15);
-                BusEventos.publicar("Un frio sepulcral drena 15 de " + p.nombreRecurso().toLowerCase() + ".", TipoMensaje.PELIGRO);
+                eventos.publicar("Un frio sepulcral drena 15 de " + p.nombreRecurso().toLowerCase() + ".", TipoMensaje.PELIGRO);
                 break;
             case NIEBLA:
                 p.recibirDanio(6, true);
                 p.sufrirEstres(3);
-                BusEventos.publicar("Una niebla mefitica te corroe (-6 PV, +3 estres).", TipoMensaje.PELIGRO);
+                eventos.publicar("Una niebla mefitica te corroe (-6 PV, +3 estres).", TipoMensaje.PELIGRO);
                 break;
             case BENDICION:
                 p.curar(15);
                 p.aliviarEstres(5);
-                BusEventos.publicar("Un rayo de luz te reconforta (+15 PV, -5 estres).", TipoMensaje.EXITO);
+                eventos.publicar("Un rayo de luz te reconforta (+15 PV, -5 estres).", TipoMensaje.EXITO);
                 break;
             default: // sin efecto
         }

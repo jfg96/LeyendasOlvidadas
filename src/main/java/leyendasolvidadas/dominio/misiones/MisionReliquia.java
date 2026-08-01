@@ -23,7 +23,7 @@ public class MisionReliquia extends Mision {
     @Override public void notificarObjetivo() {
         if (!recogida) {
             recogida = true;
-            BusEventos.publicar("Tomas la reliquia sagrada. ¡Vuelve a la ENTRADA (E) para consagrarla!", TipoMensaje.RECOMPENSA);
+            eventos().publicar("Tomas la reliquia sagrada. ¡Vuelve a la ENTRADA (E) para consagrarla!", TipoMensaje.RECOMPENSA);
         }
     }
     /** Llamado al pisar la entrada. */

@@ -102,6 +102,8 @@ documentación mantenida durante el desarrollo.
 
 - Incorporación de fuentes de azar aisladas e inyectables, con semillas locales
   para evitar interferencias entre mapas y pruebas.
+- Sustitución del receptor global de eventos por publicadores inyectables desde
+  el punto de entrada, con aislamiento entre partidas y pruebas.
 - Extracción de las recompensas, penalizaciones, convivencia y progreso tras
   una expedición a un servicio de aplicación independiente de consola.
 - Incorporación de un resultado neutral que comunica a cada interfaz las

@@ -38,6 +38,7 @@ public abstract class Personaje {
     private int lealtad = 50;
     private final List<HeridaPersistente> heridas = new ArrayList<>();
     private MercenarioUnico identidadUnica;
+    private transient PublicadorEventos eventos = PublicadorEventos.silencioso();
 
     public Personaje(String nombre, int nivel, double vidaMax, int defensa,
                      int esquiva, int critico, int velocidad, double recursoMax, int regenRecurso) {
@@ -77,6 +78,11 @@ public abstract class Personaje {
     public String getAflixion() { return aflixion; }
     public int getExperiencia() { return experiencia; }
     public Inventario getInventario() { return inventario; }
+    public PublicadorEventos getEventos() { return eventos; }
+    public void configurarEventos(PublicadorEventos eventos) {
+        this.eventos = eventos == null ? PublicadorEventos.silencioso() : eventos;
+        inventario.configurarEventos(this.eventos);
+    }
     public Arma getArma() { return arma; }
     public void setArma(Arma a) { arma = a; }
     public Armadura getArmadura() { return armadura; }
@@ -186,11 +192,11 @@ public abstract class Personaje {
             TipoEfecto t = e.getTipo();
             if (t == TipoEfecto.SANGRADO || t == TipoEfecto.VENENO || t == TipoEfecto.QUEMADURA) {
                 double d = recibirDanio(e.getPotencia(), true);
-                BusEventos.publicar(nombre + " sufre " + (int) d + " por " + t.getNombre().toLowerCase() + ".", TipoMensaje.PELIGRO);
+                eventos.publicar(nombre + " sufre " + (int) d + " por " + t.getNombre().toLowerCase() + ".", TipoMensaje.PELIGRO);
             }
             if (t == TipoEfecto.REGENERACION) {
                 curar(e.getPotencia());
-                BusEventos.publicar(nombre + " recupera " + (int) e.getPotencia() + " PV por regeneracion.", TipoMensaje.EXITO);
+                eventos.publicar(nombre + " recupera " + (int) e.getPotencia() + " PV por regeneracion.", TipoMensaje.EXITO);
             }
             if (e.avanzarTurno()) it.remove();
         }
@@ -222,23 +228,23 @@ public abstract class Personaje {
         sufrirEstres(cantidad);
     }
     private void pruebaDeterminacion() {
-        BusEventos.publicar("Tu mente se resquebraja... PRUEBA DE DETERMINACION", TipoMensaje.HORROR);
+        eventos.publicar("Tu mente se resquebraja... PRUEBA DE DETERMINACION", TipoMensaje.HORROR);
         if (Rng.prob(25)) {
             aflixion = "VIRTUD";
             cordura = 45;
-            BusEventos.publicar("¡" + nombre.toUpperCase() + " SE CRECE ANTE EL HORROR! (Virtuoso: +critico, +esquiva)", TipoMensaje.RECOMPENSA);
+            eventos.publicar("¡" + nombre.toUpperCase() + " SE CRECE ANTE EL HORROR! (Virtuoso: +critico, +esquiva)", TipoMensaje.RECOMPENSA);
         } else if (Rng.prob(50)) {
             aflixion = "PARANOIA";
-            BusEventos.publicar(nombre + " sucumbe a la PARANOIA: a veces dudara y perdera el turno.", TipoMensaje.HORROR);
+            eventos.publicar(nombre + " sucumbe a la PARANOIA: a veces dudara y perdera el turno.", TipoMensaje.HORROR);
         } else {
             aflixion = "DESESPERACION";
-            BusEventos.publicar(nombre + " cae en la DESESPERACION: su propia mente le atormenta.", TipoMensaje.HORROR);
+            eventos.publicar(nombre + " cae en la DESESPERACION: su propia mente le atormenta.", TipoMensaje.HORROR);
         }
     }
     public void aliviarEstres(int cantidad) {
         cordura = Math.max(0, cordura - cantidad);
         if (aflixion != null && !"VIRTUD".equals(aflixion) && cordura < 30) {
-            BusEventos.publicar(nombre + " recobra la compostura. La afliccion se disipa.", TipoMensaje.EXITO);
+            eventos.publicar(nombre + " recobra la compostura. La afliccion se disipa.", TipoMensaje.EXITO);
             aflixion = null;
         }
     }
@@ -263,7 +269,7 @@ public abstract class Personaje {
     public int xpNecesaria() { return nivel * 100; }
     public void ganarExperiencia(int cantidad) {
         experiencia += cantidad;
-        BusEventos.publicar("+" + cantidad + " XP.", TipoMensaje.PROGRESO);
+        eventos.publicar("+" + cantidad + " XP.", TipoMensaje.PROGRESO);
         while (experiencia >= xpNecesaria() && nivel < 30) {
             experiencia -= xpNecesaria();
             subirNivel();
@@ -273,7 +279,7 @@ public abstract class Personaje {
     public void subirNivel() {
         setNivel(nivel + 1);
         if (!progresionSilenciosa)
-            BusEventos.publicar("¡" + nombre.toUpperCase() + " ALCANZA EL NIVEL " + nivel + "!", TipoMensaje.RECOMPENSA);
+            eventos.publicar("¡" + nombre.toUpperCase() + " ALCANZA EL NIVEL " + nivel + "!", TipoMensaje.RECOMPENSA);
     }
 
     /** Escala un recluta sin mostrar mensajes de subida durante su generacion. */
@@ -285,6 +291,6 @@ public abstract class Personaje {
     }
 
     protected void logProgresion(String mensaje) {
-        if (!progresionSilenciosa) BusEventos.publicar(mensaje, TipoMensaje.PROGRESO);
+        if (!progresionSilenciosa) eventos.publicar(mensaje, TipoMensaje.PROGRESO);
     }
 }

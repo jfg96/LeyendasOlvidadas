@@ -17,10 +17,17 @@ import leyendasolvidadas.interfaz.consola.*;
  */
 public class Juego {
     private final RepositorioPartidas repositorioPartidas;
+    private final leyendasolvidadas.dominio.eventos.PublicadorEventos eventos;
     private EstadoJuego estado;
 
     public Juego(RepositorioPartidas repositorioPartidas) {
+        this(repositorioPartidas, leyendasolvidadas.dominio.eventos.PublicadorEventos.silencioso());
+    }
+
+    public Juego(RepositorioPartidas repositorioPartidas,
+                 leyendasolvidadas.dominio.eventos.PublicadorEventos eventos) {
         this.repositorioPartidas = repositorioPartidas;
+        this.eventos = eventos;
     }
 
     public void iniciarJuego() {
@@ -42,10 +49,12 @@ public class Juego {
         }
         if (estado == null) {
             estado = new EstadoJuego();
+            estado.configurarEventos(eventos);
             estado.setJugador(crearPersonaje());
             estado.renovarHerreria();
             estado.renovarContratacion();
         }
+        estado.configurarEventos(eventos);
         UI.pausa();
         new PrologoConsola(repositorioPartidas).jugar(estado);
         new CapituloUnoConsola(repositorioPartidas).presentarSiPendiente(estado);

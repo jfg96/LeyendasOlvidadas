@@ -34,7 +34,7 @@ public class Jefe extends Enemigo {
             faseDos = true;
             limpiarEfectosNegativos();
             for (MovimientoEnemigo m : movimientosFase2) anadirMovimiento(m);
-            BusEventos.publicar("¡" + getNombre().toUpperCase() + " DESATA SU FURIA! \"" + gritoFase2 + "\"", TipoMensaje.HORROR);
+            getEventos().publicar("¡" + getNombre().toUpperCase() + " DESATA SU FURIA! \"" + gritoFase2 + "\"", TipoMensaje.HORROR);
             return true;
         }
         return false;

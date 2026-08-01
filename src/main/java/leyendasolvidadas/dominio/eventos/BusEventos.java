@@ -2,18 +2,13 @@ package leyendasolvidadas.dominio.eventos;
 
 import java.util.function.Consumer;
 
-/** Puerto ligero para publicar hechos sin conocer la interfaz que los presenta. */
-public final class BusEventos {
-    private static Consumer<EventoDominio> receptor = evento -> {};
+/** Adaptador de eventos hacia un receptor externo. */
+public final class BusEventos implements PublicadorEventos {
+    private final Consumer<EventoDominio> receptor;
 
-    private BusEventos() {}
-
-    public static void conectar(Consumer<EventoDominio> nuevoReceptor) {
-        receptor = nuevoReceptor != null ? nuevoReceptor : evento -> {};
+    public BusEventos(Consumer<EventoDominio> receptor) {
+        this.receptor = receptor != null ? receptor : evento -> {};
     }
 
-    public static void publicar(String mensaje) { publicar(mensaje, TipoMensaje.NEUTRO); }
-    public static void publicar(String mensaje, TipoMensaje tipo) {
-        receptor.accept(new EventoDominio(mensaje, tipo));
-    }
+    @Override public void publicar(EventoDominio evento) { receptor.accept(evento); }
 }

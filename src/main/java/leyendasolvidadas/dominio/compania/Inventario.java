@@ -13,6 +13,11 @@ public class Inventario {
     public static final int CAPACIDAD = 24;
     private final List<Item> items = new ArrayList<>();
     private int oro = 0;
+    private transient PublicadorEventos eventos = PublicadorEventos.silencioso();
+
+    public void configurarEventos(PublicadorEventos eventos) {
+        this.eventos = eventos == null ? PublicadorEventos.silencioso() : eventos;
+    }
 
     public int getOro() { return oro; }
     public void ganarOro(int cantidad) { oro += cantidad; }
@@ -33,7 +38,7 @@ public class Inventario {
     public boolean anadir(Item item) {
         if (item == null) return false;
         if (items.size() >= CAPACIDAD) {
-            BusEventos.publicar("La mochila esta llena. " + item.getNombre() + " se queda atras.", TipoMensaje.PELIGRO);
+            eventos.publicar("La mochila esta llena. " + item.getNombre() + " se queda atras.", TipoMensaje.PELIGRO);
             return false;
         }
         items.add(item);

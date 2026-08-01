@@ -10,6 +10,7 @@ import leyendasolvidadas.dominio.mundo.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import leyendasolvidadas.dominio.eventos.PublicadorEventos;
 
 /** Todo el estado persistente de la partida (lo que se guarda en disco). */
 public class EstadoJuego {
@@ -25,6 +26,15 @@ public class EstadoJuego {
     private ProgresoCampana progresoCampana = new ProgresoCampana();
     private EstadoAldea estadoAldea = new EstadoAldea();
     private RegistroCampana registroCampana = new RegistroCampana();
+    private transient PublicadorEventos eventos = PublicadorEventos.silencioso();
+
+    public PublicadorEventos getEventos() { return eventos; }
+    public void configurarEventos(PublicadorEventos eventos) {
+        this.eventos = eventos == null ? PublicadorEventos.silencioso() : eventos;
+        if (compania != null) compania.getPlantilla().forEach(p -> p.configurarEventos(this.eventos));
+        if (jugador != null) jugador.configurarEventos(this.eventos);
+        if (candidatos != null) candidatos.forEach(p -> p.configurarEventos(this.eventos));
+    }
 
     public Compania getCompania() {
         if (compania == null && jugador != null) {
@@ -38,6 +48,7 @@ public class EstadoJuego {
     public Personaje getJugador() { return getCompania().getProtagonista(); }
     public void setJugador(Personaje j) {
         jugador = j;
+        j.configurarEventos(eventos);
         compania = new Compania(j);
     }
     public int getSemana() { return semana; }
@@ -89,10 +100,14 @@ public class EstadoJuego {
         if (!disponibles.isEmpty()) {
             MercenarioUnico unico = disponibles.get((semana - 1) % disponibles.size());
             Personaje candidato = FabricaHeroes.crearUnico(unico); candidato.prepararNivelInicial(nivelBase);
+            candidato.configurarEventos(eventos);
             getCandidatos().add(candidato);
         }
-        while (getCandidatos().size() < 3)
-            getCandidatos().add(FabricaHeroes.candidatoAleatorio(nivelBase + (Rng.prob(25) ? 1 : 0)));
+        while (getCandidatos().size() < 3) {
+            Personaje candidato = FabricaHeroes.candidatoAleatorio(nivelBase + (Rng.prob(25) ? 1 : 0));
+            candidato.configurarEventos(eventos);
+            getCandidatos().add(candidato);
+        }
     }
 
     public static int costeContratacion(Personaje candidato) {
@@ -117,6 +132,7 @@ public class EstadoJuego {
         this.ofertasHerreria = new ArrayList<>(ofertas);
         this.candidatos = new ArrayList<>(candidatos);
         this.progresoCampana = progresoCampana;
+        configurarEventos(eventos);
     }
 
     /** Completa campos incorporados en versiones posteriores al cargar. */

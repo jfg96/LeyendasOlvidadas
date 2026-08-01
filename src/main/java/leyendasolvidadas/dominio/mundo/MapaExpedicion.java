@@ -1,6 +1,7 @@
 package leyendasolvidadas.dominio.mundo;
 
 import leyendasolvidadas.dominio.azar.FuenteAzar;
+import leyendasolvidadas.dominio.eventos.PublicadorEventos;
 
 import java.util.*;
 
@@ -9,25 +10,32 @@ public final class MapaExpedicion {
     private final List<Habitacion> habitaciones = new ArrayList<>();
     private final Habitacion entrada;
     private final FuenteAzar azar;
+    private final PublicadorEventos eventos;
 
     public MapaExpedicion(int numeroHabitaciones, boolean requiereObjetivo) {
-        this(numeroHabitaciones, requiereObjetivo, FuenteAzar.global());
+        this(numeroHabitaciones, requiereObjetivo, FuenteAzar.global(), PublicadorEventos.silencioso());
     }
 
     public MapaExpedicion(int numeroHabitaciones, boolean requiereObjetivo, FuenteAzar azar) {
+        this(numeroHabitaciones, requiereObjetivo, azar, PublicadorEventos.silencioso());
+    }
+
+    public MapaExpedicion(int numeroHabitaciones, boolean requiereObjetivo, FuenteAzar azar,
+                          PublicadorEventos eventos) {
         if (numeroHabitaciones < 2)
             throw new IllegalArgumentException("Una expedición necesita al menos dos habitaciones");
 
         this.azar = Objects.requireNonNull(azar, "La fuente de azar es obligatoria");
+        this.eventos = eventos == null ? PublicadorEventos.silencioso() : eventos;
         Map<Long, Habitacion> porPosicion = new HashMap<>();
-        entrada = new Habitacion(0, 0, TipoHabitacion.ENTRADA);
+        entrada = nuevaHabitacion(0, 0, TipoHabitacion.ENTRADA);
         habitaciones.add(entrada);
         porPosicion.put(clave(0, 0), entrada);
         generar(numeroHabitaciones, porPosicion);
 
         if (requiereObjetivo) {
             Habitacion lejana = masLejana();
-            reemplazar(lejana, new Habitacion(lejana.getX(), lejana.getY(), TipoHabitacion.OBJETIVO));
+            reemplazar(lejana, nuevaHabitacion(lejana.getX(), lejana.getY(), TipoHabitacion.OBJETIVO));
         }
     }
 
@@ -50,7 +58,7 @@ public final class MapaExpedicion {
             if (destino == null) {
                 TipoHabitacion tipo = sortearTipo(!hayCampamento && habitaciones.size() >= 3);
                 if (tipo == TipoHabitacion.CAMPAMENTO) hayCampamento = true;
-                destino = new Habitacion(nuevoX, nuevoY, tipo);
+                destino = nuevaHabitacion(nuevoX, nuevoY, tipo);
                 habitaciones.add(destino);
                 porPosicion.put(clave(nuevoX, nuevoY), destino);
             }
@@ -112,5 +120,9 @@ public final class MapaExpedicion {
 
     private static long clave(int x, int y) {
         return ((long) x << 32) ^ (y & 0xffffffffL);
+    }
+
+    private Habitacion nuevaHabitacion(int x, int y, TipoHabitacion tipo) {
+        return new Habitacion(x, y, tipo).configurarEventos(eventos);
     }
 }

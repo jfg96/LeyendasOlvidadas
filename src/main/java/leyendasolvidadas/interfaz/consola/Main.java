@@ -13,11 +13,11 @@ import leyendasolvidadas.interfaz.consola.*;
 /** Punto de entrada de la aplicación. */
 public class Main {
     public static void main(String[] args) {
-        leyendasolvidadas.dominio.eventos.BusEventos.conectar(UI::mostrarEvento);
+        var eventos = new leyendasolvidadas.dominio.eventos.BusEventos(UI::mostrarEvento);
         for (String a : args)
             if (a.equals("--sin-color")) {
                 UI.color = false;
             } else if (a.equals("--sin-limpiar")) UI.limpiarPantalla = false;
-        new Juego(new GuardarCargar()).iniciarJuego();
+        new Juego(new GuardarCargar(eventos), eventos).iniciarJuego();
     }
 }

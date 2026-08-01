@@ -25,7 +25,10 @@ public final class ServicioTablonMisiones {
                     : GestorMisiones.generar(estado.getCompania().nivelMedio(), dificultades[i]);
             ordinarias.add(mision);
         }
-        return new Tablon(List.copyOf(ordinarias), List.copyOf(especiales(estado)));
+        List<Mision> especiales = especiales(estado);
+        ordinarias.forEach(mision -> mision.configurarEventos(estado.getEventos()));
+        especiales.forEach(mision -> mision.configurarEventos(estado.getEventos()));
+        return new Tablon(List.copyOf(ordinarias), List.copyOf(especiales));
     }
 
     private List<Mision> especiales(EstadoJuego estado) {

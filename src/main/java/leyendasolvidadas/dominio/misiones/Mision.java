@@ -16,6 +16,7 @@ public abstract class Mision {
     private final Item itemRecompensa;
     private EstadoMision estado = EstadoMision.EN_CURSO;
     private Region region;
+    private transient PublicadorEventos eventos = PublicadorEventos.silencioso();
 
     public Mision(MisionId id, String nombre, String descripcion, Dificultad dificultad,
                   int oroRecompensa, int xpRecompensa, Item itemRecompensa) {
@@ -34,11 +35,16 @@ public abstract class Mision {
     public Item getItemRecompensa() { return itemRecompensa; }
     public EstadoMision getEstado() { return estado; }
     public Region getRegion() { return region; }
+    protected PublicadorEventos eventos() { return eventos; }
+    public Mision configurarEventos(PublicadorEventos eventos) {
+        this.eventos = eventos == null ? PublicadorEventos.silencioso() : eventos;
+        return this;
+    }
     public Mision enRegion(Region region) { this.region = region; return this; }
     protected void completar() {
         if (estado == EstadoMision.EN_CURSO) {
             estado = EstadoMision.COMPLETADA;
-            BusEventos.publicar("¡OBJETIVO CUMPLIDO! Puedes volver a la aldea con la cabeza alta.", TipoMensaje.RECOMPENSA);
+            eventos.publicar("¡OBJETIVO CUMPLIDO! Puedes volver a la aldea con la cabeza alta.", TipoMensaje.RECOMPENSA);
         }
     }
     public void fracasar() { estado = EstadoMision.FRACASADA; }

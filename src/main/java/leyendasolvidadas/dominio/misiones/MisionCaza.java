@@ -23,7 +23,7 @@ public class MisionCaza extends Mision {
     @Override public void notificarMuerte(Enemigo e) {
         if (estaCompletada()) return;
         muertes++;
-        BusEventos.publicar("Batida: " + muertes + "/" + objetivo + " presas cobradas.", TipoMensaje.PROGRESO);
+        eventos().publicar("Batida: " + muertes + "/" + objetivo + " presas cobradas.", TipoMensaje.PROGRESO);
         if (muertes >= objetivo) completar();
     }
     @Override public String progreso() { return "Presas: " + muertes + "/" + objetivo; }

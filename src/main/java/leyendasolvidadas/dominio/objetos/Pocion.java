@@ -25,24 +25,24 @@ public class Pocion extends Item {
         switch (tipo) {
             case VIDA:
                 p.curar(potencia);
-                BusEventos.publicar(p.getNombre() + " bebe " + getNombre() + " y recupera " + (int) potencia + " PV.", TipoMensaje.EXITO);
+                p.getEventos().publicar(p.getNombre() + " bebe " + getNombre() + " y recupera " + (int) potencia + " PV.", TipoMensaje.EXITO);
                 return true;
             case RECURSO:
                 p.setRecurso(p.getRecurso() + potencia);
-                BusEventos.publicar("El tonico restaura " + (int) potencia + " de " + p.nombreRecurso() + ".", TipoMensaje.EXITO);
+                p.getEventos().publicar("El tonico restaura " + (int) potencia + " de " + p.nombreRecurso() + ".", TipoMensaje.EXITO);
                 return true;
             case CALMA:
                 p.aliviarEstres((int) potencia);
-                BusEventos.publicar("El laudano calma los nervios (-" + (int) potencia + " estres).", TipoMensaje.EXITO);
+                p.getEventos().publicar("El laudano calma los nervios (-" + (int) potencia + " estres).", TipoMensaje.EXITO);
                 return true;
             case PURGA:
                 p.limpiarEfectosNegativos();
-                BusEventos.publicar("El antidoto purga los males del cuerpo.", TipoMensaje.EXITO);
+                p.getEventos().publicar("El antidoto purga los males del cuerpo.", TipoMensaje.EXITO);
                 return true;
             case ANTORCHA:
-                if (exp == null) { BusEventos.publicar("Aqui no hace falta luz."); return false; }
+                if (exp == null) { p.getEventos().publicar("Aqui no hace falta luz."); return false; }
                 exp.subirLuz((int) potencia);
-                BusEventos.publicar("Prendes una antorcha nueva (+" + (int) potencia + " de luz).", TipoMensaje.RECOMPENSA);
+                p.getEventos().publicar("Prendes una antorcha nueva (+" + (int) potencia + " de luz).", TipoMensaje.RECOMPENSA);
                 return true;
         }
         return false;
