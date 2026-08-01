@@ -40,6 +40,8 @@ interfaz decide cómo representarlos.
 - `ServicioCapituloDos`: progreso paralelo de regiones, jefes, Libro de los
   Nombres y decisión sobre la verdad de la matanza.
 - `ServicioCapituloTres`: Minas, Pazo, Falange, ataque, edificios y alianzas.
+- `ServicioResolucionExpedicion`: recompensas, penalizaciones, convivencia y
+  progreso de campaña al regresar a Valdesombra.
 - `Combate`: motor completo de iniciativa, acciones, IA y recompensas.
 - `VistaCombate`: puerto de decisiones y representación; permite ejecutar el
   mismo motor desde consola, JavaFX o una prueba automática.
@@ -58,7 +60,7 @@ ni introducir reglas narrativas en la interfaz.
 `GuardarCargar` implementa `RepositorioPartidas`. `CodecPartida` usa el formato
 versionado LOSV y nunca serializa clases Java, por lo que mover o renombrar una
 clase no altera automáticamente los archivos guardados. Cada versión dispone
-de una ruta explícita de lectura o migración; LOSV v4 todavía acepta v1, v2 y v3.
+de una ruta explícita de lectura o migración; LOSV v7 acepta partidas v1-v6.
 
 ## Interfaz de consola
 

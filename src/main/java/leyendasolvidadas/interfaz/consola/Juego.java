@@ -90,9 +90,6 @@ public class Juego {
             }
             Mision mision = exp.getGestor().getMision();
             Expedicion.Resultado r = exp.explorar();
-            estado.avanzarSemana();
-            estado.renovarHerreria();
-            estado.renovarContratacion();
             resolverVuelta(r, mision);
             if (estado.isCampanaGanada() && mision instanceof MisionJefe && ((MisionJefe) mision).esFinal()) {
                 new CapituloCincoConsola(repositorioPartidas).mostrarEpilogo(estado);
@@ -101,89 +98,58 @@ public class Juego {
     }
 
     private void resolverVuelta(Expedicion.Resultado r, Mision mision) {
-        Compania compania = estado.getCompania();
-        java.util.List<Personaje> grupo = compania.getFormacionActiva();
         UI.limpiar();
         switch (r) {
+            case EXITO -> UI.titulo("REGRESO TRIUNFAL");
+            case ABANDONO -> UI.titulo("RETIRADA");
+            case MUERTE -> UI.titulo("TE ARRASTRAN DE VUELTA");
+        }
+        ResultadoExpedicion resultado = switch (r) {
+            case EXITO -> ResultadoExpedicion.VICTORIA;
+            case ABANDONO -> ResultadoExpedicion.ABANDONO;
+            case MUERTE -> ResultadoExpedicion.DERROTA;
+        };
+        ServicioResolucionExpedicion.Resolucion resolucion =
+                new ServicioResolucionExpedicion().resolver(estado, mision, resultado);
+
+        switch (r) {
             case EXITO: {
-                UI.titulo("REGRESO TRIUNFAL");
-                estado.registrarVictoria();
-                estado.getRegistroCampana().anotar("Semana " + estado.getSemana() + ": victoria en «"
-                        + mision.getNombre() + "» (" + (mision.getRegion() == null ? "paraje desconocido" : mision.getRegion().getNombre()) + ").");
-                new ServicioCompania().registrarConvivencia(compania, ServicioCompania.ResultadoExpedicion.VICTORIA);
-                compania.getInventario().ganarOro(mision.getOroRecompensa());
-                UI.log(UI.pintar("Cobras el encargo: +" + mision.getOroRecompensa() + " reales.", UI.AMARILLO));
-                int xp = (int)Math.round(mision.getXpRecompensa()
-                        * (1 + estado.getEstadoAldea().nivel(EdificioAldea.ARCHIVO) * 0.05));
-                for (Personaje heroe : grupo) heroe.ganarExperiencia(xp);
-                if (mision.getItemRecompensa() != null) {
-                    UI.log("Te entregan ademas " + UI.item(mision.getItemRecompensa()) + ".");
-                    compania.getInventario().anadir(mision.getItemRecompensa());
+                UI.log(UI.pintar("Cobras el encargo: +" + resolucion.oroRecibido() + " reales.", UI.AMARILLO));
+                if (resolucion.itemRecibido() != null) {
+                    UI.log("Te entregan ademas " + UI.item(resolucion.itemRecibido()) + ".");
                 }
-                for (Personaje heroe : grupo) heroe.aliviarEstres(20);
-                int victoriasBosque = new ServicioCapituloUno().registrarVictoria(estado, mision.getRegion());
-                if (victoriasBosque > 0) {
+                if (resolucion.progresoCapituloUno() > 0) {
                     UI.log(UI.pintar("El Bosque de los Ahorcados recuerda vuestro paso ("
-                            + victoriasBosque + "/3).", UI.CIAN));
-                    if (victoriasBosque == 3)
+                            + resolucion.progresoCapituloUno() + "/3).", UI.CIAN));
+                    if (resolucion.progresoCapituloUno() == 3)
                         UI.log(UI.pintar("En una soga encontráis el mismo símbolo que llevaba Lúa: tres caminantes sin rostro.", UI.MAGENTA));
                 }
-                int progresoDos = new ServicioCapituloDos().registrarVictoria(estado, mision.getRegion());
-                if (progresoDos > 0) UI.log(UI.pintar("Pistas recuperadas en " + mision.getRegion().getNombre()
-                        + " (" + progresoDos + "/2).", UI.CIAN));
-                int progresoTres = new ServicioCapituloTres().registrarVictoria(estado, mision.getRegion());
-                if (progresoTres > 0) UI.log(UI.pintar("Pruebas recuperadas en " + mision.getRegion().getNombre()
-                        + " (" + progresoTres + "/2).", UI.CIAN));
-                if (estado.getProgresoCampana().getCapitulo()
-                        == leyendasolvidadas.dominio.campana.CapituloCampana.LIBRO_DE_LOS_NOMBRES) {
-                    int nombres = new ServicioCapituloCuatro().registrarHallazgo(estado, mision.getRegion());
-                    if (nombres > 0) UI.log(UI.pintar("Testimonios del Libro reconstruidos ("
-                            + nombres + "/3).", UI.CIAN));
-                }
-                if (mision instanceof MisionJefe && ((MisionJefe) mision).esFinal())
+                if (resolucion.progresoCapituloDos() > 0) UI.log(UI.pintar("Pistas recuperadas en " + mision.getRegion().getNombre()
+                        + " (" + resolucion.progresoCapituloDos() + "/2).", UI.CIAN));
+                if (resolucion.progresoCapituloTres() > 0) UI.log(UI.pintar("Pruebas recuperadas en " + mision.getRegion().getNombre()
+                        + " (" + resolucion.progresoCapituloTres() + "/2).", UI.CIAN));
+                if (resolucion.fragmentosLibro() > 0) UI.log(UI.pintar("Testimonios del Libro reconstruidos ("
+                        + resolucion.fragmentosLibro() + "/3).", UI.CIAN));
+                if (resolucion.requiereFinal())
                     new CapituloCincoConsola(repositorioPartidas).resolverFinal(estado);
-                if (mision instanceof MisionPersonal personal
-                        && new ServicioMisionesPersonales().registrarVictoria(estado, personal))
+                if (resolucion.requiereDesenlacePersonal() && mision instanceof MisionPersonal personal)
                     new MisionesPersonalesConsola(repositorioPartidas).resolver(estado, personal.getMercenario());
-                if (mision.getId() == MisionId.REY_SOGAS) cerrarCapituloUno();
-                if (mision.getId() == MisionId.SUDARIOS_ALDARA)
-                    new ServicioCapituloDos().registrarJefe(estado, Region.BRANAS_HUNDIDAS);
-                if (mision.getId() == MisionId.PUERTAS_HOSPITAL)
-                    new ServicioCapituloDos().registrarJefe(estado, Region.CAMINO_DE_LOS_DIFUNTOS);
-                if (new ServicioCapituloDos().puedeCerrar(estado)
-                        && estado.getProgresoCampana().getCapitulo() == leyendasolvidadas.dominio.campana.CapituloCampana.CAMINOS_DE_ANIMAS)
+                if (resolucion.requiereCierreCapituloUno()) cerrarCapituloUno();
+                if (resolucion.requiereCierreCapituloDos())
                     new CapituloDosConsola(repositorioPartidas).cerrar(estado);
-                if (mision.getId() == MisionId.CAMPANA_CAPATAZ)
-                    new ServicioCapituloTres().registrarJefe(estado, Region.MINAS_DE_SAN_LOURENZO);
-                if (mision.getId() == MisionId.CRIPTA_SOUTOMAIOR)
-                    new ServicioCapituloTres().registrarJefe(estado, Region.PAZO_DE_SOUTOMAIOR);
-                if (new ServicioCapituloTres().puedeCerrar(estado)
-                        && estado.getProgresoCampana().getCapitulo() == leyendasolvidadas.dominio.campana.CapituloCampana.DEUDA_DE_LOS_VIVOS)
+                if (resolucion.requiereCierreCapituloTres())
                     new CapituloTresConsola(repositorioPartidas).cerrar(estado);
-                if (mision.getId() == MisionId.VIGILIA_CIENTO_DOCE)
+                if (resolucion.requiereCierreCapituloCuatro())
                     new CapituloCuatroConsola(repositorioPartidas).cerrar(estado);
                 break;
             }
             case ABANDONO:
-                estado.getRegistroCampana().anotar("Semana " + estado.getSemana() + ": la compañía abandonó «" + mision.getNombre() + "».");
-                new ServicioCompania().registrarConvivencia(compania, ServicioCompania.ResultadoExpedicion.ABANDONO);
-                UI.titulo("RETIRADA");
                 UI.log("Vuelves con las manos casi vacias y la mirada baja. Habra otra semana.");
                 break;
             case MUERTE: {
-                estado.getRegistroCampana().anotar("Semana " + estado.getSemana() + ": derrota y nuevas secuelas en «" + mision.getNombre() + "».");
-                new ServicioCompania().registrarConvivencia(compania, ServicioCompania.ResultadoExpedicion.DERROTA);
-                UI.titulo("TE ARRASTRAN DE VUELTA");
-                int perdido = compania.getInventario().getOro() / 2;
-                compania.getInventario().gastarOro(perdido);
-                for (Personaje heroe : grupo) {
-                    heroe.setVida(heroe.getVidaMax() * 0.5);
-                    heroe.limpiarEfectos();
-                    heroe.resetMental();
-                    heroe.aliviarEstres(30);
-                }
                 UI.log(UI.pintar("Unos carboneros te encuentran medio muerto en el camino.", UI.ROJO));
-                UI.log(UI.pintar("Los fisicos de la aldea cobran caro: pierdes " + perdido + " reales.", UI.ROJO));
+                UI.log(UI.pintar("Los fisicos de la aldea cobran caro: pierdes "
+                        + resolucion.oroPerdido() + " reales.", UI.ROJO));
                 break;
             }
         }

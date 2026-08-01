@@ -90,6 +90,10 @@ documentación mantenida durante el desarrollo.
 
 ### Arquitectura y calidad
 
+- Extracción de las recompensas, penalizaciones, convivencia y progreso tras
+  una expedición a un servicio de aplicación independiente de consola.
+- Incorporación de un resultado neutral que comunica a cada interfaz las
+  decisiones narrativas pendientes.
 - Reorganización del código en paquetes de aplicación, dominio,
   infraestructura e interfaz.
 - Separación de las reglas internas respecto de la entrada y salida de consola.
