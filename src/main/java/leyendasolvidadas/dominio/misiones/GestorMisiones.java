@@ -39,27 +39,33 @@ public class GestorMisiones {
      * @return una nueva misión
      */
     public static Mision generar(int nivelHeroe, Dificultad dif) {
+        return generar(nivelHeroe, dif, FuenteAzar.global());
+    }
+    public static Mision generar(int nivelHeroe, Dificultad dif, FuenteAzar azar) {
         int niv = nivelHeroe + dif.getNivelExtra();
         int oro = (30 + niv * 12) * (dif.ordinal() + 1);
         int xp = (40 + niv * 20) * (dif.ordinal() + 1);
-        Item premio = Rng.prob(50) ? null
-                : Rng.prob(50) ? Amuleto.aleatorio(10 + dif.ordinal() * 8)
-                : Arma.aleatoria(niv, 10 + dif.ordinal() * 8);
-        switch (Rng.entre(0, 3)) {
+        Item premio = azar.probabilidad(50) ? null
+                : azar.probabilidad(50) ? Amuleto.aleatorio(10 + dif.ordinal() * 8, azar)
+                : Arma.aleatoria(niv, 10 + dif.ordinal() * 8, azar);
+        switch (azar.entre(0, 3)) {
             case 0: return new MisionCaza(dif, 3 + dif.ordinal() * 2, oro, xp, premio);
             case 1: return new MisionExploracion(dif, oro, xp, premio);
             case 2: return new MisionReliquia(dif, oro, xp, premio);
             default: return new MisionJefe(dif, (int) (oro * 1.4), (int) (xp * 1.4),
-                    premio != null ? premio : Amuleto.aleatorio(15), false);
+                    premio != null ? premio : Amuleto.aleatorio(15, azar), false);
         }
     }
 
     public static Mision generarBosque(int nivelHeroe, Dificultad dif) {
+        return generarBosque(nivelHeroe, dif, FuenteAzar.global());
+    }
+    public static Mision generarBosque(int nivelHeroe, Dificultad dif, FuenteAzar azar) {
         int niv = nivelHeroe + dif.getNivelExtra();
         int oro = (35 + niv * 12) * (dif.ordinal() + 1);
         int xp = (45 + niv * 20) * (dif.ordinal() + 1);
-        Item premio = Rng.prob(55) ? null : Amuleto.aleatorio(10 + dif.ordinal() * 8);
-        Mision mision = switch (Rng.entre(0, 2)) {
+        Item premio = azar.probabilidad(55) ? null : Amuleto.aleatorio(10 + dif.ordinal() * 8, azar);
+        Mision mision = switch (azar.entre(0, 2)) {
             case 0 -> new MisionCaza(MisionId.SOGAS_VACIAS, "Las sogas vacías",
                     "Abatir a las criaturas que anidan bajo los antiguos patíbulos.", dif,
                     3 + dif.ordinal(), oro, xp, premio);
@@ -72,23 +78,26 @@ public class GestorMisiones {
     }
 
     public static Mision generarRegional(Region region, int nivel, Dificultad dif) {
-        if (region == Region.BOSQUE_DE_LOS_AHORCADOS) return generarBosque(nivel, dif);
+        return generarRegional(region, nivel, dif, FuenteAzar.global());
+    }
+    public static Mision generarRegional(Region region, int nivel, Dificultad dif, FuenteAzar azar) {
+        if (region == Region.BOSQUE_DE_LOS_AHORCADOS) return generarBosque(nivel, dif, azar);
         int n = nivel + dif.getNivelExtra();
         int oro = (40 + n * 13) * (dif.ordinal() + 1), xp = (50 + n * 22) * (dif.ordinal() + 1);
         Mision m = switch (region) {
-            case BRANAS_HUNDIDAS -> Rng.prob(50)
+            case BRANAS_HUNDIDAS -> azar.probabilidad(50)
                     ? new MisionCaza(MisionId.RESPIRAN_BARRO, "Los que respiran barro", "Abatir a las criaturas surgidas de la ciénaga.", dif, 3 + dif.ordinal(), oro, xp, null)
                     : new MisionExploracion(MisionId.TUMBA_ALDARA, "La tumba vacía de Aldara", "Cartografiar las islas que aparecen bajo la niebla amarilla.", dif, oro, xp, null);
-            case CAMINO_DE_LOS_DIFUNTOS -> Rng.prob(50)
+            case CAMINO_DE_LOS_DIFUNTOS -> azar.probabilidad(50)
                     ? new MisionCaza(MisionId.CAMPANAS_SIN_CAMPANERO, "Campanas sin campanero", "Silenciar a los muertos que recorren el Camino Viejo.", dif, 3 + dif.ordinal(), oro, xp, null)
                     : new MisionReliquia(MisionId.PAGINA_SIN_NOMBRES, "Una página sin nombres", "Recuperar una hoja arrancada del registro parroquial.", dif, oro, xp, null);
-            case MINAS_DE_SAN_LOURENZO -> Rng.prob(50)
+            case MINAS_DE_SAN_LOURENZO -> azar.probabilidad(50)
                     ? new MisionCaza(MisionId.HIERRO_PARA_MUERTOS, "Hierro para los muertos", "Eliminar a los mineros que siguen picando tras su muerte.", dif, 3 + dif.ordinal(), oro, xp, null)
                     : new MisionExploracion(MisionId.GALERIAS_BAJO_PAZO, "Galerías bajo el Pazo", "Encontrar el santuario enterrado bajo la explotación.", dif, oro, xp, null);
-            case PAZO_DE_SOUTOMAIOR -> Rng.prob(50)
+            case PAZO_DE_SOUTOMAIOR -> azar.probabilidad(50)
                     ? new MisionCaza(MisionId.CRIADOS_SIN_NOMBRE, "Los criados sin nombre", "Abrirse paso entre los guardianes de la casa Soutomaior.", dif, 3 + dif.ordinal(), oro, xp, null)
                     : new MisionReliquia(MisionId.INVENTARIO_CULPABLES, "El inventario de los culpables", "Robar el registro del saqueo de los peregrinos.", dif, oro, xp, null);
-            default -> generar(nivel, dif);
+            default -> generar(nivel, dif, azar);
         };
         return m.enRegion(region);
     }

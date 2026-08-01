@@ -21,8 +21,8 @@ public final class ServicioTablonMisiones {
             Mision mision = capitulo == CapituloCampana.LIBRO_DE_LOS_NOMBRES
                     ? GestorMisiones.generarLibroNombres(regiones[i], estado.getCompania().nivelMedio(), dificultades[i])
                     : estado.getProgresoCampana().estaDesbloqueada(regiones[i])
-                    ? GestorMisiones.generarRegional(regiones[i], estado.getCompania().nivelMedio(), dificultades[i])
-                    : GestorMisiones.generar(estado.getCompania().nivelMedio(), dificultades[i]);
+                    ? GestorMisiones.generarRegional(regiones[i], estado.getCompania().nivelMedio(), dificultades[i], estado.getAzar())
+                    : GestorMisiones.generar(estado.getCompania().nivelMedio(), dificultades[i], estado.getAzar());
             ordinarias.add(mision);
         }
         List<Mision> especiales = especiales(estado);
@@ -36,30 +36,30 @@ public final class ServicioTablonMisiones {
         var progreso = estado.getProgresoCampana();
         if (progreso.getCapitulo() == CapituloCampana.ULTIMA_PROCESION && !estado.isCampanaGanada())
             misiones.add(new MisionJefe(Dificultad.DIFICIL, 500, 1000,
-                    Amuleto.aleatorio(30), true).enRegion(Region.HOSPITAL_DEL_CAMINO_VIEJO));
+                    Amuleto.aleatorio(30, estado.getAzar()), true).enRegion(Region.HOSPITAL_DEL_CAMINO_VIEJO));
         else if (progreso.haDecidido("cap1.simbolo_peregrinos_descubierto") && !progreso.haDecidido("cap1.rei_derrotado"))
             misiones.add(new MisionJefe(MisionId.REY_SOGAS, "El rey de las sogas",
                     "Seguir a Inés y abatir a O Rei dos Aforcados.", Dificultad.MEDIA, 220, 300,
-                    Amuleto.aleatorio(20), false).enRegion(Region.BOSQUE_DE_LOS_AHORCADOS));
+                    Amuleto.aleatorio(20, estado.getAzar()), false).enRegion(Region.BOSQUE_DE_LOS_AHORCADOS));
         if (progreso.haDecidido("cap2.branas.jefe_disponible") && !progreso.haDecidido("cap2.lavandeira_derrotada"))
             misiones.add(new MisionJefe(MisionId.SUDARIOS_ALDARA, "Los sudarios de Aldara",
                     "Derrotar a A Lavandeira Maior y recuperar las páginas sumergidas.", Dificultad.MEDIA,
-                    260, 340, Amuleto.aleatorio(22), false).enRegion(Region.BRANAS_HUNDIDAS));
+                    260, 340, Amuleto.aleatorio(22, estado.getAzar()), false).enRegion(Region.BRANAS_HUNDIDAS));
         if (progreso.haDecidido("cap2.camino.jefe_disponible") && !progreso.haDecidido("cap2.hospitalario_derrotado"))
             misiones.add(new MisionJefe(MisionId.PUERTAS_HOSPITAL, "Las puertas del hospital",
                     "Vencer al Hospitalario que cerró las puertas durante el incendio.", Dificultad.DIFICIL,
-                    300, 400, Amuleto.aleatorio(25), false).enRegion(Region.CAMINO_DE_LOS_DIFUNTOS));
+                    300, 400, Amuleto.aleatorio(25, estado.getAzar()), false).enRegion(Region.CAMINO_DE_LOS_DIFUNTOS));
         if (progreso.haDecidido("cap3.minas.jefe_disponible") && !progreso.haDecidido("cap3.capataz_derrotado"))
             misiones.add(new MisionJefe(MisionId.CAMPANA_CAPATAZ, "La campana del capataz", "Romper las cadenas de O Capataz.",
-                    Dificultad.MEDIA, 320, 440, Amuleto.aleatorio(25), false).enRegion(Region.MINAS_DE_SAN_LOURENZO));
+                    Dificultad.MEDIA, 320, 440, Amuleto.aleatorio(25, estado.getAzar()), false).enRegion(Region.MINAS_DE_SAN_LOURENZO));
         if (progreso.haDecidido("cap3.pazo.jefe_disponible") && !progreso.haDecidido("cap3.cripta_soutomaior_abierta"))
             misiones.add(new MisionJefe(MisionId.CRIPTA_SOUTOMAIOR, "La cripta de los Soutomaior",
                     "Entrar en la cripta donde se oculta la Falange.", Dificultad.DIFICIL,
-                    360, 500, Amuleto.aleatorio(28), false).enRegion(Region.PAZO_DE_SOUTOMAIOR));
+                    360, 500, Amuleto.aleatorio(28, estado.getAzar()), false).enRegion(Region.PAZO_DE_SOUTOMAIOR));
         if (new ServicioCapituloCuatro().puedeCelebrarRitual(estado))
             misiones.add(new MisionReliquia(MisionId.VIGILIA_CIENTO_DOCE, "La vigilia de los ciento doce",
                     "Llevar el Libro reconstruido hasta el osario y devolver los nombres a sus muertos.",
-                    Dificultad.DIFICIL, 420, 650, Amuleto.aleatorio(30)).enRegion(Region.CAMINO_DE_LOS_DIFUNTOS));
+                    Dificultad.DIFICIL, 420, 650, Amuleto.aleatorio(30, estado.getAzar())).enRegion(Region.CAMINO_DE_LOS_DIFUNTOS));
         misiones.addAll(new ServicioMisionesPersonales().disponibles(estado));
         return misiones;
     }

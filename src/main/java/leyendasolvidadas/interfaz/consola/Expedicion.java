@@ -36,7 +36,7 @@ public class Expedicion implements ContextoCombate {
     private final CondicionesExpedicion condiciones;
     private final RegistroCampana registro;
     private final FuenteAzar azar;
-    private final PreparadorEncuentros encuentros = new PreparadorEncuentros();
+    private final PreparadorEncuentros encuentros;
 
     public Expedicion(Compania compania, Mision mision, Dificultad dificultad, int victoriasPrevias) {
         this(compania, mision, dificultad, victoriasPrevias, null);
@@ -57,6 +57,7 @@ public class Expedicion implements ContextoCombate {
         this.region = mision.getRegion();
         this.registro = registro;
         this.azar = azar;
+        this.encuentros = new PreparadorEncuentros(azar);
         this.nivelZona = (int) Math.round(heroes.stream().mapToInt(Personaje::getNivel)
                 .average().orElse(1)) + dificultad.getNivelExtra();
         this.condiciones = new CondicionesExpedicion(region, nivelZona, azar);
@@ -210,7 +211,7 @@ public class Expedicion implements ContextoCombate {
                 if (res == Combate.Resultado.DERROTA) return Resultado.MUERTE;
                 if (res == Combate.Resultado.HUIDA) return null;
             } else if (r <= 32) {
-                Evento.trampa(Rng.elegir(heroesVivos()));
+                Evento.trampa(azar.elegir(heroesVivos()));
                 if (companiaDerrotada()) return Resultado.MUERTE;
                 UI.pausa();
             } else if (r <= 40) {

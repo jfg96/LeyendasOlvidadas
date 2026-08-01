@@ -21,10 +21,13 @@ public class Habitacion {
     private transient PublicadorEventos eventos = PublicadorEventos.silencioso();
 
     public Habitacion(int x, int y, TipoHabitacion tipo) {
+        this(x, y, tipo, FuenteAzar.global());
+    }
+    public Habitacion(int x, int y, TipoHabitacion tipo, FuenteAzar azar) {
         this.x = x; this.y = y; this.tipo = tipo;
-        int azar = Rng.entre(0, 9);
-        this.ambiente = azar < 2 ? TipoSala.ESCARCHA : azar < 4 ? TipoSala.NIEBLA
-                : azar < 5 ? TipoSala.BENDICION : TipoSala.NORMAL;
+        int tirada = azar.entre(0, 9);
+        this.ambiente = tirada < 2 ? TipoSala.ESCARCHA : tirada < 4 ? TipoSala.NIEBLA
+                : tirada < 5 ? TipoSala.BENDICION : TipoSala.NORMAL;
     }
     public int getX() { return x; }
     public Habitacion configurarEventos(PublicadorEventos eventos) {

@@ -91,10 +91,10 @@ public class EstadoJuego {
         ofertasHerreria.clear();
         int niv = getCompania().nivelMedio();
         int calidad = 5 + getEstadoAldea().nivel(EdificioAldea.HERRERIA) * 5;
-        ofertasHerreria.add(Arma.aleatoria(niv, calidad));
-        ofertasHerreria.add(Armadura.aleatoria(niv, calidad));
-        ofertasHerreria.add(Rng.prob(50) ? Amuleto.aleatorio(5)
-                : (Rng.prob(50) ? Pocion.vida() : Pocion.antorcha()));
+        ofertasHerreria.add(Arma.aleatoria(niv, calidad, azar));
+        ofertasHerreria.add(Armadura.aleatoria(niv, calidad, azar));
+        ofertasHerreria.add(azar.probabilidad(50) ? Amuleto.aleatorio(5, azar)
+                : (azar.probabilidad(50) ? Pocion.vida() : Pocion.antorcha()));
     }
 
     /** Renueva los tres aventureros disponibles para contratar esta semana. */
@@ -114,7 +114,8 @@ public class EstadoJuego {
             getCandidatos().add(candidato);
         }
         while (getCandidatos().size() < 3) {
-            Personaje candidato = FabricaHeroes.candidatoAleatorio(nivelBase + (Rng.prob(25) ? 1 : 0));
+            Personaje candidato = FabricaHeroes.candidatoAleatorio(
+                    nivelBase + (azar.probabilidad(25) ? 1 : 0), azar);
             candidato.configurarEventos(eventos);
             candidato.configurarAzar(azar);
             getCandidatos().add(candidato);

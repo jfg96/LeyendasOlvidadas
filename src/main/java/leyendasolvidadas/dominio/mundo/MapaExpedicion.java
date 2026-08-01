@@ -123,6 +123,6 @@ public final class MapaExpedicion {
     }
 
     private Habitacion nuevaHabitacion(int x, int y, TipoHabitacion tipo) {
-        return new Habitacion(x, y, tipo).configurarEventos(eventos);
+        return new Habitacion(x, y, tipo, azar).configurarEventos(eventos);
     }
 }

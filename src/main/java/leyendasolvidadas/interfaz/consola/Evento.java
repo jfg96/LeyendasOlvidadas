@@ -16,7 +16,7 @@ public final class Evento {
 
     /** Elige y resuelve un hallazgo al azar. */
     public static void curioAleatorio(Personaje h, Expedicion exp) {
-        switch (Rng.entre(0, 4)) {
+        switch (h.getAzar().entre(0, 4)) {
             case 0: altar(h); break;
             case 1: osario(h, exp); break;
             case 2: fuente(h); break;
@@ -26,7 +26,7 @@ public final class Evento {
     }
 
     public static void curioBosque(Personaje h, Expedicion exp) {
-        if (Rng.prob(50)) {
+        if (h.getAzar().probabilidad(50)) {
             UI.seccion("UNA VOZ ENTRE LOS ÁRBOLES");
             UI.log("Desde la niebla, alguien imita la voz de un compañero y pide que os separéis.");
             System.out.println("  1. Responder a la voz   2. Atar al grupo con una cuerda y seguir");
@@ -52,7 +52,7 @@ public final class Evento {
         UI.log("En el agua aparece tu rostro ahogado, con una página del Libro entre los dientes.");
         System.out.println("  1. Meter la mano en el agua   2. Romper el reflejo con una piedra");
         if (UI.leerOpcion(1, 2) == 1) {
-            if (Rng.prob(55)) { h.aliviarEstres(8); exp.subirLuz(15); UI.log(UI.pintar("Rescatas una vela de cobre (+15 luz).", UI.VERDE)); }
+            if (h.getAzar().probabilidad(55)) { h.aliviarEstres(8); exp.subirLuz(15); UI.log(UI.pintar("Rescatas una vela de cobre (+15 luz).", UI.VERDE)); }
             else { h.aplicarEfecto(TipoEfecto.VENENO, 3, 3); UI.log(UI.pintar("Algo te muerde bajo el agua.", UI.ROJO)); }
         } else { h.sufrirEstres(6); UI.log("Cada fragmento sigue mirándote."); }
     }
@@ -87,7 +87,7 @@ public final class Evento {
                 UI.log(UI.pintar("Una paz antigua te envuelve (-20 estres).", UI.VERDE));
                 break;
             case 2:
-                int oro = Rng.entre(20, 60);
+                int oro = h.getAzar().entre(20, 60);
                 h.getInventario().ganarOro(oro);
                 h.sufrirEstres(15);
                 UI.log(UI.pintar("+" + oro + " reales... pero la culpa pesa (+15 estres).", UI.AMARILLO));
@@ -101,9 +101,9 @@ public final class Evento {
         UI.log("Huesos apilados con extrano cuidado. Algo brilla entre las costillas.");
         System.out.println("  1. Rebuscar entre los huesos   2. Dejarlos descansar");
         if (UI.leerOpcion(1, 2) == 1) {
-            if (Rng.prob(55)) {
-                Item premio = Rng.prob(50) ? Amuleto.aleatorio(exp.getBonusRareza())
-                        : Arma.aleatoria(h.getNivel(), exp.getBonusRareza());
+            if (h.getAzar().probabilidad(55)) {
+                Item premio = h.getAzar().probabilidad(50) ? Amuleto.aleatorio(exp.getBonusRareza(), h.getAzar())
+                        : Arma.aleatoria(h.getNivel(), exp.getBonusRareza(), h.getAzar());
                 UI.log("Encuentras " + UI.item(premio) + ".");
                 h.getInventario().anadir(premio);
             } else {
@@ -118,7 +118,7 @@ public final class Evento {
         UI.log("Agua negra y quieta. Dicen que las xanas conceden dones... o males.");
         System.out.println("  1. Beber   2. Llenar la cantimplora y marchar");
         if (UI.leerOpcion(1, 2) == 1) {
-            if (Rng.prob(60)) {
+            if (h.getAzar().probabilidad(60)) {
                 h.curar(h.getVidaMax() * 0.35);
                 h.setRecurso(h.getRecursoMax());
                 UI.log(UI.pintar("El agua sabe a gloria: vida y " + h.nombreRecurso().toLowerCase() + " restaurados.", UI.VERDE));
@@ -134,7 +134,7 @@ public final class Evento {
         UI.log("Un desdichado cuelga de una rama. Su zurron aun parece lleno.");
         System.out.println("  1. Registrar el zurron   2. Descolgarlo y darle sepultura");
         if (UI.leerOpcion(1, 2) == 1) {
-            int oro = Rng.entre(15, 45);
+            int oro = h.getAzar().entre(15, 45);
             h.getInventario().ganarOro(oro);
             h.getInventario().anadir(Pocion.vida());
             h.sufrirEstres(10);
@@ -150,7 +150,7 @@ public final class Evento {
         UI.log("Brasas aun tibias. Quien acampara aqui dejo lena y trapos de brea.");
         exp.subirLuz(25);
         UI.log(UI.pintar("Avivas tu antorcha con las brasas (+25 de luz).", UI.AMARILLO));
-        if (Rng.prob(40)) {
+        if (h.getAzar().probabilidad(40)) {
             h.getInventario().anadir(Pocion.antorcha());
             UI.log("Ademas guardas una antorcha de repuesto.");
         }
@@ -159,13 +159,13 @@ public final class Evento {
     /** Resuelve una trampa de pasillo. */
     public static void trampa(Personaje h) {
         UI.log(UI.pintar("¡CLAC! Un cepo oculto salta bajo tus pies...", UI.ROJO));
-        if (Rng.prob(h.esquivaActual() + 25)) {
+        if (h.getAzar().probabilidad(h.esquivaActual() + 25)) {
             UI.log(UI.pintar("Lo esquivas con un quiebro. El corazon a mil.", UI.VERDE));
             h.sufrirEstres(3);
         } else {
             double d = h.recibirDanio(8 + h.getNivel() * 2, true);
             h.sufrirEstres(8);
-            if (Rng.prob(40)) h.aplicarEfecto(TipoEfecto.SANGRADO, 2, 2 + h.getNivel() / 2.0);
+            if (h.getAzar().probabilidad(40)) h.aplicarEfecto(TipoEfecto.SANGRADO, 2, 2 + h.getNivel() / 2.0);
             UI.log(UI.pintar("El hierro te muerde: " + (int) d + " de danio (+8 estres).", UI.ROJO));
         }
     }
@@ -173,7 +173,7 @@ public final class Evento {
     /** Abre un cofre y resuelve su posible contenido. */
     public static java.util.List<Enemigo> cofre(Personaje h, Expedicion exp, boolean grande) {
         UI.seccion(grande ? "UN ARCON FERRADO" : "UN COFRE POLVORIENTO");
-        if (!grande && Rng.prob(12)) {
+        if (!grande && h.getAzar().probabilidad(12)) {
             UI.log(UI.pintar("¡El cofre abre unas fauces llenas de dientes!", UI.ROJO));
             Enemigo mimico = new Enemigo("Arca Mimica", h.getNivel() + 1, true);
             mimico.anadirMovimiento(MovimientoEnemigo.golpe("Dentellada", 1.2, 3));
@@ -181,16 +181,16 @@ public final class Evento {
                     new int[]{1, 2, 3}, false, false));
             return java.util.List.of(mimico);
         }
-        int oro = (grande ? Rng.entre(60, 120) : Rng.entre(20, 50)) + h.getNivel() * 5;
+        int oro = (grande ? h.getAzar().entre(60, 120) : h.getAzar().entre(20, 50)) + h.getNivel() * 5;
         h.getInventario().ganarOro(oro);
         UI.log(UI.pintar("+" + oro + " reales.", UI.AMARILLO));
-        if (grande || Rng.prob(60)) {
+        if (grande || h.getAzar().probabilidad(60)) {
             Item it;
-            switch (Rng.entre(0, 3)) {
-                case 0: it = Arma.aleatoria(h.getNivel(), exp.getBonusRareza() + (grande ? 15 : 0)); break;
-                case 1: it = Armadura.aleatoria(h.getNivel(), exp.getBonusRareza() + (grande ? 15 : 0)); break;
-                case 2: it = Amuleto.aleatorio(exp.getBonusRareza() + (grande ? 15 : 0)); break;
-                default: it = Rng.prob(50) ? Pocion.vida() : Pocion.laudano();
+            switch (h.getAzar().entre(0, 3)) {
+                case 0: it = Arma.aleatoria(h.getNivel(), exp.getBonusRareza() + (grande ? 15 : 0), h.getAzar()); break;
+                case 1: it = Armadura.aleatoria(h.getNivel(), exp.getBonusRareza() + (grande ? 15 : 0), h.getAzar()); break;
+                case 2: it = Amuleto.aleatorio(exp.getBonusRareza() + (grande ? 15 : 0), h.getAzar()); break;
+                default: it = h.getAzar().probabilidad(50) ? Pocion.vida() : Pocion.laudano();
             }
             UI.log("Dentro hallas " + UI.item(it) + " " + UI.pintar("(" + it.descripcion() + ")", UI.TENUE));
             h.getInventario().anadir(it);

@@ -23,9 +23,12 @@ public class Arma extends Item {
     }
     /** Genera un arma aleatoria acorde al nivel. */
     public static Arma aleatoria(int nivel, int bonusRareza) {
+        return aleatoria(nivel, bonusRareza, FuenteAzar.global());
+    }
+    public static Arma aleatoria(int nivel, int bonusRareza, FuenteAzar azar) {
         String[] nombres = {"Espada de Romero", "Hacha del Carbonero", "Estoque Toledano",
                 "Maza del Sepulturero", "Hoz Segadora", "Alfanje Herrumbroso"};
-        return new Arma(Rng.elegir(java.util.List.of(nombres)),
-                6 + nivel * 2 + Rng.entre(0, 3), Rareza.sortear(bonusRareza));
+        return new Arma(azar.elegir(java.util.List.of(nombres)),
+                6 + nivel * 2 + azar.entre(0, 3), Rareza.sortear(bonusRareza, azar));
     }
 }

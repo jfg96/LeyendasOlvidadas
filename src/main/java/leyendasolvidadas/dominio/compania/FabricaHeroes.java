@@ -48,11 +48,14 @@ public final class FabricaHeroes {
     }
 
     public static Personaje candidatoAleatorio(int nivelObjetivo) {
-        String nombre = Rng.elegir(NOMBRES);
-        Personaje candidato = crear(Rng.entre(1, 9), nombre);
+        return candidatoAleatorio(nivelObjetivo, FuenteAzar.global());
+    }
+    public static Personaje candidatoAleatorio(int nivelObjetivo, FuenteAzar azar) {
+        String nombre = azar.elegir(NOMBRES);
+        Personaje candidato = crear(azar.entre(1, 9), nombre);
         candidato.prepararNivelInicial(Math.max(1, nivelObjetivo));
-        candidato.setTrasfondo(new TrasfondoMercenario(Rng.elegir(ORIGENES), Rng.elegir(DESCRIPCIONES),
-                Rng.elegir(RASGOS), Rng.elegir(DEFECTOS), Rng.elegir(MOTIVACIONES), Rng.elegir(FRASES)));
+        candidato.setTrasfondo(new TrasfondoMercenario(azar.elegir(ORIGENES), azar.elegir(DESCRIPCIONES),
+                azar.elegir(RASGOS), azar.elegir(DEFECTOS), azar.elegir(MOTIVACIONES), azar.elegir(FRASES)));
         candidato.setPersonalidadMecanica(rasgoDesde(candidato.getTrasfondo().rasgo()),
                 defectoDesde(candidato.getTrasfondo().defecto()));
         return candidato;

@@ -76,7 +76,7 @@ public class ServicioCompania {
         for (Personaje heroe : grupo) {
             if (!compania.esProtagonista(heroe)) heroe.modificarLealtad(lealtad);
             if (resultado == ResultadoExpedicion.DERROTA)
-                heroe.sufrirHerida(leyendasolvidadas.dominio.azar.Rng.elegir(
+                heroe.sufrirHerida(heroe.getAzar().elegir(
                         List.of(HeridaPersistente.values())));
         }
         for (int i = 0; i < grupo.size(); i++) for (int j = i + 1; j < grupo.size(); j++)

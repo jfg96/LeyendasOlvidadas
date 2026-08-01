@@ -27,9 +27,12 @@ public class Armadura extends Item {
     @Override public String descripcion() { return "Armadura | Def +" + defensa + ", Vida +" + vidaExtra; }
 
     public static Armadura aleatoria(int nivel, int bonusRareza) {
+        return aleatoria(nivel, bonusRareza, FuenteAzar.global());
+    }
+    public static Armadura aleatoria(int nivel, int bonusRareza, FuenteAzar azar) {
         String[] nombres = {"Cota del Peregrino", "Jubon Encerado", "Coraza del Alguacil",
                 "Sayo de Penitente", "Peto del Miliciano"};
-        return new Armadura(Rng.elegir(java.util.List.of(nombres)),
-                2 + nivel, 10 + nivel * 4, Rareza.sortear(bonusRareza));
+        return new Armadura(azar.elegir(java.util.List.of(nombres)),
+                2 + nivel, 10 + nivel * 4, Rareza.sortear(bonusRareza, azar));
     }
 }

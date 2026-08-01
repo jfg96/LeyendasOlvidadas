@@ -12,11 +12,8 @@ public interface FuenteAzar {
         return opciones.get(entre(0, opciones.size() - 1));
     }
 
-    /** Adaptador temporal para código que todavía usa el generador global. */
+    /** Fuente independiente para constructores de compatibilidad. */
     static FuenteAzar global() {
-        return new FuenteAzar() {
-            @Override public int entre(int minimo, int maximo) { return Rng.entre(minimo, maximo); }
-            @Override public boolean probabilidad(int porcentaje) { return Rng.prob(porcentaje); }
-        };
+        return new AzarJava();
     }
 }

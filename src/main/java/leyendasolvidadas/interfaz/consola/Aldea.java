@@ -372,7 +372,7 @@ public class Aldea {
                     "\"Si oyes campanillas de madrugada, reza: la Compania busca a quien lleve su vela.\"",
                     "\"Un buen amuleto vale mas que cien espadas. Un mal amuleto... tambien cobra.\"",
                     "\"Acampa cuando puedas, forastero. La cabeza se quiebra antes que el espinazo.\""};
-                UI.log(UI.pintar(Rng.elegir(List.of(rumores)), UI.CIAN));
+                UI.log(UI.pintar(estado.getAzar().elegir(List.of(rumores)), UI.CIAN));
                 break;
             }
             case 3: {
@@ -380,7 +380,7 @@ public class Aldea {
                 int apuesta = UI.leerOpcion(0, Math.max(0, h.getInventario().getOro()));
                 if (apuesta == 0) { UI.log("Hoy no es dia de tentar la suerte."); break; }
                 h.getInventario().gastarOro(apuesta);
-                if (Rng.prob(45)) {
+                if (estado.getAzar().probabilidad(45)) {
                     h.getInventario().ganarOro(apuesta * 2);
                     UI.log(UI.pintar("¡Seis y seis! Doblas la apuesta: +" + apuesta * 2 + " reales.", UI.AMARILLO));
                 } else {

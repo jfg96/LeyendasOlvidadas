@@ -16,7 +16,10 @@ public enum Rareza {
 
     /** Sortea una rareza; bonus (0..30) mejora las probabilidades (oscuridad, jefes...). */
     public static Rareza sortear(int bonus) {
-        int r = Rng.entre(1, 100) - bonus;
+        return sortear(bonus, FuenteAzar.global());
+    }
+    public static Rareza sortear(int bonus, FuenteAzar azar) {
+        int r = azar.entre(1, 100) - bonus;
         if (r <= 4) return LEGENDARIA;
         if (r <= 16) return EPICA;
         if (r <= 42) return RARA;

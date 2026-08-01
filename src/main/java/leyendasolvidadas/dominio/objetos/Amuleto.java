@@ -37,15 +37,18 @@ public class Amuleto extends Item {
         }
     }
     public static Amuleto aleatorio(int bonusRareza) {
-        Don d = Don.values()[Rng.entre(0, Don.values().length - 1)];
+        return aleatorio(bonusRareza, FuenteAzar.global());
+    }
+    public static Amuleto aleatorio(int bonusRareza, FuenteAzar azar) {
+        Don d = Don.values()[azar.entre(0, Don.values().length - 1)];
         String[] nombres = {"Higa de Azabache", "Escapulario Raido", "Campanilla de Ermita",
                 "Diente de Lobisome", "Cruz de Caravaca", "Medalla del Romero"};
         int pot;
         switch (d) {
-            case TEMPLE: case CODICIA: pot = Rng.entre(10, 25); break;
-            case FUROR: pot = Rng.entre(6, 14); break;
-            default: pot = Rng.entre(5, 12);
+            case TEMPLE: case CODICIA: pot = azar.entre(10, 25); break;
+            case FUROR: pot = azar.entre(6, 14); break;
+            default: pot = azar.entre(5, 12);
         }
-        return new Amuleto(Rng.elegir(java.util.List.of(nombres)), d, pot, Rareza.sortear(bonusRareza));
+        return new Amuleto(azar.elegir(java.util.List.of(nombres)), d, pot, Rareza.sortear(bonusRareza, azar));
     }
 }

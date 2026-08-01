@@ -140,52 +140,58 @@ public final class Bestiario {
 
     /** Genera un grupo de 1-3 enemigos para un combate normal. */
     public static List<Enemigo> crearGrupo(int nivelZona, Dificultad dif) {
-        int niv = Math.max(1, nivelZona + Rng.entre(-1, 1));
-        int cuantos = dif == Dificultad.FACIL ? (Rng.prob(20) ? 3 : 2) : dif == Dificultad.MEDIA
-                ? (Rng.prob(60) ? 3 : 2) : 3;
+        return crearGrupo(nivelZona, dif, FuenteAzar.global());
+    }
+    public static List<Enemigo> crearGrupo(int nivelZona, Dificultad dif, FuenteAzar azar) {
+        int niv = Math.max(1, nivelZona + azar.entre(-1, 1));
+        int cuantos = dif == Dificultad.FACIL ? (azar.probabilidad(20) ? 3 : 2) : dif == Dificultad.MEDIA
+                ? (azar.probabilidad(60) ? 3 : 2) : 3;
         List<Enemigo> grupo = new ArrayList<>();
         int probElite = dif == Dificultad.FACIL ? 8 : dif == Dificultad.MEDIA ? 16 : 26;
         for (int i = 0; i < cuantos; i++) {
-            if (Rng.prob(probElite) && !hayElite(grupo)) grupo.add(eliteAleatorio(niv + 1));
-            else grupo.add(comunAleatorio(niv));
+            if (azar.probabilidad(probElite) && !hayElite(grupo)) grupo.add(eliteAleatorio(niv + 1, azar));
+            else grupo.add(comunAleatorio(niv, azar));
         }
         // Ordenar evita que los enemigos de retaguardia ocupen la primera fila.
         grupo.sort((a, b) -> Integer.compare(a.getFilaPreferida(), b.getFilaPreferida()));
         return grupo;
     }
     public static List<Enemigo> crearGrupo(Region region, int nivelZona, Dificultad dif) {
+        return crearGrupo(region, nivelZona, dif, FuenteAzar.global());
+    }
+    public static List<Enemigo> crearGrupo(Region region, int nivelZona, Dificultad dif, FuenteAzar azar) {
         if (region == Region.HOSPITAL_DEL_CAMINO_VIEJO) {
-            int niv = Math.max(1, nivelZona + Rng.entre(-1, 1));
+            int niv = Math.max(1, nivelZona + azar.entre(-1, 1));
             List<Enemigo> grupo = new ArrayList<>();
             grupo.add(portadorCirio(niv)); grupo.add(penitenteSinRostro(niv));
-            if (dif != Dificultad.FACIL) grupo.add(Rng.prob(50) ? campanero(niv) : peregrinoQuemado(niv));
+            if (dif != Dificultad.FACIL) grupo.add(azar.probabilidad(50) ? campanero(niv) : peregrinoQuemado(niv));
             grupo.sort((a, b) -> Integer.compare(a.getFilaPreferida(), b.getFilaPreferida()));
             return grupo;
         }
         if (region == Region.BRANAS_HUNDIDAS || region == Region.CAMINO_DE_LOS_DIFUNTOS) {
-            int niv = Math.max(1, nivelZona + Rng.entre(-1, 1));
+            int niv = Math.max(1, nivelZona + azar.entre(-1, 1));
             int cuantos = dif == Dificultad.FACIL ? 2 : 3;
             List<Enemigo> grupo = new ArrayList<>();
             for (int i = 0; i < cuantos; i++) grupo.add(region == Region.BRANAS_HUNDIDAS
-                    ? (Rng.prob(55) ? afogado(niv) : lavandeira(niv))
-                    : (Rng.prob(55) ? peregrinoQuemado(niv) : campanero(niv)));
+                    ? (azar.probabilidad(55) ? afogado(niv) : lavandeira(niv))
+                    : (azar.probabilidad(55) ? peregrinoQuemado(niv) : campanero(niv)));
             grupo.sort((a, b) -> Integer.compare(a.getFilaPreferida(), b.getFilaPreferida()));
             return grupo;
         }
         if (region == Region.MINAS_DE_SAN_LOURENZO || region == Region.PAZO_DE_SOUTOMAIOR) {
-            int niv = Math.max(1, nivelZona + Rng.entre(-1, 1)); int cuantos = dif == Dificultad.FACIL ? 2 : 3;
+            int niv = Math.max(1, nivelZona + azar.entre(-1, 1)); int cuantos = dif == Dificultad.FACIL ? 2 : 3;
             List<Enemigo> grupo = new ArrayList<>();
             for (int i=0;i<cuantos;i++) grupo.add(region == Region.MINAS_DE_SAN_LOURENZO
-                    ? (Rng.prob(60) ? mineiroMorto(niv) : trasnoHierro(niv))
-                    : (Rng.prob(60) ? guardiaSoutomaior(niv) : criadoSinNombre(niv)));
+                    ? (azar.probabilidad(60) ? mineiroMorto(niv) : trasnoHierro(niv))
+                    : (azar.probabilidad(60) ? guardiaSoutomaior(niv) : criadoSinNombre(niv)));
             return grupo;
         }
-        if (region != Region.BOSQUE_DE_LOS_AHORCADOS) return crearGrupo(nivelZona, dif);
-        int niv = Math.max(1, nivelZona + Rng.entre(-1, 1));
+        if (region != Region.BOSQUE_DE_LOS_AHORCADOS) return crearGrupo(nivelZona, dif, azar);
+        int niv = Math.max(1, nivelZona + azar.entre(-1, 1));
         int cuantos = dif == Dificultad.FACIL ? 2 : 3;
         List<Enemigo> grupo = new ArrayList<>();
         for (int i = 0; i < cuantos; i++) {
-            int tipo = Rng.entre(0, 3);
+            int tipo = azar.entre(0, 3);
             grupo.add(tipo == 0 ? lobo(niv) : tipo == 1 ? ahorcadoVerde(niv)
                     : tipo == 2 ? corvoCarne(niv) : (i == 0 && dif == Dificultad.DIFICIL ? lobisome(niv) : ahorcadoVerde(niv)));
         }
@@ -196,8 +202,8 @@ public final class Bestiario {
         for (Enemigo e : g) if (e.esElite()) return true;
         return false;
     }
-    private static Enemigo comunAleatorio(int niv) {
-        switch (Rng.entre(0, 5)) {
+    private static Enemigo comunAleatorio(int niv, FuenteAzar azar) {
+        switch (azar.entre(0, 5)) {
             case 0: return duende(niv);
             case 1: return anima(niv);
             case 2: return lobo(niv);
@@ -206,8 +212,8 @@ public final class Bestiario {
             default: return meiga(niv);
         }
     }
-    private static Enemigo eliteAleatorio(int niv) {
-        switch (Rng.entre(0, 2)) {
+    private static Enemigo eliteAleatorio(int niv, FuenteAzar azar) {
+        switch (azar.entre(0, 2)) {
             case 0: return lobisome(niv);
             case 1: return caballero(niv);
             default: return cuelebre(niv);
