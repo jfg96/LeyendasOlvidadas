@@ -104,6 +104,10 @@ La partida se guarda en `partida.sav`, dentro del directorio desde el que se
 inicia el juego. Puede guardarse manualmente desde la aldea y el prólogo crea
 puntos de guardado automáticos entre escenas.
 
+Cada actualización conserva la versión anterior en `partida.sav.bak`. Si el
+archivo principal está dañado, el juego intenta cargar automáticamente esa
+copia de seguridad.
+
 El formato actual es LOSV v7 y puede migrar partidas LOSV v1-v6. Los archivos
 experimentales creados con la antigua serialización nativa de Java no son
 compatibles.

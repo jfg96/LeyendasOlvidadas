@@ -71,6 +71,12 @@ documentación mantenida durante el desarrollo.
 
 ### Persistencia
 
+- Incorporación de guardado seguro mediante archivo temporal y sustitución
+  atómica cuando el sistema de archivos lo permite.
+- Incorporación de una copia de seguridad automática y recuperación desde ella
+  cuando la partida principal está dañada.
+- Incorporación de rutas de guardado configurables para aislar perfiles y
+  pruebas.
 - Sustitución de la serialización nativa de Java por el formato binario LOSV.
 - Incorporación de cabecera, versión e identificadores estables.
 - Evolución del formato desde LOSV v1 hasta LOSV v7.
