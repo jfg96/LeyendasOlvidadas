@@ -22,7 +22,7 @@ esos puertos.
 - `dominio.objetos`: armas, armaduras, amuletos, consumibles y rarezas.
 - `dominio.misiones`: objetivos y progreso de encargos.
 - `dominio.mundo`: regiones, habitaciones, estado de la aldea, dificultad,
-  bestiario y contratos de luz.
+  bestiario, mapas procedurales y contratos de luz.
 - `dominio.azar`: generador reproducible empleado por reglas y simulaciones.
 - `dominio.eventos`: mensajes semánticos sin colores ni widgets.
 

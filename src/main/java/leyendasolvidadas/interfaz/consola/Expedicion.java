@@ -11,9 +11,7 @@ import leyendasolvidadas.infraestructura.*;
 import leyendasolvidadas.interfaz.consola.*;
 import leyendasolvidadas.dominio.campana.RegistroCampana;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +30,9 @@ public class Expedicion implements ContextoCombate {
     private final int nivelZona;
     private final int victoriasPrevias;
     private final Region region;
-    private final List<Habitacion> habitaciones = new ArrayList<>();
+    private final List<Habitacion> habitaciones;
     private Habitacion actual;
-    private Habitacion entrada;
+    private final Habitacion entrada;
     private int luz = 100;
     private final RegistroCampana registro;
 
@@ -54,7 +52,11 @@ public class Expedicion implements ContextoCombate {
         this.nivelZona = (int) Math.round(heroes.stream().mapToInt(Personaje::getNivel)
                 .average().orElse(1)) + dificultad.getNivelExtra();
         gestor.asignar(mision);
-        generarMapa(7 + dificultad.ordinal() * 2);
+        MapaExpedicion mapa = new MapaExpedicion(7 + dificultad.ordinal() * 2, mision.requiereObjetivo());
+        this.habitaciones = mapa.getHabitaciones();
+        this.entrada = mapa.getEntrada();
+        this.actual = entrada;
+        entrar(entrada, true);
     }
 
     private List<Personaje> heroesVivos() { return heroes.stream().filter(Personaje::estaVivo).toList(); }
@@ -77,79 +79,7 @@ public class Expedicion implements ContextoCombate {
     private int probEmboscada() { return luz >= 75 ? 4 : luz >= 40 ? 10 : luz >= 15 ? 18 : 30; }
     private int estresPorPaso() { return luz >= 75 ? 0 : luz >= 40 ? 1 : luz >= 15 ? 2 : 4; }
 
-    /** Genera un mapa conexo mediante un paseo aleatorio. */
-    private void generarMapa(int numHabitaciones) {
-        Map<Long, Habitacion> porPos = new HashMap<>();
-        entrada = new Habitacion(0, 0, TipoHabitacion.ENTRADA);
-        habitaciones.add(entrada);
-        porPos.put(clave(0, 0), entrada);
-        int x = 0, y = 0;
-        int[][] dirs = {{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
-        char[] letras = {'N', 'S', 'E', 'O'};
-        int intentos = 0;
-        boolean hayCampamento = false;
-        while (habitaciones.size() < numHabitaciones && intentos < 500) {
-            intentos++;
-            int d = Rng.entre(0, 3);
-            int nx = x + dirs[d][0], ny = y + dirs[d][1];
-            Habitacion origen = porPos.get(clave(x, y));
-            Habitacion destino = porPos.get(clave(nx, ny));
-            if (destino == null) {
-                TipoHabitacion tipo = sortearTipo(!hayCampamento && habitaciones.size() >= 3);
-                if (tipo == TipoHabitacion.CAMPAMENTO) hayCampamento = true;
-                destino = new Habitacion(nx, ny, tipo);
-                habitaciones.add(destino);
-                porPos.put(clave(nx, ny), destino);
-            }
-            origen.conectar(letras[d], destino);
-            destino.conectar(letras[d == 0 ? 1 : d == 1 ? 0 : d == 2 ? 3 : 2], origen);
-            x = nx; y = ny;
-            if (Rng.prob(30)) { x = 0; y = 0; }
-        }
-        // El objetivo se coloca lejos de la entrada para evitar expediciones triviales.
-        Habitacion lejana = masLejana();
-        if (gestor.getMision().requiereObjetivo()) {
-            reemplazar(lejana, new Habitacion(lejana.getX(), lejana.getY(), TipoHabitacion.OBJETIVO));
-        }
-        actual = entrada;
-        entrar(entrada, true);
-    }
     private long clave(int x, int y) { return ((long) x << 32) ^ (y & 0xffffffffL); }
-    private TipoHabitacion sortearTipo(boolean forzarCampamento) {
-        if (forzarCampamento && Rng.prob(35)) return TipoHabitacion.CAMPAMENTO;
-        int r = Rng.entre(1, 100);
-        if (r <= 45) return TipoHabitacion.COMBATE;
-        if (r <= 63) return TipoHabitacion.CURIO;
-        if (r <= 78) return TipoHabitacion.TESORO;
-        if (r <= 88) return TipoHabitacion.CAMPAMENTO;
-        return TipoHabitacion.VACIA;
-    }
-    private Habitacion masLejana() {
-        Map<Habitacion, Integer> dist = new HashMap<>();
-        Deque<Habitacion> cola = new ArrayDeque<>();
-        dist.put(entrada, 0); cola.add(entrada);
-        Habitacion lejos = entrada;
-        while (!cola.isEmpty()) {
-            Habitacion h = cola.poll();
-            for (Habitacion v : h.getConexiones().values()) {
-                if (!dist.containsKey(v)) {
-                    dist.put(v, dist.get(h) + 1);
-                    if (dist.get(v) > dist.get(lejos)) lejos = v;
-                    cola.add(v);
-                }
-            }
-        }
-        return lejos;
-    }
-    private void reemplazar(Habitacion vieja, Habitacion nueva) {
-        for (Map.Entry<Character, Habitacion> en : vieja.getConexiones().entrySet()) {
-            nueva.conectar(en.getKey(), en.getValue());
-            Habitacion vecina = en.getValue();
-            for (Map.Entry<Character, Habitacion> e2 : vecina.getConexiones().entrySet())
-                if (e2.getValue() == vieja) vecina.conectar(e2.getKey(), nueva);
-        }
-        habitaciones.set(habitaciones.indexOf(vieja), nueva);
-    }
 
     private void dibujarMapa() {
         int minX = 0, maxX = 0, minY = 0, maxY = 0;

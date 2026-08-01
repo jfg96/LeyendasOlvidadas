@@ -59,6 +59,8 @@ documentación mantenida durante el desarrollo.
 
 ### Combate y expediciones
 
+- Extracción de la generación procedural a un modelo de mapa independiente de
+  consola, con pruebas de tamaño, conectividad, enlaces y posición del objetivo.
 - Adaptación del combate a formaciones de tres héroes.
 - Incorporación de iniciativa individual y selección de objetivos aliados o
   enemigos.
