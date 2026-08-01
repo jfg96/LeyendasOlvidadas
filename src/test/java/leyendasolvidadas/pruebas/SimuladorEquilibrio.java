@@ -21,6 +21,7 @@ import java.util.Map;
 /** Simulacion Monte Carlo reproducible para detectar extremos de equilibrio. */
 public class SimuladorEquilibrio {
     private static final int ITERACIONES = 1000;
+    private static FuenteAzar azar = new AzarJava();
 
     private record Resultado(boolean victoria, int rondas, int supervivientes, double vidaRestante) {}
     private record Resumen(double victorias, double rondas, double supervivientes, double vida) {}
@@ -70,7 +71,7 @@ public class SimuladorEquilibrio {
     }
 
     private static Resumen simularJefes(int[] clases, int nivel, boolean finalCampana, long semilla) {
-        Rng.semilla(semilla);
+        azar = new AzarJava(semilla);
         int victorias = 0, rondas = 0, supervivientes = 0;
         double vida = 0;
         for (int i = 0; i < ITERACIONES; i++) {
@@ -78,6 +79,7 @@ public class SimuladorEquilibrio {
             int nivelZona = nivel + Dificultad.DIFICIL.getNivelExtra();
             Jefe jefe = finalCampana ? Bestiario.crearJefeFinal(nivelZona)
                     : Bestiario.crearJefe(nivelZona, i % 3);
+            jefe.configurarAzar(azar);
             Resultado r = simular(heroes, new ArrayList<>(List.of(jefe)), Dificultad.DIFICIL);
             if (r.victoria) victorias++;
             rondas += r.rondas;
@@ -89,7 +91,7 @@ public class SimuladorEquilibrio {
     }
 
     private static Resumen simularSerie(int[] clases, int nivel, Dificultad dificultad, long semilla) {
-        Rng.semilla(semilla);
+        azar = new AzarJava(semilla);
         int victorias = 0, rondas = 0, supervivientes = 0;
         double vida = 0;
         for (int i = 0; i < ITERACIONES; i++) {
@@ -98,7 +100,8 @@ public class SimuladorEquilibrio {
             int rondasExpedicion = 0;
             boolean completada = true;
             for (int encuentro = 0; encuentro < 4; encuentro++) {
-                List<Enemigo> enemigos = Bestiario.crearGrupo(nivel + dificultad.getNivelExtra(), dificultad);
+                List<Enemigo> enemigos = Bestiario.crearGrupo(
+                        nivel + dificultad.getNivelExtra(), dificultad, azar);
                 r = simular(heroes, enemigos, dificultad);
                 rondasExpedicion += r.rondas;
                 if (!r.victoria) { completada = false; break; }
@@ -127,6 +130,7 @@ public class SimuladorEquilibrio {
         List<Personaje> heroes = new ArrayList<>();
         for (int i = 0; i < clases.length; i++) {
             Personaje heroe = FabricaHeroes.crear(clases[i], "H" + i);
+            heroe.configurarAzar(azar);
             heroe.prepararNivelInicial(nivel);
             heroes.add(heroe);
         }
@@ -142,7 +146,7 @@ public class SimuladorEquilibrio {
             orden.addAll(heroes.stream().filter(Personaje::estaVivo).toList());
             orden.addAll(enemigos.stream().filter(Personaje::estaVivo).toList());
             Map<Personaje, Integer> iniciativa = new java.util.HashMap<>();
-            for (Personaje p : orden) iniciativa.put(p, p.getVelocidad() + Rng.entre(0, 4));
+            for (Personaje p : orden) iniciativa.put(p, p.getVelocidad() + azar.entre(0, 4));
             orden.sort(Comparator.comparingInt((Personaje p) -> iniciativa.get(p)).reversed());
 
             for (Personaje actor : orden) {
@@ -211,12 +215,12 @@ public class SimuladorEquilibrio {
     }
 
     private static void golpear(Personaje heroe, Habilidad habilidad, Enemigo enemigo) {
-        if (!enemigo.estaVivo() || Rng.prob(enemigo.esquivaActual())) return;
-        double danio = heroe.ataqueBase() * habilidad.getMultiplicador() * heroe.modDanioSaliente() * Rng.variacion();
-        if (Rng.prob(heroe.criticoActual() + habilidad.getBonusCritico())) danio *= 1.6;
+        if (!enemigo.estaVivo() || azar.probabilidad(enemigo.esquivaActual())) return;
+        double danio = heroe.ataqueBase() * habilidad.getMultiplicador() * heroe.modDanioSaliente() * azar.variacion();
+        if (azar.probabilidad(heroe.criticoActual() + habilidad.getBonusCritico())) danio *= 1.6;
         double real = habilidad.getMultiplicador() > 0 ? enemigo.recibirDanio(danio, false) : 0;
         if (habilidad.getRoboVida() > 0) heroe.curar(real * habilidad.getRoboVida());
-        if (habilidad.getEfecto() != null && enemigo.estaVivo() && Rng.prob(habilidad.getProbabilidadEfecto()))
+        if (habilidad.getEfecto() != null && enemigo.estaVivo() && azar.probabilidad(habilidad.getProbabilidadEfecto()))
             enemigo.aplicarEfecto(habilidad.getEfecto(), habilidad.getDuracionEfecto(),
                     habilidad.getPotenciaEfecto() > 0 ? habilidad.getPotenciaEfecto() : 3 + heroe.getNivel());
     }
@@ -225,7 +229,7 @@ public class SimuladorEquilibrio {
                                      List<Enemigo> enemigos, Dificultad dificultad) {
         List<Personaje> disponibles = heroes.stream().filter(Personaje::estaVivo).toList();
         if (disponibles.isEmpty()) return;
-        Personaje objetivo = Rng.elegir(disponibles);
+        Personaje objetivo = azar.elegir(disponibles);
         int fila = enemigos.stream().filter(Personaje::estaVivo).toList().indexOf(enemigo) + 1;
         MovimientoEnemigo mov = enemigo.elegirMovimiento(Math.max(1, fila));
         if (mov.seCura()) { enemigo.curar(enemigo.getVidaMax() * 0.15); return; }
@@ -233,13 +237,13 @@ public class SimuladorEquilibrio {
             enemigo.aplicarEfecto(mov.getEfecto(), mov.getDuracionEfecto(), mov.getPotenciaEfecto());
             return;
         }
-        if (mov.getMultiplicador() > 0 && !Rng.prob(objetivo.esquivaActual())) {
+        if (mov.getMultiplicador() > 0 && !azar.probabilidad(objetivo.esquivaActual())) {
             double multDificultad = dificultad == Dificultad.DIFICIL ? 1.10 : 1.0;
             double danio = enemigo.getDanioBase() * mov.getMultiplicador() * enemigo.multFase()
-                    * multDificultad * enemigo.modDanioSaliente() * Rng.variacion();
-            if (Rng.prob(8)) danio *= 1.6;
+                    * multDificultad * enemigo.modDanioSaliente() * azar.variacion();
+            if (azar.probabilidad(8)) danio *= 1.6;
             objetivo.recibirDanio(danio, false);
-            if (mov.getEfecto() != null && Rng.prob(mov.getProbabilidadEfecto()))
+            if (mov.getEfecto() != null && azar.probabilidad(mov.getProbabilidadEfecto()))
                 objetivo.aplicarEfecto(mov.getEfecto(), mov.getDuracionEfecto(), mov.getPotenciaEfecto());
         }
         if (mov.getEstres() > 0) objetivo.sufrirEstres(mov.getEstres());

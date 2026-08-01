@@ -23,18 +23,21 @@ esos puertos.
 - `dominio.misiones`: objetivos y progreso de encargos.
 - `dominio.mundo`: regiones, habitaciones, estado de la aldea, dificultad,
   bestiario, mapas procedurales, condiciones de expedición y contratos de luz.
-- `dominio.azar`: generador reproducible empleado por reglas y simulaciones.
-- `dominio.eventos`: mensajes semánticos sin colores ni widgets.
+- `dominio.azar`: fuentes de azar aisladas e inyectables, con semillas locales
+  para reglas, pruebas y simulaciones reproducibles.
+- `dominio.eventos`: mensajes semánticos y publicadores inyectables sin colores
+  ni widgets.
 
 Las clases de dominio no leen teclado, no imprimen, no conocen ANSI y no abren
-archivos. `BusEventos` publica hechos narrativos mediante `EventoDominio`; cada
-interfaz decide cómo representarlos.
+archivos. Cada partida recibe un `PublicadorEventos`; la interfaz decide cómo
+representar sus instancias de `EventoDominio` sin modificar estado global.
 
 ## Aplicación
 
 - `EstadoJuego`: estado persistente de la partida, incluido `ProgresoCampana`.
 - `ServicioCompania`: contratar, despedir y preparar la formación.
 - `ServicioAldea`: curación, calma, compra, venta y forja.
+- `ServicioTablonMisiones`: ofertas ordinarias y narrativas disponibles.
 - `ServicioPrologo`: transiciones, decisiones y consecuencias del prólogo.
 - `ServicioCapituloUno`: presentación y primera relación con Padre Tomé.
 - `ServicioCapituloDos`: progreso paralelo de regiones, jefes, Libro de los
@@ -71,7 +74,7 @@ juego a terminal, no una dependencia del dominio.
 
 Una futura interfaz JavaFX deberá:
 
-1. Conectar un receptor propio a `BusEventos`.
+1. Proporcionar un `PublicadorEventos` propio al construir la partida.
 2. Consumir `EstadoJuego` y los servicios de aplicación.
 3. Implementar o reutilizar un adaptador para `RepositorioPartidas`.
 4. Implementar `VistaCombate` para representar sus decisiones sin introducir

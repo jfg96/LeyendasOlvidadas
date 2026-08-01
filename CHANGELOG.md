@@ -104,8 +104,8 @@ documentación mantenida durante el desarrollo.
   para evitar interferencias entre mapas y pruebas.
 - Propagación de la fuente de azar de cada partida a personajes, enemigos,
   combate y expediciones.
-- Eliminación del generador aleatorio global del código de producción; las
-  ofertas, mapas, encuentros y actores comparten la fuente de su partida.
+- Eliminación del generador aleatorio global; las ofertas, mapas, encuentros,
+  actores, pruebas y simulaciones reciben una fuente aislada y reproducible.
 - Sustitución del receptor global de eventos por publicadores inyectables desde
   el punto de entrada, con aislamiento entre partidas y pruebas.
 - Extracción de las recompensas, penalizaciones, convivencia y progreso tras
@@ -120,7 +120,7 @@ documentación mantenida durante el desarrollo.
 - Eliminación del singleton global de juego y de la persistencia estática.
 - Incorporación de eventos de dominio con representación independiente.
 - Migración a la estructura estándar de Maven y Java 17.
-- Incorporación de JUnit 5 y una suite automatizada de 25 pruebas.
+- Incorporación de JUnit 5 y una suite automatizada para las reglas críticas.
 - Incorporación de pruebas de arquitectura, campaña, compañía, combate,
   persistencia y servicios de aplicación.
 - Incorporación de una prueba integral desde el prólogo hasta el epílogo.

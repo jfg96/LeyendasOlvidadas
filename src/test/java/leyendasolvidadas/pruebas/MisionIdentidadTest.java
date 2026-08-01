@@ -1,6 +1,7 @@
 package leyendasolvidadas.pruebas;
 
-import leyendasolvidadas.dominio.azar.Rng;
+import leyendasolvidadas.dominio.azar.AzarJava;
+import leyendasolvidadas.dominio.azar.FuenteAzar;
 import leyendasolvidadas.dominio.misiones.*;
 import leyendasolvidadas.dominio.mundo.Dificultad;
 import leyendasolvidadas.dominio.mundo.Region;
@@ -42,9 +43,9 @@ class MisionIdentidadTest {
     }
 
     private static void comprobarRegion(Region region, Set<MisionId> esperados) {
-        Rng.semilla(region.ordinal());
+        FuenteAzar azar = new AzarJava(region.ordinal());
         for (int i = 0; i < 20; i++)
             assertTrue(esperados.contains(GestorMisiones.generarRegional(
-                    region, 2, Dificultad.FACIL).getId()));
+                    region, 2, Dificultad.FACIL, azar).getId()));
     }
 }
