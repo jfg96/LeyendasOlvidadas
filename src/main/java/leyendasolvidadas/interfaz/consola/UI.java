@@ -19,8 +19,16 @@ public final class UI {
     public static boolean limpiarPantalla = true;
     public static final int ANCHO = 78;
     public static final Scanner SC = new Scanner(System.in);
+    private static TerminalJuego terminal;
 
     private UI() {}
+
+    static void configurarTerminal(TerminalJuego nuevaTerminal) { terminal = nuevaTerminal; }
+
+    public static int ancho() {
+        int disponible = terminal == null ? 80 : terminal.columnas();
+        return Math.max(60, Math.min(100, disponible - 2));
+    }
 
     public static String c(String codigo) { return color ? codigo : ""; }
     public static final String RESET = "\u001B[0m", NEGRITA = "\u001B[1m", TENUE = "\u001B[2m";
@@ -39,23 +47,26 @@ public final class UI {
     }
 
     public static void limpiar() {
-        if (limpiarPantalla && color) System.out.print("\u001B[2J\u001B[H");
-        else System.out.println("\n".repeat(2));
+        if (limpiarPantalla && terminal != null && terminal.pantallaCompleta()) terminal.limpiar();
+        else if (limpiarPantalla) System.out.print("\u001B[2J\u001B[H");
+        else System.out.println();
     }
 
     public static void titulo(String t) {
-        t = t.length() > ANCHO - 8 ? t.substring(0, ANCHO - 9) + "…" : t;
-        String linea = "═".repeat(ANCHO - 2);
-        System.out.println(pintar("╔" + linea + "╗", AMARILLO));
-        int hueco = linea.length() - t.length();
-        int izq = hueco / 2;
-        System.out.println(pintar("║", AMARILLO) + " ".repeat(izq) + pintar(t, NEGRITA)
-                + " ".repeat(hueco - izq) + pintar("║", AMARILLO));
-        System.out.println(pintar("╚" + linea + "╝", AMARILLO));
+        int ancho = ancho();
+        t = t.length() > ancho - 8 ? t.substring(0, ancho - 9) + "…" : t;
+        String marca = " LEYENDAS OLVIDADAS ";
+        int resto = Math.max(1, ancho - marca.length() - 2);
+        System.out.println(pintar("┌" + marca + "─".repeat(resto) + "┐", AMARILLO));
+        System.out.println(pintar("│ ", AMARILLO) + pintar(t.toUpperCase(), NEGRITA)
+                + " ".repeat(Math.max(0, ancho - t.length() - 3)) + pintar("│", AMARILLO));
+        System.out.println(pintar("└" + "─".repeat(ancho) + "┘", AMARILLO));
     }
 
     public static void seccion(String t) {
-        System.out.println(pintar("── " + t + " " + "─".repeat(Math.max(2, ANCHO - 5 - t.length())), GRIS));
+        System.out.println();
+        System.out.println(pintar("  " + t.toUpperCase(), GRIS));
+        System.out.println(pintar("  " + "─".repeat(Math.max(2, ancho() - 4)), GRIS));
     }
 
     public static void turno(String nombre, String detalle) {
@@ -66,10 +77,12 @@ public final class UI {
     }
 
     public static void opcion(int numero, String nombre, String detalle) {
-        System.out.printf("  %2d. %-28s %s%n", numero, nombre, pintar(detalle == null ? "" : detalle, TENUE));
+        System.out.printf("  %s %-28s %s%n", pintar("[" + numero + "]", AMARILLO), nombre,
+                pintar(detalle == null ? "" : "· " + detalle, TENUE));
     }
     public static void opcionDeshabilitada(int numero, String nombre, String motivo) {
-        System.out.printf("  %2d. %s  %s%n", numero, pintar(nombre, GRIS), pintar("[" + motivo + "]", TENUE));
+        System.out.printf("  %s %-28s %s%n", pintar("[" + numero + "]", GRIS), pintar(nombre, GRIS),
+                pintar("· " + motivo, TENUE));
     }
     public static void aviso(String texto) { log(pintar("! " + texto, AMARILLO)); }
 
@@ -98,8 +111,14 @@ public final class UI {
     }
 
     public static void pausa() {
-        System.out.print(pintar("\n  [ Pulsa ENTER para continuar ]", TENUE));
+        pie("ENTER continuar");
         SC.nextLine();
+    }
+
+    public static void pie(String acciones) {
+        System.out.println();
+        System.out.println(pintar("  " + "─".repeat(Math.max(2, ancho() - 4)), GRIS));
+        System.out.print(pintar("  " + acciones + "  ", TENUE));
     }
 
     /**
@@ -111,7 +130,8 @@ public final class UI {
      */
     public static int leerOpcion(int min, int max) {
         while (true) {
-            System.out.print(pintar("  » ", AMARILLO));
+            pie("Escribe una opción y pulsa ENTER");
+            System.out.print(pintar("› ", AMARILLO + NEGRITA));
             String linea = SC.nextLine().trim();
             try {
                 int n = Integer.parseInt(linea);

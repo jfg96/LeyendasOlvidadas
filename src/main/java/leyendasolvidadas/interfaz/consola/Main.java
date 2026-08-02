@@ -13,12 +13,18 @@ import leyendasolvidadas.interfaz.consola.*;
 /** Punto de entrada de la aplicación. */
 public class Main {
     public static void main(String[] args) {
-        var eventos = new leyendasolvidadas.dominio.eventos.BusEventos(UI::mostrarEvento);
-        var azar = new leyendasolvidadas.dominio.azar.AzarJava();
+        boolean pantallaCompleta = true;
         for (String a : args)
             if (a.equals("--sin-color")) {
                 UI.color = false;
-            } else if (a.equals("--sin-limpiar")) UI.limpiarPantalla = false;
-        new Juego(new GuardarCargar(eventos), eventos, azar).iniciarJuego();
+            } else if (a.equals("--sin-limpiar") || a.equals("--modo-lineal")) {
+                UI.limpiarPantalla = false;
+                pantallaCompleta = false;
+            }
+        try (TerminalJuego terminal = TerminalJuego.abrir(pantallaCompleta)) {
+            var eventos = new leyendasolvidadas.dominio.eventos.BusEventos(UI::mostrarEvento);
+            var azar = new leyendasolvidadas.dominio.azar.AzarJava();
+            new Juego(new GuardarCargar(eventos), eventos, azar).iniciarJuego();
+        }
     }
 }
