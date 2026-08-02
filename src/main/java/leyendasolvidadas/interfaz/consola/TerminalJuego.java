@@ -13,11 +13,14 @@ import org.jline.utils.InfoCmp;
 public final class TerminalJuego implements AutoCloseable {
     private final Terminal terminal;
     private final boolean pantallaCompleta;
-    private boolean cerrada;
+    private final Thread restaurador;
+    private volatile boolean cerrada;
 
     private TerminalJuego(Terminal terminal, boolean pantallaCompleta) {
         this.terminal = terminal;
         this.pantallaCompleta = pantallaCompleta;
+        this.restaurador = new Thread(this::close, "restaurar-terminal");
+        if (pantallaCompleta) Runtime.getRuntime().addShutdownHook(restaurador);
     }
 
     public static TerminalJuego abrir(boolean solicitarPantallaCompleta) {
@@ -49,6 +52,10 @@ public final class TerminalJuego implements AutoCloseable {
         return terminal == null || terminal.getHeight() <= 0 ? 24 : terminal.getHeight();
     }
 
+    public boolean dimensionesAdecuadas() {
+        return !pantallaCompleta || columnas() >= 80 && filas() >= 24;
+    }
+
     public void limpiar() {
         if (!pantallaCompleta) return;
         capacidad(InfoCmp.Capability.clear_screen);
@@ -64,6 +71,10 @@ public final class TerminalJuego implements AutoCloseable {
     @Override public void close() {
         if (cerrada) return;
         cerrada = true;
+        if (pantallaCompleta && Thread.currentThread() != restaurador) {
+            try { Runtime.getRuntime().removeShutdownHook(restaurador); }
+            catch (IllegalStateException ignorada) { }
+        }
         if (pantallaCompleta) {
             capacidad(InfoCmp.Capability.cursor_visible);
             capacidad(InfoCmp.Capability.exit_ca_mode);

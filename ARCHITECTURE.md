@@ -67,10 +67,17 @@ de una ruta explícita de lectura o migración; LOSV v7 acepta partidas v1-v6.
 
 ## Interfaz de consola
 
-Contiene el arranque, la representación ANSI y los controladores interactivos de
-aldea, expedición, eventos e inventario. `VistaCombateConsola` adapta el motor
-de aplicación a la terminal. Esta es una adaptación del
-juego a terminal, no una dependencia del dominio.
+Contiene el arranque, la composición visual y los controladores interactivos de
+aldea, expedición, eventos e inventario. `TerminalJuego` encapsula detección de
+capacidades, dimensiones, pantalla alternativa, cursor y restauración segura
+mediante JLine. `UI` aporta el lenguaje visual común y mantiene separados color,
+modo de pantalla y contenido. `VistaCombateConsola` adapta el motor de aplicación
+a la terminal. Esta es una adaptación del juego a terminal, no una dependencia
+del dominio.
+
+La salida interactiva exige 80 × 24 y utiliza una pantalla alternativa para no
+contaminar el historial del usuario. El modo lineal sigue disponible para
+accesibilidad, automatización y consolas que no ofrecen capacidades de terminal.
 
 Una futura interfaz JavaFX deberá:
 

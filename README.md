@@ -63,12 +63,19 @@ java -jar target/leyendas-olvidadas-3.1.0-SNAPSHOT.jar
 Opciones disponibles:
 
 - `--sin-color`: desactiva los colores ANSI.
-- `--sin-limpiar`: conserva el historial de salida entre pantallas.
+- `--modo-lineal`: evita la pantalla completa y conserva un historial continuo,
+  indicado para lectores de pantalla, registros y consolas de IDE.
+- `--sin-limpiar`: alias compatible de `--modo-lineal`.
+- `--ayuda`: muestra las opciones sin iniciar el juego.
+
+En una terminal interactiva, el juego utiliza una pantalla alternativa: la
+interfaz no se acumula en el historial y al salir se recuperan el contenido y
+el cursor anteriores. La interfaz requiere un tamaño mínimo de 80 × 24.
 
 Ejemplo:
 
 ```bash
-java -jar target/leyendas-olvidadas-3.1.0-SNAPSHOT.jar --sin-color --sin-limpiar
+java -jar target/leyendas-olvidadas-3.1.0-SNAPSHOT.jar --sin-color --modo-lineal
 ```
 
 En Windows puede ser necesario activar UTF-8 antes de ejecutar el juego:

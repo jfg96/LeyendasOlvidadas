@@ -8,6 +8,19 @@ documentación mantenida durante el desarrollo.
 
 ### Interfaz y accesibilidad
 
+- Conversión de la consola en una interfaz de pantalla completa con búfer
+  alternativo, cursor controlado y restauración segura al salir o fallar.
+- Incorporación de detección de capacidades y dimensiones mediante JLine, con
+  validación del mínimo de 80 × 24 y degradación segura fuera de una terminal.
+- Sustitución de la presentación acumulativa por una composición visual estable,
+  adaptable entre 60 y 100 columnas, con cabeceras, secciones, acciones y pies
+  de navegación consistentes en aldea, expedición y combate.
+- Separación efectiva entre color y limpieza de pantalla: `--sin-color` ya no
+  provoca que se acumulen las vistas del juego.
+- Incorporación de `--modo-lineal` para lectores de pantalla, registros y
+  consolas de IDE, manteniendo `--sin-limpiar` como alias compatible.
+- Empaquetado de las dependencias de terminal en el JAR ejecutable y nueva ayuda
+  de línea de comandos mediante `--ayuda`.
 - Reorganización del menú principal de Valdesombra por áreas funcionales.
 - Rediseño de la interfaz de consola con secciones, alineación y mensajes
   contextuales consistentes.
