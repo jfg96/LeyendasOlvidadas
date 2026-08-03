@@ -19,6 +19,7 @@
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jline.version>3.30.9</jline.version>
         <junit.version>5.12.2</junit.version>
     </properties>
 
@@ -26,7 +27,12 @@
         <dependency>
             <groupId>org.jline</groupId>
             <artifactId>jline-terminal</artifactId>
-            <version>3.30.9</version>
+            <version>${jline.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jline</groupId>
+            <artifactId>jline-native</artifactId>
+            <version>${jline.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
