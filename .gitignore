@@ -11,6 +11,13 @@ target/
 # Configuración local de asistentes
 .claude/
 
+# Documentación interna de desarrollo
+/PROJECT_STATUS.md
+/PROPUESTAS_DISENO.txt
+/docs/private/
+*-private.md
+*-private.txt
+
 # Partidas y datos generados durante la ejecución
 partida.sav
 

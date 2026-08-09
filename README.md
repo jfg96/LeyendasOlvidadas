@@ -167,4 +167,3 @@ de las franjas definidas.
 
 - [`ARCHITECTURE.md`](ARCHITECTURE.md): organización y reglas de dependencia.
 - [`CHANGELOG.md`](CHANGELOG.md): evolución funcional y técnica.
-- [`PROJECT_STATUS.md`](PROJECT_STATUS.md): estado de continuidad del desarrollo.

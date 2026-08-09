@@ -113,7 +113,6 @@ documentación mantenida durante el desarrollo.
 
 ### Arquitectura y calidad
 
-- Incorporación de un documento de propuestas de diseño para futuras iteraciones.
 - Incorporación de fuentes de azar aisladas e inyectables, con semillas locales
   para evitar interferencias entre mapas y pruebas.
 - Propagación de la fuente de azar de cada partida a personajes, enemigos,
