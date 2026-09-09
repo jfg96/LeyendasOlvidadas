@@ -81,9 +81,10 @@ public final class UI {
                 pintar(detalle == null ? "" : "· " + detalle, TENUE));
     }
 
-    /** Lee un ordinal dentro de un rango y lo traduce a la constante de esa posicion. */
-    public static <E extends Enum<E>> E elegirEnum(Class<E> tipo, int min, int max) {
-        return tipo.getEnumConstants()[leerOpcion(min, max) - 1];
+    /** Lee un ordinal (1..numero de constantes) y lo traduce a la constante de esa posicion. */
+    public static <E extends Enum<E>> E elegirEnum(Class<E> tipo) {
+        E[] constantes = tipo.getEnumConstants();
+        return constantes[leerOpcion(1, constantes.length) - 1];
     }
 
     /** Pinta el mensaje de un resultado de caso de uso segun su exito. */

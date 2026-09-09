@@ -19,7 +19,7 @@ public final class CapituloCuatroConsola {
         UI.log("de la parroquia, de la memoria de los peregrinos y de las cuentas de quienes ordenaron la matanza.");
         UI.log("Para reconstruirlos tendréis que regresar a lugares que ya creíais vencidos.");
         System.out.println("  ¿Quién custodiará el Libro durante la búsqueda?\n  1. Padre Tomé   2. Aldara   3. La compañía");
-        servicio.abrirLibro(estado, UI.elegirEnum(ServicioCapituloCuatro.CustodiaLibro.class, 1, 3));
+        servicio.abrirLibro(estado, UI.elegirEnum(ServicioCapituloCuatro.CustodiaLibro.class));
         repo.guardar(estado); UI.pausa();
     }
 
@@ -29,15 +29,15 @@ public final class CapituloCuatroConsola {
         System.out.println("  1. Revelar públicamente los linajes culpables.");
         System.out.println("  2. Proteger a los descendientes de los crímenes de sus mayores.");
         System.out.println("  3. Exigir reparación sin convertir los apellidos en condenas.");
-        var justicia = UI.elegirEnum(ServicioCapituloCuatro.JusticiaFamilias.class, 1, 3);
+        var justicia = UI.elegirEnum(ServicioCapituloCuatro.JusticiaFamilias.class);
 
         UI.log("Queda un último hueco. La tinta cambia ante dos nombres posibles.");
         System.out.println("  1. El antepasado del héroe, guía que abandonó a los peregrinos.");
         System.out.println("  2. Inés, la peregrina cuyo nombre fue arrancado para mantener abierta la maldición.");
-        var nombre = UI.elegirEnum(ServicioCapituloCuatro.NombreCientoTrece.class, 1, 2);
+        var nombre = UI.elegirEnum(ServicioCapituloCuatro.NombreCientoTrece.class);
 
         System.out.println("  ¿Cómo prepararéis el rito en el Hospital?\n  1. Sal y fuego   2. Reliquias recuperadas   3. Campanas de Valdesombra");
-        var preparacion = UI.elegirEnum(ServicioCapituloCuatro.PreparacionRitual.class, 1, 3);
+        var preparacion = UI.elegirEnum(ServicioCapituloCuatro.PreparacionRitual.class);
         servicio.completar(estado, justicia, nombre, preparacion);
         UI.log(UI.pintar("CAPÍTULO IV COMPLETADO — el Hospital del Camino Viejo queda abierto.", UI.AMARILLO));
         UI.log(UI.pintar("La Santa Compaña ya conoce vuestro nombre.", UI.MAGENTA));

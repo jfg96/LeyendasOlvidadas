@@ -21,7 +21,7 @@ public final class CapituloDosConsola {
         else if (estado.getProgresoCampana().haDecidido("cap1.ines.interrogar"))
             UI.log(UI.pintar("Inés recuerda cada pregunta que le hiciste, aunque no recuerde su propio nombre.", UI.MAGENTA));
         System.out.println("  1. Escuchar las reglas antiguas.\n  2. Desafiar sus amenazas.\n  3. Ofrecer un pacto a cambio del Libro.");
-        servicio.conocerAldara(estado, UI.elegirEnum(ServicioCapituloDos.ActitudAldara.class, 1, 3));
+        servicio.conocerAldara(estado, UI.elegirEnum(ServicioCapituloDos.ActitudAldara.class));
         repositorio.guardar(estado); UI.pausa();
     }
 
@@ -30,7 +30,7 @@ public final class CapituloDosConsola {
         UI.log("Las páginas recuperadas encajan. Ciento trece peregrinos fueron encerrados y quemados por los fundadores.");
         UI.log("Padre Tomé reconoce que su familia arrancó páginas para proteger a los culpables.");
         System.out.println("  1. Revelar la matanza a toda Valdesombra.\n  2. Ocultarla hasta completar el Libro.\n  3. Usar la verdad para forzar la cooperación del concejo.");
-        servicio.completar(estado, UI.elegirEnum(ServicioCapituloDos.Verdad.class, 1, 3));
+        servicio.completar(estado, UI.elegirEnum(ServicioCapituloDos.Verdad.class));
         UI.log(UI.pintar("CAPÍTULO II COMPLETADO — Minas de San Lourenzo y Pazo de Soutomaior desbloqueados.", UI.AMARILLO));
         repositorio.guardar(estado);
     }
