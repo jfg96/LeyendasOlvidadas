@@ -6,6 +6,15 @@ import java.util.List;
 public interface FuenteAzar {
     int entre(int minimo, int maximo);
     boolean probabilidad(int porcentaje);
+
+    /**
+     * Comprueba una probabilidad continua en [0,1] sin redondear a porcentaje entero.
+     * Usa la misma fuente de azar para conservar la reproducibilidad.
+     */
+    default boolean probabilidad(double probabilidadUnitaria) {
+        double p = Math.max(0, Math.min(1, probabilidadUnitaria));
+        return entre(0, 99_999) < Math.round(p * 100_000);
+    }
     default double variacion() { return 0.9 + entre(0, 10_000) / 50_000.0; }
 
     default <T> T elegir(List<T> opciones) {

@@ -66,15 +66,15 @@ public class Enemigo extends Personaje {
      */
     public Item soltarBotin(Personaje jugador, double multBotin, int bonusRareza) {
         double prob = (elite ? 0.65 : 0.30) * multBotin;
-        if (!getAzar().probabilidad((int) Math.round(prob * 100))) return null;
+        if (!getAzar().probabilidad(prob)) return null;
         int tirada = getAzar().entre(1, 100);
         if (tirada <= 30) return jugador instanceof Animero && getAzar().probabilidad(50)
                 ? Pocion.tonico() : Pocion.vida();
         if (tirada <= 45) return Pocion.antorcha();
         if (tirada <= 55) return Pocion.laudano();
-        if (tirada <= 75) return Arma.aleatoria(getNivel(), bonusRareza);
-        if (tirada <= 90) return Armadura.aleatoria(getNivel(), bonusRareza);
-        return Amuleto.aleatorio(bonusRareza);
+        if (tirada <= 75) return Arma.aleatoria(getNivel(), bonusRareza, getAzar());
+        if (tirada <= 90) return Armadura.aleatoria(getNivel(), bonusRareza, getAzar());
+        return Amuleto.aleatorio(bonusRareza, getAzar());
     }
 
     @Override public double ataqueBase() { return danioBase; }
