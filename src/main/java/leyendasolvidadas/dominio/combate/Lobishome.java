@@ -9,8 +9,8 @@ import java.util.List;
 /** Héroe de vanguardia centrado en sangrado y robo de vida. */
 public class Lobishome extends Personaje {
     public Lobishome(String nombre) {
-        super(nombre, 1, 110, 3, 6, 12, 4, 100, 22, 13, 18, 12, 0,
-                "La bestia gana terreno bajo tu piel. (+Vida, +Furia)");
+        super(nombre, 1, 110, 3, 6, 12, 4, 100, 22,
+                new ProgresionClase(13, 18, 12, 0, "La bestia gana terreno bajo tu piel. (+Vida, +Furia)"));
         setArma(new Arma("Zarpa Lobuna", 6, Rareza.COMUN));
         asignarHabilidades(List.of(
             new Habilidad("Zarpazo Sangrante", "Garra que abre la carne", 10, 0, 1.0,

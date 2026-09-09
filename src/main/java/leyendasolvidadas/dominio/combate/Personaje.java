@@ -48,14 +48,13 @@ public abstract class Personaje {
     public Personaje(String nombre, int nivel, double vidaMax, int defensa,
                      int esquiva, int critico, int velocidad, double recursoMax, int regenRecurso) {
         this(nombre, nivel, vidaMax, defensa, esquiva, critico, velocidad, recursoMax, regenRecurso,
-                0, 0, 0, 0, null);
+                ProgresionClase.VACIA);
     }
 
     /** Constructor de heroes: incorpora los datos de progresion propios de cada clase. */
     protected Personaje(String nombre, int nivel, double vidaMax, int defensa,
                         int esquiva, int critico, int velocidad, double recursoMax, int regenRecurso,
-                        double danioBaseClase, int crecimientoVida, int crecimientoRecurso,
-                        int crecimientoDefensa, String mensajeCrecimiento) {
+                        ProgresionClase progresion) {
         this.nombre = nombre;
         this.nivel = Math.max(1, Math.min(30, nivel));
         this.vidaMax = vidaMax; this.vida = vidaMax;
@@ -63,11 +62,11 @@ public abstract class Personaje {
         this.velocidad = velocidad;
         this.recursoMax = recursoMax; this.recurso = recursoMax; this.regenRecurso = regenRecurso;
         this.cordura = 0; this.experiencia = 0;
-        this.danioBaseClase = danioBaseClase;
-        this.crecimientoVida = crecimientoVida;
-        this.crecimientoRecurso = crecimientoRecurso;
-        this.crecimientoDefensa = crecimientoDefensa;
-        this.mensajeCrecimiento = mensajeCrecimiento;
+        this.danioBaseClase = progresion.danioBase();
+        this.crecimientoVida = progresion.crecimientoVida();
+        this.crecimientoRecurso = progresion.crecimientoRecurso();
+        this.crecimientoDefensa = progresion.crecimientoDefensa();
+        this.mensajeCrecimiento = progresion.mensajeCrecimiento();
     }
 
     protected final void asignarHabilidades(List<Habilidad> habilidades) {

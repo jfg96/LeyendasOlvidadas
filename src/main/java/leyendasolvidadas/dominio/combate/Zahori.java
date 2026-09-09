@@ -9,8 +9,8 @@ import java.util.List;
 /** Héroe de control que debilita, aturde y marca enemigos. */
 public class Zahori extends Personaje {
     public Zahori(String nombre) {
-        super(nombre, 1, 82, 2, 9, 8, 5, 100, 14, 10, 12, 18, 0,
-                "Los presagios se revelan mas nitidos. (+Presagio)");
+        super(nombre, 1, 82, 2, 9, 8, 5, 100, 14,
+                new ProgresionClase(10, 12, 18, 0, "Los presagios se revelan mas nitidos. (+Presagio)"));
         setArma(new Arma("Pendulo de Azabache", 3, Rareza.COMUN));
         asignarHabilidades(List.of(
             Habilidad.ataque("Mal Presagio", "Vaticinio hiriente a cualquier fila", 5, 0.85, new int[]{1, 2, 3}),

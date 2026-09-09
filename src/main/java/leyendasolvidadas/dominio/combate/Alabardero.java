@@ -9,8 +9,8 @@ import java.util.List;
 /** Héroe de vanguardia especializado en defensa. */
 public class Alabardero extends Personaje {
     public Alabardero(String nombre, Arma armaInicial) {
-        super(nombre, 1, 110, 5, 5, 6, 3, 100, 25, 14, 22, 10, 2,
-                "El acero pesa menos en tus manos. (+Vida, +Defensa, +Aguante)");
+        super(nombre, 1, 110, 5, 5, 6, 3, 100, 25,
+                new ProgresionClase(14, 22, 10, 2, "El acero pesa menos en tus manos. (+Vida, +Defensa, +Aguante)"));
         setArma(armaInicial);
         asignarHabilidades(List.of(
             Habilidad.ataque("Tajo Firme", "Golpe fiable a la vanguardia", 0, 1.0, new int[]{1, 2}),

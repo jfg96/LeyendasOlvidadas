@@ -9,8 +9,8 @@ import java.util.List;
 /** Héroe de retaguardia especializado en ataques a distancia. */
 public class Montero extends Personaje {
     public Montero(String nombre) {
-        super(nombre, 1, 90, 3, 10, 14, 5, 100, 18, 12, 15, 15, 0,
-                "Tu pulso no tiembla ni en la niebla. (+Vida, +Pulso)");
+        super(nombre, 1, 90, 3, 10, 14, 5, 100, 18,
+                new ProgresionClase(12, 15, 15, 0, "Tu pulso no tiembla ni en la niebla. (+Vida, +Pulso)"));
         setArma(new Arma("Ballesta de Cuerno", 5, Rareza.COMUN));
         asignarHabilidades(List.of(
             Habilidad.ataque("Virote", "Saeta que busca la retaguardia", 8, 1.0, new int[]{2, 3}),

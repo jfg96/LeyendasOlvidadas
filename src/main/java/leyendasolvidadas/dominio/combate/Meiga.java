@@ -9,8 +9,8 @@ import java.util.List;
 /** Heroína de apoyo especializada en curación y veneno. */
 public class Meiga extends Personaje {
     public Meiga(String nombre) {
-        super(nombre, 1, 85, 2, 8, 6, 4, 100, 14, 10, 14, 18, 0,
-                "Los viejos ensalmos brotan mas hondos. (+Vida, +Fe)");
+        super(nombre, 1, 85, 2, 8, 6, 4, 100, 14,
+                new ProgresionClase(10, 14, 18, 0, "Los viejos ensalmos brotan mas hondos. (+Vida, +Fe)"));
         setArma(new Arma("Vara de Serbal", 3, Rareza.COMUN));
         asignarHabilidades(List.of(
             Habilidad.ataque("Mal de Ojo", "Maldicion a cualquier fila", 5, 0.85, new int[]{1, 2, 3}),

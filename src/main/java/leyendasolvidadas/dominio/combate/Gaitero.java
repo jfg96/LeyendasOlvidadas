@@ -9,8 +9,8 @@ import java.util.List;
 /** Héroe de apoyo que recupera y refuerza al grupo. */
 public class Gaitero extends Personaje {
     public Gaitero(String nombre) {
-        super(nombre, 1, 95, 4, 8, 8, 5, 100, 16, 11, 16, 14, 0,
-                "Tu gaita llega mas lejos que el miedo. (+Vida, +Aliento)");
+        super(nombre, 1, 95, 4, 8, 8, 5, 100, 16,
+                new ProgresionClase(11, 16, 14, 0, "Tu gaita llega mas lejos que el miedo. (+Vida, +Aliento)"));
         setArma(new Arma("Punal del Juglar", 4, Rareza.COMUN));
         asignarHabilidades(List.of(
             new Habilidad("Copla Hiriente", "Verso mordaz que hiere y anima", 6, 0, 0.9,

@@ -9,8 +9,8 @@ import java.util.List;
 /** Héroe capaz de atacar a distancia y robar vida. */
 public class Animero extends Personaje {
     public Animero(String nombre) {
-        super(nombre, 1, 80, 1, 8, 8, 4, 100, 12, 11, 12, 20, 0,
-                "Las animas susurran nuevos secretos. (+Mana)");
+        super(nombre, 1, 80, 1, 8, 8, 4, 100, 12,
+                new ProgresionClase(11, 12, 20, 0, "Las animas susurran nuevos secretos. (+Mana)"));
         setArma(new Arma("Baston de Endrino", 3, Rareza.COMUN));
         asignarHabilidades(List.of(
             Habilidad.ataque("Chispa Errante", "Descarga que alcanza cualquier fila", 5, 0.9, new int[]{1, 2, 3}),

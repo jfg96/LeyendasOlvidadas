@@ -9,8 +9,8 @@ import java.util.List;
 /** Héroe rápido centrado en críticos y sangrado. */
 public class Bandolero extends Personaje {
     public Bandolero(String nombre, Arma armaInicial) {
-        super(nombre, 1, 90, 3, 15, 18, 6, 100, 20, 11, 16, 15, 0,
-                "Tus pies apenas rozan el suelo. (+Vida, +Energia)");
+        super(nombre, 1, 90, 3, 15, 18, 6, 100, 20,
+                new ProgresionClase(11, 16, 15, 0, "Tus pies apenas rozan el suelo. (+Vida, +Energia)"));
         setArma(armaInicial);
         asignarHabilidades(List.of(
             new Habilidad("Punalada Traicionera", "Busca el hueco entre las costillas", 10, 0, 1.0,

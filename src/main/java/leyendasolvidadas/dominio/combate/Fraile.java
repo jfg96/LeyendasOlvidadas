@@ -9,8 +9,8 @@ import java.util.List;
 /** Héroe resistente con habilidades de protección y control. */
 public class Fraile extends Personaje {
     public Fraile(String nombre) {
-        super(nombre, 1, 100, 5, 6, 7, 3, 100, 15, 11, 18, 12, 2,
-                "Tu fe pesa mas que el acero. (+Vida, +Defensa, +Fervor)");
+        super(nombre, 1, 100, 5, 6, 7, 3, 100, 15,
+                new ProgresionClase(11, 18, 12, 2, "Tu fe pesa mas que el acero. (+Vida, +Defensa, +Fervor)"));
         setArma(new Arma("Cruz de Hierro", 5, Rareza.COMUN));
         asignarHabilidades(List.of(
             Habilidad.ataque("Golpe de Fe", "Mazazo sagrado a la vanguardia", 5, 1.0, new int[]{1, 2}),
