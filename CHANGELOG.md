@@ -119,6 +119,8 @@ documentación mantenida durante el desarrollo.
   combate y expediciones.
 - Eliminación del generador aleatorio global; las ofertas, mapas, encuentros,
   actores, pruebas y simulaciones reciben una fuente aislada y reproducible.
+- Extensión de la fuente de azar inyectable al botín de enemigos y jefes, con
+  probabilidades continuas en [0,1] que no se redondean a porcentajes enteros.
 - Sustitución del receptor global de eventos por publicadores inyectables desde
   el punto de entrada, con aislamiento entre partidas y pruebas.
 - Extracción de las recompensas, penalizaciones, convivencia y progreso tras
@@ -138,6 +140,16 @@ documentación mantenida durante el desarrollo.
   persistencia y servicios de aplicación.
 - Incorporación de una prueba integral desde el prólogo hasta el epílogo.
 - Revisión de documentación técnica, ortografía y comentarios Javadoc.
+- Construcción del bestiario a partir de una definición declarativa de
+  enemigos, jefes y segundas fases, verificable desde las pruebas.
+- Extracción de la lógica común de los cinco capítulos a un servicio base
+  compartido de activación, presentación y cierre.
+- Modelado de la progresión de las nueve clases en un value object que agrupa
+  el daño de clase y su crecimiento, deduplicando los constructores de los
+  héroes.
+- Simplificación de la lectura de opciones en la consola mediante helpers de
+  selección y presentación de resultados.
+- Eliminación de imports sin uso y de código muerto en el dominio.
 
 ## 3.0 — Versión inicial
 
