@@ -66,7 +66,7 @@ public class Enemigo extends Personaje {
      */
     public Item soltarBotin(Personaje jugador, double multBotin, int bonusRareza) {
         double prob = (elite ? 0.65 : 0.30) * multBotin;
-        if (Math.random() >= prob) return null;
+        if (!getAzar().probabilidad((int) Math.round(prob * 100))) return null;
         int tirada = getAzar().entre(1, 100);
         if (tirada <= 30) return jugador instanceof Animero && getAzar().probabilidad(50)
                 ? Pocion.tonico() : Pocion.vida();
