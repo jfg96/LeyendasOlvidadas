@@ -23,7 +23,7 @@ public final class CapituloCincoConsola {
         System.out.println("  1. La plaza, entre los vecinos y los muertos.");
         System.out.println("  2. Los pasadizos bajo el Archivo parroquial.");
         System.out.println("  3. El Campanario, por encima de la procesión.");
-        servicio.iniciarProcesion(estado, ServicioCapituloCinco.Ruta.values()[UI.leerOpcion(1, 3) - 1]);
+        servicio.iniciarProcesion(estado, UI.elegirEnum(ServicioCapituloCinco.Ruta.class, 1, 3));
         UI.log(UI.pintar("Los preparativos elegidos durante la vigilia fortalecen a la formación.", UI.VERDE));
         repo.guardar(estado); UI.pausa();
     }
@@ -39,7 +39,7 @@ public final class CapituloCincoConsola {
         if (elegido == ServicioCapituloCinco.FinalCampana.NUEVO_GUIA) {
             UI.log("La maldición puede contenerse durante una generación, pero alguien deberá portar la primera vela.");
             System.out.println("  1. El protagonista   2. Inés   3. Padre Tomé   4. Don Gonzalo   5. Un mercenario leal");
-            guia = ServicioCapituloCinco.NuevoGuia.values()[UI.leerOpcion(1, 5) - 1];
+            guia = UI.elegirEnum(ServicioCapituloCinco.NuevoGuia.class, 1, 5);
         }
         servicio.completar(estado, elegido, guia);
         repo.guardar(estado);

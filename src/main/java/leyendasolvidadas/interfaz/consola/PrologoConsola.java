@@ -52,7 +52,7 @@ public final class PrologoConsola {
         System.out.println("  2. Por deber hacia la antigua Hermandad del Camino.");
         System.out.println("  3. Por una culpa familiar que nunca te explicaron.");
         System.out.println("  4. Porque ningún camino prohibido permanece sin recorrer.");
-        ServicioPrologo.Motivacion eleccion = ServicioPrologo.Motivacion.values()[UI.leerOpcion(1, 4) - 1];
+        ServicioPrologo.Motivacion eleccion = UI.elegirEnum(ServicioPrologo.Motivacion.class, 1, 4);
         servicio.elegirMotivacion(estado, eleccion);
     }
 
@@ -77,7 +77,7 @@ public final class PrologoConsola {
         System.out.println("\n  1. Preguntarle su nombre y anotarlo en tu carta.");
         System.out.println("  2. Prometerle que la devolverás con vida junto a su familia.");
         System.out.println("  3. Examinar la ceniza y las marcas alrededor de la tumba.");
-        ServicioPrologo.RespuestaNina respuesta = ServicioPrologo.RespuestaNina.values()[UI.leerOpcion(1, 3) - 1];
+        ServicioPrologo.RespuestaNina respuesta = UI.elegirEnum(ServicioPrologo.RespuestaNina.class, 1, 3);
         servicio.responderALaNina(estado, respuesta);
     }
 

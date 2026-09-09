@@ -182,7 +182,7 @@ public class Juego {
         System.out.println("  1. Protegerla bajo la custodia de la compañía.");
         System.out.println("  2. Interrogarla antes de llevarla a Valdesombra.");
         System.out.println("  3. Confiarla a Padre Tomé y observar su reacción.");
-        ServicioCapituloUno.ActitudInes actitud = ServicioCapituloUno.ActitudInes.values()[UI.leerOpcion(1, 3) - 1];
+        ServicioCapituloUno.ActitudInes actitud = UI.elegirEnum(ServicioCapituloUno.ActitudInes.class, 1, 3);
         new ServicioCapituloUno().completarBosque(estado, actitud);
         UI.log(UI.pintar("CAPÍTULO I COMPLETADO — Brañas Hundidas y Camino de los Difuntos desbloqueados.", UI.AMARILLO));
     }

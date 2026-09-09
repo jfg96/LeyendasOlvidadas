@@ -17,8 +17,8 @@ public final class MisionesPersonalesConsola {
         System.out.println("  3. Abandonar Valdesombra para siempre.");
         System.out.println("  4. Aceptar un sacrificio que no permite regreso.");
         ResultadoAccion resultado = servicio.resolver(estado, unico,
-                ServicioMisionesPersonales.Desenlace.values()[UI.leerOpcion(1, 4) - 1]);
-        UI.log(UI.pintar(resultado.mensaje(), resultado.exito() ? UI.VERDE : UI.ROJO));
+                UI.elegirEnum(ServicioMisionesPersonales.Desenlace.class, 1, 4));
+        UI.pintarResultado(resultado);
         repo.guardar(estado); UI.pausa();
     }
 

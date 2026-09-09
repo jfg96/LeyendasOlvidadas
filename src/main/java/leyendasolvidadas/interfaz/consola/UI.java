@@ -80,6 +80,16 @@ public final class UI {
         System.out.printf("  %s %-28s %s%n", pintar("[" + numero + "]", AMARILLO), nombre,
                 pintar(detalle == null ? "" : "· " + detalle, TENUE));
     }
+
+    /** Lee un ordinal dentro de un rango y lo traduce a la constante de esa posicion. */
+    public static <E extends Enum<E>> E elegirEnum(Class<E> tipo, int min, int max) {
+        return tipo.getEnumConstants()[leerOpcion(min, max) - 1];
+    }
+
+    /** Pinta el mensaje de un resultado de caso de uso segun su exito. */
+    public static void pintarResultado(ResultadoAccion resultado) {
+        log(pintar(resultado.mensaje(), resultado.exito() ? VERDE : ROJO));
+    }
     public static void opcionDeshabilitada(int numero, String nombre, String motivo) {
         System.out.printf("  %s %-28s %s%n", pintar("[" + numero + "]", GRIS), pintar(nombre, GRIS),
                 pintar("· " + motivo, TENUE));

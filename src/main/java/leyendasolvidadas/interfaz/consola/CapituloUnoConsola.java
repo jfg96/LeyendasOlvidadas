@@ -19,7 +19,7 @@ public final class CapituloUnoConsola {
         System.out.println("\n  1. Confiar en él y ofrecerle ayuda.");
         System.out.println("  2. Dejar claro que sabes que oculta algo.");
         System.out.println("  3. Exigir respuestas antes de aceptar ningún encargo.");
-        ServicioCapituloUno.Actitud actitud = ServicioCapituloUno.Actitud.values()[UI.leerOpcion(1, 3) - 1];
+        ServicioCapituloUno.Actitud actitud = UI.elegirEnum(ServicioCapituloUno.Actitud.class, 1, 3);
         servicio.conocerPadreTome(estado, actitud);
         UI.log(UI.pintar("\"Formad una compañía. El Bosque de los Ahorcados será el primer camino.\"", UI.MAGENTA));
         repositorio.guardar(estado);

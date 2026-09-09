@@ -284,7 +284,7 @@ public class Aldea {
     }
 
     private void mostrarResultado(ResultadoAccion resultado) {
-        UI.log(UI.pintar(resultado.mensaje(), resultado.exito() ? UI.VERDE : UI.ROJO));
+        UI.pintarResultado(resultado);
     }
 
     private Personaje elegirMiembro(String titulo) {
