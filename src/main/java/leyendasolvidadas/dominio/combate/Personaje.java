@@ -28,6 +28,10 @@ public abstract class Personaje {
     private int cordura;
     private String aflixion;
     private int experiencia;
+    private double danioBaseClase;
+    private int crecimientoVida, crecimientoRecurso, crecimientoDefensa;
+    private String mensajeCrecimiento;
+    private List<Habilidad> habilidades = List.of();
     private final Inventario inventario = new Inventario();
     private Arma arma; private Armadura armadura; private Amuleto amuleto;
     private final List<EfectoEstado> efectos = new ArrayList<>();
@@ -43,6 +47,15 @@ public abstract class Personaje {
 
     public Personaje(String nombre, int nivel, double vidaMax, int defensa,
                      int esquiva, int critico, int velocidad, double recursoMax, int regenRecurso) {
+        this(nombre, nivel, vidaMax, defensa, esquiva, critico, velocidad, recursoMax, regenRecurso,
+                0, 0, 0, 0, null);
+    }
+
+    /** Constructor de heroes: incorpora los datos de progresion propios de cada clase. */
+    protected Personaje(String nombre, int nivel, double vidaMax, int defensa,
+                        int esquiva, int critico, int velocidad, double recursoMax, int regenRecurso,
+                        double danioBaseClase, int crecimientoVida, int crecimientoRecurso,
+                        int crecimientoDefensa, String mensajeCrecimiento) {
         this.nombre = nombre;
         this.nivel = Math.max(1, Math.min(30, nivel));
         this.vidaMax = vidaMax; this.vida = vidaMax;
@@ -50,10 +63,18 @@ public abstract class Personaje {
         this.velocidad = velocidad;
         this.recursoMax = recursoMax; this.recurso = recursoMax; this.regenRecurso = regenRecurso;
         this.cordura = 0; this.experiencia = 0;
+        this.danioBaseClase = danioBaseClase;
+        this.crecimientoVida = crecimientoVida;
+        this.crecimientoRecurso = crecimientoRecurso;
+        this.crecimientoDefensa = crecimientoDefensa;
+        this.mensajeCrecimiento = mensajeCrecimiento;
+    }
+
+    protected final void asignarHabilidades(List<Habilidad> habilidades) {
+        this.habilidades = habilidades;
     }
 
     public String getNombre() { return nombre; }
-    public void setNombre(String n) { nombre = n; }
     public int getNivel() { return nivel; }
     public void setNivel(int n) { nivel = Math.max(1, Math.min(30, n)); }
     public double getVida() { return vida; }
@@ -150,11 +171,13 @@ public abstract class Personaje {
     }
 
     /** Dano de ataque base del personaje, incluyendo su arma. */
-    public abstract double ataqueBase();
+    public double ataqueBase() {
+        return danioBaseClase + 3 * getNivel() + (getArma() != null ? getArma().getDanio() : 0);
+    }
     /** Nombre del recurso de clase (Aguante, Mana, Energia...). */
     public abstract String nombreRecurso();
     /** Habilidades de combate del personaje (vacio en enemigos). */
-    public List<Habilidad> getHabilidades() { return new ArrayList<>(); }
+    public List<Habilidad> getHabilidades() { return habilidades; }
 
     /**
      * Aplica dano teniendo en cuenta defensa, MARCADO y PROTEGIDO.
@@ -280,11 +303,22 @@ public abstract class Personaje {
             subirNivel();
         }
     }
-    /** Sube de nivel. Las subclases mejoran aqui sus estadisticas. */
+    /** Sube de nivel. Los heroes aplican aqui el crecimiento propio de su clase. */
     public void subirNivel() {
         setNivel(nivel + 1);
         if (!progresionSilenciosa)
             eventos.publicar("¡" + nombre.toUpperCase() + " ALCANZA EL NIVEL " + nivel + "!", TipoMensaje.RECOMPENSA);
+        aplicarCrecimientoDeClase();
+    }
+
+    private void aplicarCrecimientoDeClase() {
+        if (crecimientoVida == 0 && crecimientoRecurso == 0 && crecimientoDefensa == 0) return;
+        setVidaMaxBase(getVidaMaxBase() + crecimientoVida);
+        setVida(getVidaMax());
+        setDefensaBase(getDefensaBase() + crecimientoDefensa);
+        setRecursoMax(getRecursoMax() + crecimientoRecurso);
+        setRecurso(getRecursoMax());
+        logProgresion(mensajeCrecimiento);
     }
 
     /** Escala un recluta sin mostrar mensajes de subida durante su generacion. */

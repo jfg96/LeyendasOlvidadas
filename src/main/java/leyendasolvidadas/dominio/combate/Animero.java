@@ -8,12 +8,11 @@ import java.util.List;
 
 /** Héroe capaz de atacar a distancia y robar vida. */
 public class Animero extends Personaje {
-    private final List<Habilidad> habilidades;
-
     public Animero(String nombre) {
-        super(nombre, 1, 80, 1, 8, 8, 4, 100, 12);
+        super(nombre, 1, 80, 1, 8, 8, 4, 100, 12, 11, 12, 20, 0,
+                "Las animas susurran nuevos secretos. (+Mana)");
         setArma(new Arma("Baston de Endrino", 3, Rareza.COMUN));
-        habilidades = List.of(
+        asignarHabilidades(List.of(
             Habilidad.ataque("Chispa Errante", "Descarga que alcanza cualquier fila", 5, 0.9, new int[]{1, 2, 3}),
             new Habilidad("Fuego Fatuo", "Llama espectral que prende la retaguardia", 15, 0, 0.8,
                     new int[]{2, 3}, false, TipoEfecto.QUEMADURA, 80, 3, 0, false, 0, 0, 0),
@@ -21,19 +20,7 @@ public class Animero extends Personaje {
                     new int[]{1, 2}, false, TipoEfecto.ATURDIDO, 35, 1, 0, false, 0, 0, 0),
             new Habilidad("Sifon de Animas", "Roba la vida del enemigo", 35, 3, 1.1,
                     new int[]{1, 2, 3}, false, null, 0, 0, 0, false, 0, 0.5, -3)
-        );
-    }
-    @Override public double ataqueBase() {
-        return 11 + 3 * getNivel() + (getArma() != null ? getArma().getDanio() : 0);
+        ));
     }
     @Override public String nombreRecurso() { return "Mana"; }
-    @Override public List<Habilidad> getHabilidades() { return habilidades; }
-    @Override public void subirNivel() {
-        super.subirNivel();
-        setVidaMaxBase(getVidaMaxBase() + 12);
-        setVida(getVidaMax());
-        setRecursoMax(getRecursoMax() + 20);
-        setRecurso(getRecursoMax());
-        logProgresion("Las animas susurran nuevos secretos. (+Mana)");
-    }
 }

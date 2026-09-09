@@ -8,12 +8,11 @@ import java.util.List;
 
 /** Héroe de apoyo que recupera y refuerza al grupo. */
 public class Gaitero extends Personaje {
-    private final List<Habilidad> habilidades;
-
     public Gaitero(String nombre) {
-        super(nombre, 1, 95, 4, 8, 8, 5, 100, 16);
+        super(nombre, 1, 95, 4, 8, 8, 5, 100, 16, 11, 16, 14, 0,
+                "Tu gaita llega mas lejos que el miedo. (+Vida, +Aliento)");
         setArma(new Arma("Punal del Juglar", 4, Rareza.COMUN));
-        habilidades = List.of(
+        asignarHabilidades(List.of(
             new Habilidad("Copla Hiriente", "Verso mordaz que hiere y anima", 6, 0, 0.9,
                     new int[]{1, 2, 3}, false, null, 0, 0, 0, false, 0, 0, -3),
             new Habilidad("Aturuxo", "Grito de guerra: se crece ante el peligro", 20, 3, 0,
@@ -22,19 +21,7 @@ public class Gaitero extends Personaje {
                     new int[]{}, false, TipoEfecto.REGENERACION, 100, 3, 12, true, 0, 0, -12).aAliado(),
             new Habilidad("Muneira Marcial", "Compas atronador que quiebra a toda la horda", 30, 3, 0.75,
                     new int[]{1, 2, 3}, true, TipoEfecto.DEBILITADO, 60, 2, 0, false, 0, 0, 0)
-        );
-    }
-    @Override public double ataqueBase() {
-        return 11 + 3 * getNivel() + (getArma() != null ? getArma().getDanio() : 0);
+        ));
     }
     @Override public String nombreRecurso() { return "Aliento"; }
-    @Override public List<Habilidad> getHabilidades() { return habilidades; }
-    @Override public void subirNivel() {
-        super.subirNivel();
-        setVidaMaxBase(getVidaMaxBase() + 16);
-        setVida(getVidaMax());
-        setRecursoMax(getRecursoMax() + 14);
-        setRecurso(getRecursoMax());
-        logProgresion("Tu gaita llega mas lejos que el miedo. (+Vida, +Aliento)");
-    }
 }
