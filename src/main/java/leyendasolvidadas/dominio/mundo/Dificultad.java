@@ -1,10 +1,5 @@
 package leyendasolvidadas.dominio.mundo;
 
-import leyendasolvidadas.dominio.azar.*;
-import leyendasolvidadas.dominio.combate.*;
-import leyendasolvidadas.dominio.objetos.*;
-import leyendasolvidadas.dominio.misiones.*;
-
 /** Dificultad de una expedicion. */
 public enum Dificultad {
     FACIL("Novicio", 0), MEDIA("Veterano", 1), DIFICIL("Pesadilla", 2);
