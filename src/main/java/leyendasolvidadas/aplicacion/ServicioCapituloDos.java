@@ -4,24 +4,28 @@ import leyendasolvidadas.dominio.campana.CapituloCampana;
 import leyendasolvidadas.dominio.mundo.Region;
 
 /** Progreso y decisiones de Los caminos de ánimas. */
-public final class ServicioCapituloDos {
+public final class ServicioCapituloDos extends ServicioCapitulo {
     public enum ActitudAldara { ESCUCHAR, DESAFIAR, PACTAR }
     public enum Verdad { REVELAR, OCULTAR, NEGOCIAR }
     private static final String PRESENTADO = "cap2.aldara_presentada";
 
-    public boolean requierePresentacion(EstadoJuego estado) {
-        return estado.getProgresoCampana().getCapitulo() == CapituloCampana.CAMINOS_DE_ANIMAS
-                && !estado.getProgresoCampana().haDecidido(PRESENTADO);
+    @Override
+    protected CapituloCampana capitulo() {
+        return CapituloCampana.CAMINOS_DE_ANIMAS;
+    }
+    @Override
+    protected boolean estaPresentado(EstadoJuego estado) {
+        return estado.getProgresoCampana().haDecidido(PRESENTADO);
     }
 
     public void conocerAldara(EstadoJuego estado, ActitudAldara actitud) {
-        if (!requierePresentacion(estado)) throw new IllegalStateException("Aldara ya se ha presentado");
+        comprobarPresentacion(estado, "Aldara ya se ha presentado");
         estado.getProgresoCampana().registrarDecision("cap2.aldara." + actitud.name().toLowerCase());
         estado.getProgresoCampana().registrarDecision(PRESENTADO);
     }
 
     public int registrarVictoria(EstadoJuego estado, Region region) {
-        if (estado.getProgresoCampana().getCapitulo() != CapituloCampana.CAMINOS_DE_ANIMAS
+        if (!enCapitulo(estado)
                 || (region != Region.BRANAS_HUNDIDAS && region != Region.CAMINO_DE_LOS_DIFUNTOS)) return 0;
         String zona = region == Region.BRANAS_HUNDIDAS ? "branas" : "camino";
         int total = (int) estado.getProgresoCampana().getDecisiones().stream()
@@ -49,8 +53,7 @@ public final class ServicioCapituloDos {
         if (!puedeCerrar(estado)) throw new IllegalStateException("El Libro de los Nombres sigue incompleto");
         estado.getProgresoCampana().registrarDecision("cap2.verdad." + verdad.name().toLowerCase());
         estado.getProgresoCampana().registrarDecision("cap2.matanza_revelada");
-        estado.getProgresoCampana().avanzarA(CapituloCampana.DEUDA_DE_LOS_VIVOS);
-        estado.getRegistroCampana().anotar("Capítulo II: la verdad sobre los peregrinos se resolvió mediante "
+        cerrar(estado, CapituloCampana.DEUDA_DE_LOS_VIVOS, "Capítulo II: la verdad sobre los peregrinos se resolvió mediante "
                 + verdad.name().toLowerCase() + ".");
     }
 }

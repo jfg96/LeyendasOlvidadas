@@ -4,23 +4,27 @@ import leyendasolvidadas.dominio.campana.CapituloCampana;
 import leyendasolvidadas.dominio.mundo.*;
 
 /** Reglas de La deuda de los vivos y del primer ataque a Valdesombra. */
-public final class ServicioCapituloTres {
+public final class ServicioCapituloTres extends ServicioCapitulo {
     public enum ActitudGonzalo { ACEPTAR_AYUDA, RECHAZAR, FINGIR_LEALTAD }
     public enum Alianza { PADRE_TOME, ALDARA, DON_GONZALO }
     public enum Defensa { ARCHIVO, ERMITA, HERRERIA }
 
-    public boolean requierePresentacion(EstadoJuego e) {
-        return e.getProgresoCampana().getCapitulo() == CapituloCampana.DEUDA_DE_LOS_VIVOS
-                && !e.getProgresoCampana().haDecidido("cap3.gonzalo_presentado");
+    @Override
+    protected CapituloCampana capitulo() {
+        return CapituloCampana.DEUDA_DE_LOS_VIVOS;
+    }
+    @Override
+    protected boolean estaPresentado(EstadoJuego e) {
+        return e.getProgresoCampana().haDecidido("cap3.gonzalo_presentado");
     }
     public void conocerGonzalo(EstadoJuego e, ActitudGonzalo actitud) {
-        if (!requierePresentacion(e)) throw new IllegalStateException("Don Gonzalo ya se ha presentado");
+        comprobarPresentacion(e, "Don Gonzalo ya se ha presentado");
         e.getProgresoCampana().registrarDecision("cap3.gonzalo." + actitud.name().toLowerCase());
         e.getProgresoCampana().registrarDecision("cap3.gonzalo_presentado");
         if (actitud == ActitudGonzalo.ACEPTAR_AYUDA) e.getCompania().getInventario().ganarOro(100);
     }
     public int registrarVictoria(EstadoJuego e, Region region) {
-        if (e.getProgresoCampana().getCapitulo() != CapituloCampana.DEUDA_DE_LOS_VIVOS
+        if (!enCapitulo(e)
                 || (region != Region.MINAS_DE_SAN_LOURENZO && region != Region.PAZO_DE_SOUTOMAIOR)) return 0;
         String z = region == Region.MINAS_DE_SAN_LOURENZO ? "minas" : "pazo";
         int n = (int)e.getProgresoCampana().getDecisiones().stream().filter(x -> x.startsWith("cap3."+z+".victoria.")).count();
@@ -45,8 +49,8 @@ public final class ServicioCapituloTres {
         EdificioAldea protegido = switch (defensa) { case ARCHIVO -> EdificioAldea.ARCHIVO; case ERMITA -> EdificioAldea.ERMITA; case HERRERIA -> EdificioAldea.HERRERIA; };
         for (EdificioAldea edificio : new EdificioAldea[]{EdificioAldea.ARCHIVO, EdificioAldea.ERMITA, EdificioAldea.HERRERIA})
             if (edificio != protegido) e.getEstadoAldea().danar(edificio);
-        e.getProgresoCampana().avanzarA(CapituloCampana.LIBRO_DE_LOS_NOMBRES);
-        e.getRegistroCampana().anotar("Capítulo III: la compañía defendió " + defensa.name().toLowerCase()
-                + " y selló una alianza con " + alianza.name().toLowerCase().replace('_', ' ') + ".");
+        cerrar(e, CapituloCampana.LIBRO_DE_LOS_NOMBRES, "Capítulo III: la compañía defendió "
+                + defensa.name().toLowerCase() + " y selló una alianza con "
+                + alianza.name().toLowerCase().replace('_', ' ') + ".");
     }
 }

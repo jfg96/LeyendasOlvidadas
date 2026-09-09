@@ -7,20 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Reglas de La última procesión y selección de un epílogo alcanzable. */
-public final class ServicioCapituloCinco {
+public final class ServicioCapituloCinco extends ServicioCapitulo {
     public enum Ruta { PLAZA_DEFORMADA, PASADIZOS_DEL_ARCHIVO, CAMPANARIO }
     public enum FinalCampana {
         NOMBRES_DEVUELTOS, NUEVO_GUIA, EJERCITO_DE_LOS_MUERTOS, QUE_ARDA_VALDESOMBRA, DEUDA_PERDONADA
     }
     public enum NuevoGuia { PROTAGONISTA, INES, PADRE_TOME, DON_GONZALO, MERCENARIO_LEAL }
 
-    public boolean requierePresentacion(EstadoJuego estado) {
-        return estado.getProgresoCampana().getCapitulo() == CapituloCampana.ULTIMA_PROCESION
-                && !estado.getProgresoCampana().haDecidido("cap5.procesion_iniciada");
+    @Override
+    protected CapituloCampana capitulo() {
+        return CapituloCampana.ULTIMA_PROCESION;
+    }
+    @Override
+    protected boolean estaPresentado(EstadoJuego estado) {
+        return estado.getProgresoCampana().haDecidido("cap5.procesion_iniciada");
     }
 
     public void iniciarProcesion(EstadoJuego estado, Ruta ruta) {
-        if (!requierePresentacion(estado)) throw new IllegalStateException("La procesión ya ha comenzado");
+        comprobarPresentacion(estado, "La procesión ya ha comenzado");
         estado.getProgresoCampana().registrarDecision("cap5.ruta." + ruta.name().toLowerCase());
         estado.getProgresoCampana().registrarDecision("cap5.procesion_iniciada");
         registrarAliado(estado);
@@ -43,7 +47,7 @@ public final class ServicioCapituloCinco {
     }
 
     public void completar(EstadoJuego estado, FinalCampana finalCampana, NuevoGuia nuevoGuia) {
-        if (estado.getProgresoCampana().getCapitulo() != CapituloCampana.ULTIMA_PROCESION)
+        if (!enCapitulo(estado))
             throw new IllegalStateException("La última procesión no está activa");
         if (!finalesDisponibles(estado).contains(finalCampana))
             throw new IllegalArgumentException("Ese final no está disponible en esta campaña");
@@ -53,8 +57,7 @@ public final class ServicioCapituloCinco {
         if (nuevoGuia != null)
             estado.getProgresoCampana().registrarDecision("cap5.nuevo_guia." + nuevoGuia.name().toLowerCase());
         estado.setCampanaGanada(true);
-        estado.getProgresoCampana().avanzarA(CapituloCampana.EPILOGO);
-        estado.getRegistroCampana().anotar("Epílogo alcanzado: "
+        cerrar(estado, CapituloCampana.EPILOGO, "Epílogo alcanzado: "
                 + finalCampana.name().toLowerCase().replace('_', ' ') + ".");
     }
 
